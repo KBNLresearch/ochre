@@ -48,11 +48,14 @@ def create_corpus(in_file):
 
     # We need to normalize ' " ' in the gold standard to ' "', because we have
     # introduced an additional space.
-    print 'Gold standard'
-    print ''.join(gold_standard).replace(' " ', ' "').strip()
-    print
-    print 'OCR text'
-    print ' '.join(ocr_text)
+    click.echo('> Gold standard')
+    gs = ''.join(gold_standard).replace(' " ', ' "').strip()
+    gs = gs.replace(' ', '~')
+    click.echo(gs)
+    click.echo('> OCR text')
+    ocr = ' '.join(ocr_text)
+    ocr = ocr.replace(' ', '~')
+    click.echo(ocr)
 
 if __name__ == '__main__':
     create_corpus()
