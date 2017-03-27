@@ -1,5 +1,6 @@
 import click
 import codecs
+import os
 
 from lxml import etree
 
@@ -7,11 +8,11 @@ from lxml import etree
 @click.command()
 @click.argument('in_file', type=click.Path(exists=True))
 def create_corpus(in_file):
+    click.echo(in_file)
     quote = '{http://ilk.uvt.nl/folia}quote'
 
     ocr_text = []
     gold_standard = []
-    has_ocroutput = []
     ocr_word = None
     prev_parent = None
 
@@ -19,7 +20,8 @@ def create_corpus(in_file):
     # punctuation mark.
     # I think the existing LSTM code does not take into account documents (all
     # text is simply concatenated together).
-    context = etree.iterparse(in_file, tag='{http://ilk.uvt.nl/folia}w', encoding='utf-8')
+    context = etree.iterparse(in_file, tag='{http://ilk.uvt.nl/folia}w',
+                              encoding='utf-8')
     for action, elem in context:
         parent = elem.getparent().tag
         for t in elem.iterchildren(tag='{http://ilk.uvt.nl/folia}t'):
@@ -30,37 +32,34 @@ def create_corpus(in_file):
 
         if ocr_word:
             space = True
-            ocr_text.append(unicode(ocr_word))
+            ocr_text.append(ocr_word)
         # Add a space if the word is a " and it is the start of a quote.
         # Otherwise, the " will be stuck to the previous word (which it should
         # be if it is the end of the quote or any othe punctuation mark).
-        elif gs_word == '"' and parent == quote and prev_parent != qoute:
+        elif gs_word == '"' and parent == quote and prev_parent != quote:
             space = True
         else:
             space = False
 
         if space:
             gold_standard.append(' ')
-        gold_standard.append(unicode(gs_word))
+        gold_standard.append(gs_word)
         ocr_word = None
         space = False
         prev_parent = parent
 
     # We need to normalize ' " ' in the gold standard to ' "', because we have
     # introduced an additional space.
-    #click.echo('> Gold standard')
-    with codecs.open('gs.txt', 'wb', encoding='utf-8') as f:
+    fname = os.path.basename(in_file)
+    fname = fname.replace('.folia.xml', '.{}.txt')
+    with codecs.open(fname.format('gs'), 'wb', encoding='utf-8') as f:
         gs = u''.join(gold_standard).replace(u' " ', u' "').strip()
         f.write(gs)
-    #gs = gs.replace(' ', '~')
-    #click.echo(gs)
-    #click.echo('> OCR text')
-    with codecs.open('ocr.txt', 'wb', encoding='utf-8') as f:
+
+    with codecs.open(fname.format('ocr'), 'wb', encoding='utf-8') as f:
         ocr = u' '.join(ocr_text)
         f.write(ocr)
 
-    #ocr = ocr.replace(' ', '~')
-    #click.echo(ocr)
 
 if __name__ == '__main__':
     create_corpus()
