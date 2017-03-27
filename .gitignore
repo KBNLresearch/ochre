@@ -12,3 +12,4 @@ bower_components
 node_modules
 build
 dist
+ipynb_checkpoints
