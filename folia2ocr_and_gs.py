@@ -7,7 +7,7 @@ from lxml import etree
 
 @click.command()
 @click.argument('in_file', type=click.Path(exists=True))
-def create_corpus(in_file):
+def folia2ocr_and_gs(in_file):
     click.echo(in_file)
     quote = '{http://ilk.uvt.nl/folia}quote'
 
@@ -62,4 +62,4 @@ def create_corpus(in_file):
 
 
 if __name__ == '__main__':
-    create_corpus()
+    folia2ocr_and_gs()
