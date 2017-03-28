@@ -3,12 +3,15 @@ import codecs
 import os
 
 from lxml import etree
+from nlppln.utils import create_dirs
 
 
 @click.command()
 @click.argument('in_file', type=click.Path(exists=True))
-def folia2ocr_and_gs(in_file):
-    click.echo(in_file)
+@click.option('--out_dir', '-o', default=os.getcwd(), type=click.Path())
+def folia2ocr_and_gs(in_file, out_dir):
+    create_dirs(out_dir)
+
     quote = '{http://ilk.uvt.nl/folia}quote'
 
     ocr_text = []
@@ -52,6 +55,7 @@ def folia2ocr_and_gs(in_file):
     # introduced an additional space.
     fname = os.path.basename(in_file)
     fname = fname.replace('.folia.xml', '.{}.txt')
+    fname = os.path.join(out_dir, fname)
     with codecs.open(fname.format('gs'), 'wb', encoding='utf-8') as f:
         gs = u''.join(gold_standard).replace(u' " ', u' "').strip()
         f.write(gs)
