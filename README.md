@@ -2,6 +2,10 @@
 ## Plan
 
 * create ocr + gs for all files
+* count characters in ocr files (how many characters that are encoded with multiple
+  characters? can we replace them all by characters that are encoded with a single
+  character?)
+* remove files with empty ocr text(?)
 * align all ocr + gs files
 * quantify and qualify the differences between ocr and gs (what kind of ocr mistakes occur?)
 * dive into the neural networks
