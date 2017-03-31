@@ -6,16 +6,22 @@ requirements:
 inputs:
   in_dir: Directory
 outputs:
-  texts:
+  ocr:
     type:
-      items:
-        type: array
-        items: File
+      items: File
       type: array
-    outputSource: folia2ocr-and-gs/out_files
+    outputSource: folia2ocr-and-gs/ocr
+  gs:
+    type:
+      items: File
+      type: array
+    outputSource: folia2ocr-and-gs/gs
+  merged:
+    type: File
+    outputSource: merge-json/merged
 steps:
-  ls:
-    run: /Users/janneke/Documents/code/nlppln/cwl/ls.cwl
+  select-folia-files:
+    run: /Users/janneke/Documents/code/ocr/cwl/select-folia-files.cwl
     in:
       in_dir: in_dir
     out:
@@ -23,9 +29,25 @@ steps:
   folia2ocr-and-gs:
     run: /Users/janneke/Documents/code/ocr/cwl/folia2ocr-and-gs.cwl
     in:
-      in_file: ls/out_files
+      in_file: select-folia-files/out_files
     out:
-    - out_files
+    - gs
+    - ocr
     scatter:
     - in_file
-    scatterMethod: nested_crossproduct
+    scatterMethod: flat_crossproduct
+  count-chars:
+    run: /Users/janneke/Documents/code/ocr/cwl/count-chars.cwl
+    in:
+      in_file: folia2ocr-and-gs/ocr
+    out:
+    - char_counts
+    scatter:
+    - in_file
+    scatterMethod: flat_crossproduct
+  merge-json:
+    run: /Users/janneke/Documents/code/ocr/cwl/merge-json.cwl
+    in:
+      in_files: count-chars/char_counts
+    out:
+    - merged
