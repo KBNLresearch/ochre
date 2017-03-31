@@ -1,6 +1,7 @@
 import click
 import json
 import os
+import codecs
 
 from collections import Counter
 
@@ -10,7 +11,7 @@ from collections import Counter
 @click.option('--out_dir', '-o', default=os.getcwd(), type=click.Path())
 def count_chars(in_file, out_dir):
     chars = Counter()
-    with open(in_file) as f:
+    with codecs.open(in_file, 'r', encoding='utf-8') as f:
         text = f.read().strip()
 
     for char in text:
@@ -18,7 +19,7 @@ def count_chars(in_file, out_dir):
 
     fname = os.path.basename(in_file.replace('.txt', '.json'))
     fname = os.path.join(out_dir, fname)
-    with open(fname, 'w', encoding='utf-8') as f:
+    with codecs.open(fname, 'w', encoding='utf-8') as f:
         json.dump(chars, f, indent=2)
 
     #for c, freq in chars.most_common():
