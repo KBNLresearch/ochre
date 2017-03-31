@@ -15,7 +15,11 @@ inputs:
       separate: false
 
 outputs:
-  out_files:
-    type: File[]
+  gs:
+    type: File
     outputBinding:
-      glob: "*.txt"
+      glob: "*.gs.txt"
+  ocr:
+    type: File
+    outputBinding:
+      glob: "*.ocr.txt"
