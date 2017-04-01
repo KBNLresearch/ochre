@@ -15,6 +15,11 @@ arguments:
 inputs:
   in_files:
     type: File[]
+  name:
+    type: string?
+    inputBinding:
+      prefix: --name=
+      separate: false
   out_dir:
     type: Directory?
     inputBinding:
