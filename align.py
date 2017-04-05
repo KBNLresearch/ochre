@@ -3,6 +3,8 @@ import codecs
 import re
 import edlib
 
+from collections import Counter
+
 
 def make_mapping(sequences):
     # make char -> int mapping
@@ -50,24 +52,23 @@ def align(file1, file2):
         seq1 = f.read()
     with codecs.open(file2, encoding='utf-8') as f:
         seq2 = f.read()
-    click.echo(type(seq1))
 
     # map characters encoded with multiple characters to single characters
     mapping = make_mapping([seq1, seq2])
     sequence1 = translate(mapping, seq1)
     sequence2 = translate(mapping, seq2)
 
-    result = edlib.align(sequence1, sequence2, task='path')
-    print(result["editDistance"])  # 3
-    print(result["alphabetLength"])  # 8
-    print(result["locations"])  # [(None, 8)]
-    print(result["cigar"])  # None
-
-    cigar = result['cigar']
+    aligment = edlib.align(sequence1, sequence2, task='path')
+    edit_distance = aligment['editDistance']
+    cigar = aligment['cigar']
 
     matches = re.findall(r'(\d+)(.)', cigar)
     offset1 = 0
     offset2 = 0
+
+    changes_from = []
+    changes_to = []
+    changes = Counter()
 
     for m in matches:
         n = int(m[0])
@@ -76,38 +77,43 @@ def align(file1, file2):
         if typ == '=':
             # sanity check - strings should be equal
             assert(seq1[offset1:offset1+n] == seq2[offset2:offset2+n])
+
+            if changes_from != [] and changes_to != []:
+                changes[(''.join(changes_from), ''.join(changes_to))] += 1
+
+            changes_from = []
+            changes_to = []
+
             offset1 += n
             offset2 += n
-            #print('len in seq1', len(seq1[offset1:offset1+n]))
-            #print('len in seq2', len(seq2[offset2:offset2+n]))
-        elif typ == 'D':
-            print('inserted: "{}"'.format(seq1[offset1:offset1+n]))
-            print('context: "{}"'.format(seq1[max(0, offset1-5):offset1+n+5]))
-            print('inserted: "{}"'.format(seq2[offset2:offset2+n]))
-            print('context: "{}"'.format(seq2[max(0, offset2-5):offset2+n+5]))
-            #print(len(seq1[offset1:offset1+n]))
-            #offset1 += n
+        elif typ == 'D':  # Inserted
+            changes_from.append('')
+            changes_to.append(seq2[offset2:offset2+n])
+
             offset2 += n
         elif typ == 'X':
-            print('subsituted: "{}"'.format(seq1[offset1:offset1+n]))
-            print('context: "{}"'.format(seq1[max(0, offset1-5):offset1+n+5]))
-            print('subsituted: "{}"'.format(seq2[offset2:offset2+n]))
-            print('context: "{}"'.format(seq2[max(0, offset2-5):offset2+n+5]))
+            changes_from.append(seq1[offset1:offset1+n])
+            changes_to.append(seq2[offset2:offset2+n])
+
             offset1 += n
             offset2 += n
-            print('len in seq1', len(seq1[offset1:offset1+n]))
-            print('len in seq2', len(seq2[offset2:offset2+n]))
-        elif typ == 'I':
-            print('deleted: "{}"'.format(seq1[offset1:offset1+n]))
-            print('context: "{}"'.format(seq1[max(0, offset1-5):offset1+n+5]))
-            print('deleted: "{}"'.format(seq1[offset1:offset1+n]))
-            print('context: "{}"'.format(seq1[max(0, offset1-5):offset1+n+5]))
-            #print('deleted: "{}"'.format(seq2[offset2:offset2+n]))
-            #print('deleted: "{}"'.format(seq2[max(0, offset2-5):offset2+n+5]))
-            offset1 += n
-            #offset2 += n
+        elif typ == 'I':  # Deleted
+            changes_from.append(seq1[offset1:offset1+n])
+            changes_to.append('')
 
-        print('----')
+            offset1 += n
+
+    result = {'edit_distance': edit_distance,
+              'seq1_length': len(sequence1),
+              'seq2_length': len(sequence2),
+              'changes': []}
+
+    for (c_from, c_to), freq in changes.items():
+        result['changes'].append({'from': c_from,
+                                  'to': c_to,
+                                  'num': freq,
+                                  'df': 1})
+    print(result)
 
 
 if __name__ == '__main__':
