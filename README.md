@@ -2,7 +2,7 @@
 ## Plan
 
 * create ocr + gs for all files
-* remove files with empty ocr text(?)
+* DONE remove files with either empty ocr text or empty gs (`remove_empty_files.py`)
 * extract character counts for all files (to get an idea of the characters used)
 * align all ocr + gs files
 * quantify and qualify the differences between ocr and gs (what kind of ocr mistakes occur?)
