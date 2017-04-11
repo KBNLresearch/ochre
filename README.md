@@ -8,7 +8,15 @@
 * quantify and qualify the differences between ocr and gs (what kind of ocr mistakes occur?)
   * How can we show they are (more or less) random?
   * They might be newspaper (or font) dependant
+  * Maybe it is better to show that rnns can deal with both random errors and
+  non random errors, because probably the errors aren't random
+  * Idea: experiment with various types and (combined) degrees of errors (e.g., is it
+    better to train using generated data, does pretraining with correct Dutch text
+    help or harm)
+  * Idea: generate new data to test on
 * dive into the neural networks
+  * keras (+tensorflow)
+  * try the rnn software from the blogpost
 
 ## Ideas
 
@@ -22,6 +30,11 @@
 * FIXED characters consisting of multiple characters are mapped to unused ascii extended
 codes on the fly
 * How to store changes (so they can be merged easily)?
+
+## remove_empty_files
+
+* FIXED remove files with either empty ocr text or empty gs
+* there might still be problems with aligning texts that differ a lot (but we'll see)
 
 ## folia2ocr_and_gs
 
