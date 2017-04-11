@@ -21,6 +21,8 @@ def folia2ocr_and_gs(in_file, out_dir):
     # punctuation mark.
     # I think the existing LSTM code does not take into account documents (all
     # text is simply concatenated together).
+    # TODO: fix treatment of " (double quotes). After a starting quote a space
+    # is inserted.
     context = etree.iterparse(in_file, tag='{http://ilk.uvt.nl/folia}w',
                               encoding='utf-8')
     for action, elem in context:
