@@ -7,11 +7,14 @@
 * align all ocr + gs files
 * quantify and qualify the differences between ocr and gs (what kind of ocr mistakes occur?)
   * How can we show they are (more or less) random?
+  * They might be newspaper (or font) dependant
 * dive into the neural networks
 
 ## Ideas
 
 * Perhaps NN can be used to asses the quality of text? (character-based language model, the probability of generating a certain text)
+* Visualization of probabilities for each character (do the ocr mistakes have lower
+  probability?) (probability=color)
 
 ## align
 
