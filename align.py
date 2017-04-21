@@ -1,7 +1,8 @@
 import click
-import codecs
 import re
 import edlib
+import os
+import json
 
 from collections import Counter
 
@@ -47,10 +48,11 @@ def translate(mapping, sequence):
 @click.command()
 @click.argument('file1', type=click.Path(exists=True))
 @click.argument('file2', type=click.Path(exists=True))
-def align(file1, file2):
-    with codecs.open(file1, encoding='utf-8') as f:
+@click.option('--out_dir', '-o', default=os.getcwd(), type=click.Path())
+def align(file1, file2, out_dir):
+    with open(file1, encoding='utf-8') as f:
         seq1 = f.read()
-    with codecs.open(file2, encoding='utf-8') as f:
+    with open(file2, encoding='utf-8') as f:
         seq2 = f.read()
 
     # map characters encoded with multiple characters to single characters
@@ -103,17 +105,26 @@ def align(file1, file2):
 
             offset1 += n
 
-    result = {'edit_distance': edit_distance,
+    doc_id = os.path.basename(file1).split('-')[0]
+    result = {'doc_id': doc_id,
+              'edit_distance': edit_distance,
               'seq1_length': len(sequence1),
-              'seq2_length': len(sequence2),
-              'changes': []}
+              'seq2_length': len(sequence2)}
 
+    out_file = os.path.join(out_dir, '{}-metadata.json'.format(doc_id))
+    with open(out_file, 'w', encoding='utf-8') as f:
+        json.dump(result, f, indent=2)
+
+    changes_list = []
     for (c_from, c_to), freq in changes.items():
-        result['changes'].append({'from': c_from,
-                                  'to': c_to,
-                                  'num': freq,
-                                  'df': 1})
-    print(result)
+        changes_list.append({'doc_id': doc_id,
+                             'from': c_from,
+                             'to': c_to,
+                             'num': freq,
+                             'df': 1})
+    out_file = os.path.join(out_dir, '{}-changes.json'.format(doc_id))
+    with open(out_file, 'w', encoding='utf-8') as f:
+        json.dump(changes_list, f, indent=2)
 
 
 if __name__ == '__main__':
