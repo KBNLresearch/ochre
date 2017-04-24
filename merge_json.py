@@ -19,12 +19,19 @@ def merge_json(in_dir, name, out_dir):
     for in_file in in_files:
         with codecs.open(in_file, 'r', encoding='utf-8') as f:
             data = json.load(f)
-        dfs.append(data)
 
-    result = pd.DataFrame(dfs, index=idx)
+        # Make sure it works if the json file contains a list of dictionaries
+        # instead of just a single dictionary.
+        if not isinstance(data, list):
+            data = [data]
+        for item in data:
+            dfs.append(item)
+
+    if len(idx) != len(dfs):
+        result = pd.DataFrame(dfs)
+    else:
+        result = pd.DataFrame(dfs, index=idx)
     result = result.fillna(0)
-    cols = result.columns
-    result[cols] = result[cols].astype(int)
 
     out_file = os.path.join(out_dir, name)
     result.to_csv(out_file, encoding='utf-8')

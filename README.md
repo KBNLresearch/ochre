@@ -12,7 +12,8 @@
   * Idea: experiment with various types and (combined) degrees of errors (e.g., is it
     better to train using generated data, does pretraining with correct Dutch text
     help or harm)
-  * Idea: generate new data to test on
+  * Idea: generate variants with (semi) random errors to test on (so the same text scrambled in
+    different ways)
 * dive into the neural networks
   * keras (+tensorflow)
   * try the rnn software from the blogpost
