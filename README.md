@@ -1,4 +1,3 @@
-
 ## Plan
 
 * create ocr + gs for all files
@@ -46,3 +45,12 @@ codes on the fly
   * Punctuation marks also do not have an ocrtext class
 * FIXED Additional space after ( (example: BNObi3-ds) (just like with " - is there a generic way to fix this?)
 * Additional space after " (starting quote) - fix requires use of folia class quote
+
+## Software for sequence alignment
+
+From talk with Arnold:
+
+* Blast
+* Suffix tree
+	* https://code.google.com/archive/p/pysuffix/
+* Dan Gusfield (person)
