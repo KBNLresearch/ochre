@@ -2,7 +2,7 @@
 cwlVersion: cwl:v1.0
 class: CommandLineTool
 
-baseCommand: ["python", "/Users/janneke/Documents/code/ocr/merge_json.py"]
+baseCommand: ["python", "-m", "ocrtools.merge_json"]
 
 requirements:
   InitialWorkDirRequirement:

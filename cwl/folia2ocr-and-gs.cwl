@@ -1,7 +1,7 @@
 #!/usr/bin/env cwlrunner
 cwlVersion: cwl:v1.0
 class: CommandLineTool
-baseCommand: ["python", "/Users/janneke/Documents/code/ocr/folia2ocr_and_gs.py"]
+baseCommand: ["python", "-m", "ocrtools.folia2ocr_and_gs"]
 
 inputs:
   in_file:

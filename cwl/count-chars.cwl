@@ -1,7 +1,7 @@
 #!/usr/bin/env cwlrunner
 cwlVersion: cwl:v1.0
 class: CommandLineTool
-baseCommand: ["python", "/Users/janneke/Documents/code/ocr/count_chars.py"]
+baseCommand: ["python", "-m", "ocrtools.count_chars"]
 
 inputs:
   in_file:
