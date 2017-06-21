@@ -125,6 +125,14 @@ def read_texts(data_files, data_dir):
     return ' '.join(raw_text), gs_text, ocr_text
 
 
+def get_char_to_int(chars):
+    return dict((c, i) for i, c in enumerate(chars))
+
+
+def get_int_to_char(chars):
+    return dict((i, c) for i, c in enumerate(chars))
+
+
 @click.command()
 @click.argument('datasets', type=click.File())
 @click.argument('data_dir', type=click.Path(exists=True))
@@ -154,7 +162,7 @@ def train_lstm(datasets, data_dir, weights_dir):
 
     chars = sorted(list(set(raw_text)))
     chars.append(u'\n')                      # padding character
-    char_to_int = dict((c, i) for i, c in enumerate(chars))
+    char_to_int = get_char_to_int(chars)
 
     n_chars = len(raw_text)
     n_vocab = len(chars)
