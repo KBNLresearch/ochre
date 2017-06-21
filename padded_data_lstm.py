@@ -77,7 +77,6 @@ def create_data(ocr_text, gs_text, char_to_int, n_vocab, seq_length=25, batch_si
 def data_generator(dataX, dataY, seq_length, n_vocab, char_to_int, batch_size):
     while 1:
         for batch_idx in range(0, len(dataX), batch_size):
-            print batch_idx
             X = np.zeros((batch_size, seq_length, n_vocab), dtype=np.bool)
             Y = np.zeros((batch_size, seq_length, n_vocab), dtype=np.bool)
             for i, (sentenceX, sentenceY) in enumerate(zip(dataX[batch_idx:batch_idx+batch_size], dataY[batch_idx:batch_idx+batch_size])):
@@ -155,7 +154,7 @@ def train_lstm(datasets, data_dir, weights_dir):
     print('Total Characters: {}'.format(n_chars))
     print('Total Vocab: {}'.format(n_vocab))
 
-    numTrainSamples, trainDataGen = create_data(ocr_train, gs_train, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size
+    numTrainSamples, trainDataGen = create_data(ocr_train, gs_train, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size)
     numTestSamples, testDataGen = create_data(ocr_test, gs_test, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size)
     numValSamples, valDataGen = create_data(ocr_val, gs_val, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size)
 
@@ -175,7 +174,7 @@ def train_lstm(datasets, data_dir, weights_dir):
     callbacks_list = [checkpoint]
 
     # do training (and save weights)
-    model.fit_generator(trainDataGen, steps_per_epoch=numTrainSamples/batch_size, epochs=15, validation_data=valDataGen, validation_steps=numValSamples/batch_size, callbacks=callbacks_list, initial_epoch=epoch)
+    model.fit_generator(trainDataGen, steps_per_epoch=int(numTrainSamples/batch_size), epochs=15, validation_data=valDataGen, validation_steps=int(numValSamples/batch_size), callbacks=callbacks_list, initial_epoch=epoch)
 
 
 if __name__ == '__main__':
