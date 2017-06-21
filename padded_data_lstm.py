@@ -14,6 +14,7 @@ import codecs
 import glob2
 import glob
 import json
+import re
 
 
 def initialize_model(n, dropout, seq_length, chars, output_size, layers,
@@ -35,6 +36,7 @@ def initialize_model(n, dropout, seq_length, chars, output_size, layers,
 
 def load_weights(model, weights_dir, loss='categorical_crossentropy',
                  optimizer='adam'):
+    epoch = 0
     weight_files = glob2.glob('{}{}*.hdf5'.format(weights_dir, os.sep))
     if weight_files != []:
         fname = sorted(weight_files)[-1]
@@ -43,10 +45,14 @@ def load_weights(model, weights_dir, loss='categorical_crossentropy',
         model.load_weights(fname)
         model.compile(loss=loss, optimizer=optimizer)
 
-    return model
+        m = re.match(r'.+-(\d\d).hdf5', fname)
+        if m:
+            epoch = int(m.group(1))
+
+    return epoch, model
 
 
-def create_data(ocr_texts, gs_texts, char_to_int, n_vocab, seq_length=25):
+def create_data(ocr_text, gs_text, char_to_int, n_vocab, seq_length=25, batch_size=100):
     """Create padded one-hot encoded data sets from text.
 
     A sample consists of seq_length characters from texts from ocr_texts
@@ -59,67 +65,80 @@ def create_data(ocr_texts, gs_texts, char_to_int, n_vocab, seq_length=25):
     """
     dataX = []
     dataY = []
-    for ocr, gs in zip(ocr_texts, gs_texts):
-        text_length = len(ocr)
-        for i in range(0, text_length-seq_length +1, 1):
-            seq_in = ocr[i:i+seq_length]
-            seq_out = gs[i:i+seq_length]
-            dataX.append(''.join(seq_in))
-            dataY.append(''.join(seq_out))
-    X = np.zeros((len(dataX), seq_length, n_vocab), dtype=np.bool)
-    Y = np.zeros((len(dataY), seq_length, n_vocab), dtype=np.bool)
+    text_length = len(ocr_text)
+    for i in range(0, text_length-seq_length +1, 1):
+        seq_in = ocr_text[i:i+seq_length]
+        seq_out = gs_text[i:i+seq_length]
+        dataX.append(''.join(seq_in))
+        dataY.append(''.join(seq_out))
+    return len(dataX), data_generator(dataX, dataY, seq_length, n_vocab, char_to_int, batch_size)
 
-    for i, sentence in enumerate(dataX):
-        for j, c in enumerate(sentence):
-            X[i, j, char_to_int[c]] = 1
-        for j in range(seq_length-len(sentence)):
-            X[i, len(sentence) + j, char_to_int[u'\n']] = 1
-            #print len(sentence)+j
-        #print X[i]
-        #print X[i].shape
 
-    for i, sentence in enumerate(dataY):
-        #print sentence
-        for j, c in enumerate(sentence):
-            Y[i, j, char_to_int[c]] = 1
-        for j in range(seq_length-len(sentence)):
-            Y[i, len(sentence)+j, char_to_int[u'\n']] = 1
-        #print Y[i]
-        #print Y[i].shape
-    return X, Y
+def data_generator(dataX, dataY, seq_length, n_vocab, char_to_int, batch_size):
+    while 1:
+        for batch_idx in range(0, len(dataX), batch_size):
+            print batch_idx
+            X = np.zeros((batch_size, seq_length, n_vocab), dtype=np.bool)
+            Y = np.zeros((batch_size, seq_length, n_vocab), dtype=np.bool)
+            for i, (sentenceX, sentenceY) in enumerate(zip(dataX[batch_idx:batch_idx+batch_size], dataY[batch_idx:batch_idx+batch_size])):
+                for j, c in enumerate(sentenceX):
+                    X[i, j, char_to_int[c]] = 1
+                for j in range(seq_length-len(sentenceX)):
+                    X[i, len(sentenceX) + j, char_to_int[u'\n']] = 1
+                for j, c in enumerate(sentenceY):
+                    Y[i, j, char_to_int[c]] = 1
+                for j in range(seq_length-len(sentenceY)):
+                    Y[i, len(sentenceY) + j, char_to_int[u'\n']] = 1
+            yield X, Y
+
+
+def read_texts(data_files, data_dir):
+    raw_text = []
+    gs = []
+    ocr = []
+
+    for df in data_files:
+        with codecs.open(os.path.join(data_dir, df), encoding='utf-8') as f:
+            aligned = json.load(f)
+
+        ocr.append(aligned['ocr'])
+        gs.append(aligned['gs'])
+
+        raw_text.append(''.join(aligned['ocr']))
+        raw_text.append(''.join(aligned['gs']))
+
+    # Make a single array, containing the character-aligned text of all data
+    # files
+    gs_text = []
+    map(gs_text.extend, gs)
+
+    ocr_text = []
+    map(ocr_text.extend, ocr)
+
+    return ' '.join(raw_text), gs_text, ocr_text
 
 
 @click.command()
-@click.argument('text_dir', type=click.Path(exists=True))
+@click.argument('datasets', type=click.File())
+@click.argument('data_dir', type=click.Path(exists=True))
 @click.option('--weights_dir', '-w', default=os.getcwd(), type=click.Path())
-def train_lstm(text_dir, weights_dir):
+def train_lstm(datasets, data_dir, weights_dir):
     # lees data in en maak character mappings
     # genereer trainings data
     seq_length = 25
     num_nodes = 256
-    layers = 2
+    layers = 3
+    batch_size = 100
 
-    data_files = glob.glob('{}/BAO*.json'.format(text_dir))
-    print data_files
+    division = json.load(datasets)
 
-    print('Number of texts: {}'.format(len(data_files)))
+    raw_val, gs_val, ocr_val = read_texts(division.get('val'), data_dir)
+    raw_test, gs_test, ocr_test = read_texts(division.get('test'), data_dir)
+    raw_train, gs_train, ocr_train = read_texts(division.get('train'), data_dir)
 
-    ocr_texts = []
-    gs_texts = []
+    raw_text = ''.join([raw_val, raw_test, raw_train])
 
-    raw_text = []
-
-    for df in data_files:
-        with codecs.open(df, encoding='utf-8') as f:
-            aligned = json.load(f)
-
-            ocr_texts.append(aligned['ocr'])
-            gs_texts.append(aligned['gs'])
-
-            raw_text.append(''.join(aligned['ocr']))
-            raw_text.append(''.join(aligned['gs']))
-
-    raw_text = ' '.join(raw_text)
+    #print('Number of texts: {}'.format(len(data_files)))
 
     chars = sorted(list(set(raw_text)))
     chars.append(u'\n')                      # padding character
@@ -131,43 +150,27 @@ def train_lstm(text_dir, weights_dir):
     print('Total Characters: {}'.format(n_chars))
     print('Total Vocab: {}'.format(n_vocab))
 
-    # divide texts in train and validation set
-    c = zip(ocr_texts, gs_texts)
-    np.random.seed(4)
-    np.random.shuffle(c)
-    ocr_texts_shuffled, gs_texts_shuffled = zip(*c)
+    numTrainSamples, trainDataGen = create_data(ocr_train, gs_train, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size
+    numTestSamples, testDataGen = create_data(ocr_test, gs_test, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size)
+    numValSamples, valDataGen = create_data(ocr_val, gs_val, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size)
 
-    n = len(ocr_texts) / 10 / 2
-
-    ocr_validation_texts = ocr_texts_shuffled[0:n]
-    ocr_test_texts = ocr_texts_shuffled[n:n+n]
-    ocr_train_texts = ocr_texts_shuffled[n+n:]
-
-    gs_validation_texts = gs_texts_shuffled[0:n]
-    gs_test_texts = gs_texts_shuffled[n:n+n]
-    gs_train_texts = gs_texts_shuffled[n+n:]
-
-    xTrain, yTrain = create_data(ocr_train_texts, gs_train_texts, char_to_int, n_vocab, seq_length=seq_length)
-    xTest, yTest = create_data(ocr_test_texts, gs_test_texts, char_to_int, n_vocab, seq_length=seq_length)
-    xVal, yVal = create_data(ocr_validation_texts, gs_validation_texts, char_to_int, n_vocab, seq_length=seq_length)
-
-    n_patterns = len(xTrain)
+    n_patterns = numTrainSamples
     print("Train Patterns: {}".format(n_patterns))
-    print("Validation Patterns: {}".format(len(xVal)))
-    print("Test Patterns: {}".format(len(xTest)))
-    print('Total: {}'.format(len(xTrain) + len(xVal) + len(xTest)))
+    print("Validation Patterns: {}".format(numValSamples))
+    print("Test Patterns: {}".format(numTestSamples))
+    print('Total: {}'.format(numTrainSamples+numTestSamples+numValSamples))
 
     model = initialize_model(num_nodes, 0.5, seq_length, chars, n_vocab, layers)
-    model = load_weights(model, weights_dir)
+    epoch, model = load_weights(model, weights_dir)
 
     # initialize saving of weights
-    filepath = os.path.join(weights_dir, '{loss:.4f}.hdf5')
+    filepath = os.path.join(weights_dir, '{loss:.4f}-{epoch:02d}.hdf5')
     checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1,
                                  save_best_only=True, mode='min')
     callbacks_list = [checkpoint]
 
     # do training (and save weights)
-    model.fit(xTrain, yTrain, batch_size=100, epochs=15, validation_data=(xVal, yVal), callbacks=callbacks_list)
+    model.fit_generator(trainDataGen, steps_per_epoch=numTrainSamples/batch_size, epochs=15, validation_data=valDataGen, validation_steps=numValSamples/batch_size, callbacks=callbacks_list, initial_epoch=epoch)
 
 
 if __name__ == '__main__':
