@@ -20,16 +20,17 @@ import re
 def initialize_model(n, dropout, seq_length, chars, output_size, layers,
                      loss='categorical_crossentropy', optimizer='adam'):
     model = Sequential()
-    model.add(LSTM(n, input_shape=(seq_length, len(chars)), return_sequences=True))
+    model.add(LSTM(n, input_shape=(seq_length, len(chars)),
+                   return_sequences=True))
     model.add(Dropout(dropout))
 
     for _ in range(layers-1):
         model.add(LSTM(n, return_sequences=True))
         model.add(Dropout(dropout))
 
-        model.add(TimeDistributed(Dense(len(chars), activation='softmax')))
+    model.add(TimeDistributed(Dense(len(chars), activation='softmax')))
 
-        model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    model.compile(loss=loss, optimizer=optimizer, metrics=['accuracy'])
 
     return model
 
