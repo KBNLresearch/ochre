@@ -52,42 +52,52 @@ def load_weights(model, weights_dir, loss='categorical_crossentropy',
     return epoch, model
 
 
-def create_data(ocr_text, gs_text, char_to_int, n_vocab, seq_length=25, batch_size=100):
+def create_synced_data(ocr_text, gs_text, char_to_int, n_vocab, seq_length=25,
+                       batch_size=100, padding_char=u'\n'):
     """Create padded one-hot encoded data sets from text.
 
-    A sample consists of seq_length characters from texts from ocr_texts
+    A sample consists of seq_length characters from ocr_text
     (includes empty characters) (input), and seq_length characters from
-    gs_texts (includes empty characters) (output).
-    ocr_texts and gs_tetxts contain aligned arrays of characters.
+    gs_text (includes empty characters) (output).
+    ocr_text and gs_tetxt contain aligned arrays of characters.
     Because of the empty characters ('' in the character arrays), the input
     and output sequences may not have equal length. Therefore input and
     output are padded with a padding character (newline).
+
+    Returns:
+      int: the number of samples in the dataset
+      generator: generator for one-hot encoded data (so the data doesn't have
+        to fit in memory)
     """
     dataX = []
     dataY = []
     text_length = len(ocr_text)
-    for i in range(0, text_length-seq_length +1, 1):
+    for i in range(0, text_length-seq_length + 1, 1):
         seq_in = ocr_text[i:i+seq_length]
         seq_out = gs_text[i:i+seq_length]
         dataX.append(''.join(seq_in))
         dataY.append(''.join(seq_out))
-    return len(dataX), data_generator(dataX, dataY, seq_length, n_vocab, char_to_int, batch_size)
+    return len(dataX), synced_data_gen(dataX, dataY, seq_length, n_vocab,
+                                       char_to_int, batch_size, padding_char)
 
 
-def data_generator(dataX, dataY, seq_length, n_vocab, char_to_int, batch_size):
+def synced_data_gen(dataX, dataY, seq_length, n_vocab, char_to_int, batch_size,
+                    padding_char):
     while 1:
         for batch_idx in range(0, len(dataX), batch_size):
             X = np.zeros((batch_size, seq_length, n_vocab), dtype=np.bool)
             Y = np.zeros((batch_size, seq_length, n_vocab), dtype=np.bool)
-            for i, (sentenceX, sentenceY) in enumerate(zip(dataX[batch_idx:batch_idx+batch_size], dataY[batch_idx:batch_idx+batch_size])):
+            sliceX = dataX[batch_idx:batch_idx+batch_size]
+            sliceY = dataY[batch_idx:batch_idx+batch_size]
+            for i, (sentenceX, sentenceY) in enumerate(zip(sliceX, sliceY)):
                 for j, c in enumerate(sentenceX):
                     X[i, j, char_to_int[c]] = 1
                 for j in range(seq_length-len(sentenceX)):
-                    X[i, len(sentenceX) + j, char_to_int[u'\n']] = 1
+                    X[i, len(sentenceX) + j, char_to_int[padding_char]] = 1
                 for j, c in enumerate(sentenceY):
                     Y[i, j, char_to_int[c]] = 1
                 for j in range(seq_length-len(sentenceY)):
-                    Y[i, len(sentenceY) + j, char_to_int[u'\n']] = 1
+                    Y[i, len(sentenceY) + j, char_to_int[padding_char]] = 1
             yield X, Y
 
 
@@ -151,9 +161,9 @@ def train_lstm(datasets, data_dir, weights_dir):
     print('Total Characters: {}'.format(n_chars))
     print('Total Vocab: {}'.format(n_vocab))
 
-    numTrainSamples, trainDataGen = create_data(ocr_train, gs_train, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size)
-    numTestSamples, testDataGen = create_data(ocr_test, gs_test, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size)
-    numValSamples, valDataGen = create_data(ocr_val, gs_val, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size)
+    numTrainSamples, trainDataGen = create_synced_data(ocr_train, gs_train, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size)
+    numTestSamples, testDataGen = create_synced_data(ocr_test, gs_test, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size)
+    numValSamples, valDataGen = create_synced_data(ocr_val, gs_val, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size)
 
     n_patterns = numTrainSamples
     print("Train Patterns: {}".format(n_patterns))
