@@ -109,7 +109,8 @@ def align(file1, file2, out_dir):
     result = {'doc_id': doc_id,
               'edit_distance': edit_distance,
               'seq1_length': len(sequence1),
-              'seq2_length': len(sequence2)}
+              'seq2_length': len(sequence2),
+              'cigar': cigar}
 
     out_file = os.path.join(out_dir, '{}-metadata.json'.format(doc_id))
     with open(out_file, 'w', encoding='utf-8') as f:
