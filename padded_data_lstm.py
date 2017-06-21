@@ -108,11 +108,8 @@ def read_texts(data_files, data_dir):
 
     # Make a single array, containing the character-aligned text of all data
     # files
-    gs_text = []
-    map(gs_text.extend, gs)
-
-    ocr_text = []
-    map(ocr_text.extend, ocr)
+    gs_text = [y for x in gs for y in x]
+    ocr_text = [y for x in ocr for y in x]
 
     return ' '.join(raw_text), gs_text, ocr_text
 
@@ -166,6 +163,8 @@ def train_lstm(datasets, data_dir, weights_dir):
 
     model = initialize_model(num_nodes, 0.5, seq_length, chars, n_vocab, layers)
     epoch, model = load_weights(model, weights_dir)
+
+    epoch += 1
 
     # initialize saving of weights
     filepath = os.path.join(weights_dir, '{loss:.4f}-{epoch:02d}.hdf5')
