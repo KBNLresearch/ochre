@@ -130,6 +130,11 @@ def train_lstm(datasets, data_dir, weights_dir):
     layers = 3
     batch_size = 100
 
+    print('Sequence lenght: {}'.format(seq_length))
+    print('Number of nodes in hidden layers: {}'.format(num_nodes))
+    print('Number of hidden layers: {}'.format(layers))
+    print('Batch size: {}'.format(batch_size))
+
     division = json.load(datasets)
 
     raw_val, gs_val, ocr_val = read_texts(division.get('val'), data_dir)
