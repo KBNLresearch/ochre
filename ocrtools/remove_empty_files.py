@@ -17,7 +17,7 @@ def remove_empty_files(in_dir, out_dir):
     ocr_files = glob.glob('{}{}*.ocr.txt'.format(in_dir, os.sep))
     gs_files = glob.glob('{}{}*.gs.txt'.format(in_dir, os.sep))
 
-    for ocr, gs in zip(ocr_files, gs_files):
+    for ocr, gs in zip(sorted(ocr_files), sorted(gs_files)):
         with codecs.open(ocr, 'r', encoding='utf-8') as f:
             ocr_text = f.read()
 
