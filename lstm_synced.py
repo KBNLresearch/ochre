@@ -192,7 +192,7 @@ def train_lstm(datasets, data_dir, weights_dir):
     callbacks_list = [checkpoint]
 
     # do training (and save weights)
-    model.fit_generator(trainDataGen, steps_per_epoch=int(numTrainSamples/batch_size), epochs=15, validation_data=valDataGen, validation_steps=int(numValSamples/batch_size), callbacks=callbacks_list, initial_epoch=epoch)
+    model.fit_generator(trainDataGen, steps_per_epoch=int(numTrainSamples/batch_size), epochs=40, validation_data=valDataGen, validation_steps=int(numValSamples/batch_size), callbacks=callbacks_list, initial_epoch=epoch)
 
 
 if __name__ == '__main__':
