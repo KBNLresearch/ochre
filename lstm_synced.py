@@ -40,7 +40,7 @@ def load_weights(model, weights_dir, loss='categorical_crossentropy',
     epoch = 0
     weight_files = glob2.glob('{}{}*.hdf5'.format(weights_dir, os.sep))
     if weight_files != []:
-        fname = sorted(weight_files)[-1]
+        fname = sorted(weight_files)[0]
         print('Loading weights from {}'.format(fname))
 
         model.load_weights(fname)
@@ -182,8 +182,6 @@ def train_lstm(datasets, data_dir, weights_dir):
 
     model = initialize_model(num_nodes, 0.5, seq_length, chars, n_vocab, layers)
     epoch, model = load_weights(model, weights_dir)
-
-    epoch += 1
 
     # initialize saving of weights
     filepath = os.path.join(weights_dir, '{loss:.4f}-{epoch:02d}.hdf5')
