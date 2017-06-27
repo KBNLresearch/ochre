@@ -118,7 +118,9 @@ def read_texts(data_files, data_dir):
             aligned = json.load(f)
 
         ocr.append(aligned['ocr'])
+        ocr.append([' '])             # add space between two texts
         gs.append(aligned['gs'])
+        gs.append([' '])              # add space between two texts
 
         raw_text.append(''.join(aligned['ocr']))
         raw_text.append(''.join(aligned['gs']))
