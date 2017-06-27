@@ -4,6 +4,7 @@ from keras.layers import Dense
 from keras.layers import Dropout
 from keras.layers import LSTM
 from keras.layers import TimeDistributed
+from keras.layers import Bidirectional
 
 from keras.callbacks import ModelCheckpoint
 from keras.utils import np_utils
@@ -21,11 +22,30 @@ def initialize_model(n, dropout, seq_length, chars, output_size, layers,
                      loss='categorical_crossentropy', optimizer='adam'):
     model = Sequential()
     model.add(LSTM(n, input_shape=(seq_length, len(chars)),
-                   return_sequences=True))
+              return_sequences=True))
     model.add(Dropout(dropout))
 
     for _ in range(layers-1):
         model.add(LSTM(n, return_sequences=True))
+        model.add(Dropout(dropout))
+
+    model.add(TimeDistributed(Dense(len(chars), activation='softmax')))
+
+    model.compile(loss=loss, optimizer=optimizer, metrics=['accuracy'])
+
+    return model
+
+
+def initialize_model_bidirectional(n, dropout, seq_length, chars, output_size,
+                                   layers, loss='categorical_crossentropy',
+                                   optimizer='adam'):
+    model = Sequential()
+    model.add(Bidirectional(LSTM(n, return_sequences=True),
+                            input_shape=(seq_length, len(chars))))
+    model.add(Dropout(dropout))
+
+    for _ in range(layers-1):
+        model.add(Bidirectional(LSTM(n, return_sequences=True)))
         model.add(Dropout(dropout))
 
     model.add(TimeDistributed(Dense(len(chars), activation='softmax')))
@@ -44,7 +64,7 @@ def load_weights(model, weights_dir, loss='categorical_crossentropy',
         print('Loading weights from {}'.format(fname))
 
         model.load_weights(fname)
-        model.compile(loss=loss, optimizer=optimizer)
+        model.compile(loss=loss, optimizer=optimizer, metrics=['accuracy'])
 
         m = re.match(r'.+-(\d\d).hdf5', fname)
         if m:
@@ -150,15 +170,17 @@ def train_lstm(datasets, data_dir, weights_dir):
     # genereer trainings data
     seq_length = 25
     num_nodes = 256
-    layers = 3
+    layers = 1
     batch_size = 100
     lowercase = True
+    bidirectional = True
 
     print('Sequence lenght: {}'.format(seq_length))
     print('Number of nodes in hidden layers: {}'.format(num_nodes))
     print('Number of hidden layers: {}'.format(layers))
     print('Batch size: {}'.format(batch_size))
     print('Lowercase data: {}'.format(lowercase))
+    print('Bidirectional layers: {}'.format(bidirectional))
 
     division = json.load(datasets)
 
@@ -192,7 +214,12 @@ def train_lstm(datasets, data_dir, weights_dir):
     print("Test Patterns: {}".format(numTestSamples))
     print('Total: {}'.format(numTrainSamples+numTestSamples+numValSamples))
 
-    model = initialize_model(num_nodes, 0.5, seq_length, chars, n_vocab, layers)
+    if bidirectional:
+        model = initialize_model_bidirectional(num_nodes, 0.5, seq_length,
+                                               chars, n_vocab, layers)
+    else:
+        model = initialize_model(num_nodes, 0.5, seq_length, chars, n_vocab,
+                                 layers)
     epoch, model = load_weights(model, weights_dir)
 
     # initialize saving of weights
