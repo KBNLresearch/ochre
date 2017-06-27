@@ -53,8 +53,14 @@ def load_weights(model, weights_dir, loss='categorical_crossentropy',
     return epoch, model
 
 
+def to_string(char_list, lowercase):
+    if lowercase:
+        return u''.join(char_list).lower()
+    return u''.join(char_list)
+
+
 def create_synced_data(ocr_text, gs_text, char_to_int, n_vocab, seq_length=25,
-                       batch_size=100, padding_char=u'\n'):
+                       batch_size=100, padding_char=u'\n', lowercase=False):
     """Create padded one-hot encoded data sets from text.
 
     A sample consists of seq_length characters from ocr_text
@@ -76,8 +82,8 @@ def create_synced_data(ocr_text, gs_text, char_to_int, n_vocab, seq_length=25,
     for i in range(0, text_length-seq_length + 1, 1):
         seq_in = ocr_text[i:i+seq_length]
         seq_out = gs_text[i:i+seq_length]
-        dataX.append(''.join(seq_in))
-        dataY.append(''.join(seq_out))
+        dataX.append(to_string(seq_in, lowercase))
+        dataY.append(to_string(seq_out, lowercase))
     return len(dataX), synced_data_gen(dataX, dataY, seq_length, n_vocab,
                                        char_to_int, batch_size, padding_char)
 
@@ -112,7 +118,9 @@ def read_texts(data_files, data_dir):
             aligned = json.load(f)
 
         ocr.append(aligned['ocr'])
+        ocr.append([' '])             # add space between two texts
         gs.append(aligned['gs'])
+        gs.append([' '])              # add space between two texts
 
         raw_text.append(''.join(aligned['ocr']))
         raw_text.append(''.join(aligned['gs']))
@@ -144,11 +152,13 @@ def train_lstm(datasets, data_dir, weights_dir):
     num_nodes = 256
     layers = 3
     batch_size = 100
+    lowercase = True
 
     print('Sequence lenght: {}'.format(seq_length))
     print('Number of nodes in hidden layers: {}'.format(num_nodes))
     print('Number of hidden layers: {}'.format(layers))
     print('Batch size: {}'.format(batch_size))
+    print('Lowercase data: {}'.format(lowercase))
 
     division = json.load(datasets)
 
@@ -157,6 +167,8 @@ def train_lstm(datasets, data_dir, weights_dir):
     raw_train, gs_train, ocr_train = read_texts(division.get('train'), data_dir)
 
     raw_text = ''.join([raw_val, raw_test, raw_train])
+    if lowercase:
+        raw_text = raw_text.lower()
 
     #print('Number of texts: {}'.format(len(data_files)))
 
@@ -170,9 +182,9 @@ def train_lstm(datasets, data_dir, weights_dir):
     print('Total Characters: {}'.format(n_chars))
     print('Total Vocab: {}'.format(n_vocab))
 
-    numTrainSamples, trainDataGen = create_synced_data(ocr_train, gs_train, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size)
-    numTestSamples, testDataGen = create_synced_data(ocr_test, gs_test, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size)
-    numValSamples, valDataGen = create_synced_data(ocr_val, gs_val, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size)
+    numTrainSamples, trainDataGen = create_synced_data(ocr_train, gs_train, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size, lowercase=lowercase)
+    numTestSamples, testDataGen = create_synced_data(ocr_test, gs_test, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size, lowercase=lowercase)
+    numValSamples, valDataGen = create_synced_data(ocr_val, gs_val, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size, lowercase=lowercase)
 
     n_patterns = numTrainSamples
     print("Train Patterns: {}".format(n_patterns))
