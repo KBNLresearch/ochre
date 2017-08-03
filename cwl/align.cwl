@@ -1,10 +1,10 @@
 #!/usr/bin/env cwl-runner
-cwlVersion: cwl:v1.0
+cwlVersion: v1.0
 class: CommandLineTool
 baseCommand: ["python", "/align.py"]
 hints:
   - class: DockerRequirement
-    dockerPull: localhost:5000/align
+    dockerPull: nlppln/nlppln-align:0.1.0
 inputs:
   file1:
     type: File
