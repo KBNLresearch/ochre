@@ -1,5 +1,5 @@
 #!/usr/bin/env cwlrunner
-cwlVersion: cwl:v1.0
+cwlVersion: v1.0
 class: CommandLineTool
 
 baseCommand: ["python", "-m", "ocrtools.remove_empty_files"]
