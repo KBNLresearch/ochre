@@ -13,3 +13,4 @@ node_modules
 build
 dist
 *.ipynb_checkpoints
+.cache

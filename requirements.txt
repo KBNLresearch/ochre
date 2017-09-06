@@ -1,3 +1,4 @@
 click
 lxml
 beautifulsoup4
+pytest
