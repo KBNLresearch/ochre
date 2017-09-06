@@ -8,9 +8,15 @@ inputs:
   in_dir2: Directory
   in_dir3: Directory
   in_dir4: Directory
-  ocr_dir_name: string
-  gs_dir_name: string
-  aligned_dir_name: string
+  ocr_dir_name:
+    type: string
+    default: ocr
+  gs_dir_name:
+    type: string
+    default: gs
+  aligned_dir_name:
+    type: string
+    default: aligned
 outputs:
   gs1:
     type: Directory
