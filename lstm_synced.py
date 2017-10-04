@@ -59,8 +59,6 @@ def initialize_model_bidirectional(n, dropout, seq_length, chars, output_size,
 def initialize_model_seq2seq(n, dropout, seq_length, output_size, layers,
                              loss='categorical_crossentropy', optimizer='adam',
                              metrics=['accuracy']):
-    print seq_length
-    print output_size
     model = Sequential()
     # encoder
     model.add(LSTM(n, input_shape=(seq_length, output_size)))
