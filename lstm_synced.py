@@ -5,6 +5,7 @@ from keras.layers import Dropout
 from keras.layers import LSTM
 from keras.layers import TimeDistributed
 from keras.layers import Bidirectional
+from keras.layers import RepeatVector
 
 from keras.callbacks import ModelCheckpoint
 from keras.utils import np_utils
@@ -51,6 +52,28 @@ def initialize_model_bidirectional(n, dropout, seq_length, chars, output_size,
     model.add(TimeDistributed(Dense(len(chars), activation='softmax')))
 
     model.compile(loss=loss, optimizer=optimizer, metrics=['accuracy'])
+
+    return model
+
+
+def initialize_model_seq2seq(n, dropout, seq_length, output_size, layers,
+                             loss='categorical_crossentropy', optimizer='adam',
+                             metrics=['accuracy']):
+    print seq_length
+    print output_size
+    model = Sequential()
+    # encoder
+    model.add(LSTM(n, input_shape=(seq_length, output_size)))
+    # For the decoder's input, we repeat the encoded input for each time step
+    model.add(RepeatVector(seq_length))
+    # The decoder RNN could be multiple layers stacked or a single layer
+    for _ in range(layers-1):
+        model.add(LSTM(n, return_sequences=True))
+
+    # For each of step of the output sequence, decide which character should be
+    # chosen
+    model.add(TimeDistributed(Dense(output_size, activation='softmax')))
+    model.compile(loss=loss, optimizer=optimizer, metrics=metrics)
 
     return model
 
@@ -170,10 +193,11 @@ def train_lstm(datasets, data_dir, weights_dir):
     # genereer trainings data
     seq_length = 25
     num_nodes = 256
-    layers = 1
+    layers = 2
     batch_size = 100
     lowercase = True
-    bidirectional = True
+    bidirectional = False
+    seq2seq = True
 
     print('Sequence lenght: {}'.format(seq_length))
     print('Number of nodes in hidden layers: {}'.format(num_nodes))
@@ -217,6 +241,9 @@ def train_lstm(datasets, data_dir, weights_dir):
     if bidirectional:
         model = initialize_model_bidirectional(num_nodes, 0.5, seq_length,
                                                chars, n_vocab, layers)
+    elif seq2seq:
+        model = initialize_model_seq2seq(num_nodes, 0.5, seq_length,
+                                         n_vocab, layers)
     else:
         model = initialize_model(num_nodes, 0.5, seq_length, chars, n_vocab,
                                  layers)
