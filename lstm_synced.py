@@ -205,6 +205,7 @@ def train_lstm(datasets, data_dir, weights_dir):
     print('Batch size: {}'.format(batch_size))
     print('Lowercase data: {}'.format(lowercase))
     print('Bidirectional layers: {}'.format(bidirectional))
+    print('Seq2seq: {}'.format(seq2seq))
 
     division = json.load(datasets)
 
