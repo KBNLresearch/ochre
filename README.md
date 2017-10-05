@@ -36,7 +36,7 @@ The software needs the data in the following formats:
 ```
 
 To create data in these formats, CWL workflows are available:
-* VU DNC corpus: `folia2texts.cwl`
+* VU DNC corpus: `vudnc2texts.cwl`
 * ICDAR 2017 shared task on OCR post correction: `icdar2017st-extract-data-all.cwl`
 
 ## Training networks for OCR post-correction

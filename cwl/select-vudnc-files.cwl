@@ -1,7 +1,7 @@
 #!/usr/bin/env cwlrunner
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: ["python", "-m", "ocrtools.select_folia_files"]
+baseCommand: ["python", "-m", "ocrtools.select_vudnc_files"]
 
 inputs:
   in_dir:

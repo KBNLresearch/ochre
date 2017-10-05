@@ -9,7 +9,7 @@ from nlppln.utils import create_dirs
 @click.command()
 @click.argument('in_file', type=click.Path(exists=True))
 @click.option('--out_dir', '-o', default=os.getcwd(), type=click.Path())
-def folia2ocr_and_gs(in_file, out_dir):
+def vudnc2ocr_and_gs(in_file, out_dir):
     create_dirs(out_dir)
 
     ocr_text_complete = []
@@ -86,4 +86,4 @@ def folia2ocr_and_gs(in_file, out_dir):
 
 
 if __name__ == '__main__':
-    folia2ocr_and_gs()
+    vudnc2ocr_and_gs()
