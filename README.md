@@ -1,3 +1,5 @@
+# OCR post-correction toolbox
+
 ## Todo
 
 * Come up with name for software package
@@ -21,6 +23,7 @@
   - Languages: en
 * byu synthetic ocr data
   - Paper: http://scholarsarchive.byu.edu/cgi/viewcontent.cgi?article=2664&context=facpub
+  - Not (yet) available
 
 ## Preprocessing
 
@@ -48,6 +51,12 @@ To create data in these formats, CWL workflows are available:
 
 Currently, only available in a Jupyter notebook, needs to be converted to a command/workflow.
 
+* Load model
+* Load (test) data
+* Predict sequences
+* Aggregate sequences
+* Write text to file
+
 ## Performance
 
 * The ocrevaluation docker needs to be published on github and dockerhub.
@@ -66,6 +75,8 @@ Jupyter notebook
 * better (more balanced) training data is needed.
 
 ## Generating training data
+
+* Scramble gold standard text
 
 ## Ideas
 
