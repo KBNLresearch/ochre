@@ -2,36 +2,39 @@
 cwlVersion: v1.0
 class: Workflow
 requirements:
+- class: SubworkflowFeatureRequirement
 - class: ScatterFeatureRequirement
 inputs:
   in_dir: Directory
+  ocr_dir_name: string
+  gs_dir_name: string
+  aligned_dir_name: string
   ocr_n: string?
   gs_n: string?
   align_m: string?
   align_c: string?
 outputs:
-  gs:
-    type:
-      type: array
-      items: File
-    outputSource: remove-empty-files/gs
   ocr_char_counts:
     type: File
     outputSource: merge-json/merged
+  ocr_dir:
+    type: Directory
+    outputSource: save-files-to-dir-1/out
   gs_char_counts:
     type: File
-    outputSource: merge-json/merged
-  ocr:
-    type:
-      type: array
-      items: File
-    outputSource: remove-empty-files/ocr
+    outputSource: merge-json-1/merged
+  gs_dir:
+    type: Directory
+    outputSource: save-files-to-dir/out
   changes:
     type: File
-    outputSource: merge-json/merged
+    outputSource: align-texts-wf/changes
   metadata:
     type: File
-    outputSource: merge-json/merged
+    outputSource: align-texts-wf/metadata
+  aligned_dir:
+    type: Directory
+    outputSource: save-files-to-dir-2/out
 steps:
   select-folia-files:
     run: /home/jvdzwaan/code/ocr/cwl/select-folia-files.cwl
@@ -45,9 +48,10 @@ steps:
       in_file: select-folia-files/out_files
     out:
     - gs
+    - ocr
     scatter:
     - in_file
-    scatterMethod: flat_crossproduct
+    scatterMethod: dotproduct
   remove-empty-files:
     run: /home/jvdzwaan/code/ocr/cwl/remove-empty-files.cwl
     in:
@@ -55,10 +59,25 @@ steps:
       gs_files: folia2ocr-and-gs/gs
     out:
     - gs
+    - ocr
+  save-files-to-dir:
+    run: /home/jvdzwaan/code/nlppln/cwl/save-files-to-dir.cwl
+    in:
+      dir_name: gs_dir_name
+      in_files: remove-empty-files/gs
+    out:
+    - out
+  save-files-to-dir-1:
+    run: /home/jvdzwaan/code/nlppln/cwl/save-files-to-dir.cwl
+    in:
+      dir_name: ocr_dir_name
+      in_files: remove-empty-files/ocr
+    out:
+    - out
   count-chars:
     run: /home/jvdzwaan/code/ocr/cwl/count-chars.cwl
     in:
-      in_file: remove-empty-files/gs
+      in_file: remove-empty-files/ocr
     out:
     - char_counts
     scatter:
@@ -67,18 +86,41 @@ steps:
   merge-json:
     run: /home/jvdzwaan/code/ocr/cwl/merge-json.cwl
     in:
-      in_files: align/changes
-      name: align_c
+      in_files: count-chars/char_counts
+      name: ocr_n
     out:
     - merged
-  align:
-    run: /home/jvdzwaan/code/ocr/cwl/align.cwl
+  count-chars-1:
+    run: /home/jvdzwaan/code/ocr/cwl/count-chars.cwl
     in:
-      file2: remove-empty-files/gs
-      file1: remove-empty-files/ocr
+      in_file: remove-empty-files/gs
     out:
-    - changes
+    - char_counts
     scatter:
-    - file1
-    - file2
+    - in_file
     scatterMethod: dotproduct
+  merge-json-1:
+    run: /home/jvdzwaan/code/ocr/cwl/merge-json.cwl
+    in:
+      in_files: count-chars-1/char_counts
+      name: gs_n
+    out:
+    - merged
+  align-texts-wf:
+    run: /home/jvdzwaan/code/ocr/cwl/align-texts-wf.cwl
+    in:
+      align_m: align_m
+      align_c: align_c
+      ocr: remove-empty-files/ocr
+      gs: remove-empty-files/gs
+    out:
+    - alignments
+    - changes
+    - metadata
+  save-files-to-dir-2:
+    run: /home/jvdzwaan/code/nlppln/cwl/save-files-to-dir.cwl
+    in:
+      dir_name: aligned_dir_name
+      in_files: align-texts-wf/alignments
+    out:
+    - out
