@@ -151,7 +151,11 @@ def read_texts(data_files, data_dir):
     ocr = []
 
     for df in data_files:
-        with codecs.open(os.path.join(data_dir, df), encoding='utf-8') as f:
+        if data_dir is None:
+            fi = df
+        else:
+            fi = os.path.join(data_dir, df)
+        with codecs.open(fi, encoding='utf-8') as f:
             aligned = json.load(f)
 
         ocr.append(aligned['ocr'])
