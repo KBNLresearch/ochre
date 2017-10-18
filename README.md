@@ -1,9 +1,13 @@
-# OCR post-correction toolbox
+# Ochre
 
-## Todo
+Ochre is an OCR post-correction toolbox.
 
-* Come up with name for software package
-*
+* Overview of OCR post-correction data sets
+* Preprocess data sets
+* Train character-based language models/LSTMs for OCR post-correction
+* Do the post-correction
+* Assess the performance of OCR post-correction
+* Analyze OCR errors
 
 ## Data sets
 
