@@ -68,10 +68,27 @@ Currently, only available in a Jupyter notebook, needs to be converted to a comm
 
 ## OCR error analysis
 
-* quantify and qualify the differences between ocr and gs (what kind of ocr mistakes occur? structural vs. random mistakes)
-* create wordmapping
-* compare words
-* automatically classify types of errors (based on heuristics)
+Different types of OCR errors exist, e.g., structural vs. random mistakes. OCR
+post-correction methods may be suitable for fixing different types of errors.
+Therefore, it is useful to gain insight into what types of OCR errors occur.
+We chose to approach this problem on the word level. In order to be able to
+compare OCR errors on the word level, words in the OCR text and gold standard
+text need to be mapped. This can be done with `cwl/word-mapping-wf.cwl`.
+
+The result is a csv-file containing mapped words. The first column contains
+a word id, the second column the gold standard text and the third column contains
+the OCR text of the word:
+```
+,gs,ocr
+0,Hello,Hcllo
+1,World,World
+2,!,.
+```
+This csv file can be used to analyze the errors. See `notebooks/categorize errors based on word mappings.ipynb` for an example.
+
+We use heuristics to categorize the following types of errors (`ocrtools/ocrerrors.py`):
+
+* TODO: add error types
 
 ## OCR quality measure
 
