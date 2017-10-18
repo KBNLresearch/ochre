@@ -36,16 +36,16 @@ outputs:
     type: Directory
     outputSource: save-files-to-dir-2/out
 steps:
-  select-folia-files:
-    run: /home/jvdzwaan/code/ocr/cwl/select-folia-files.cwl
+  vudnc-select-files:
+    run: /home/jvdzwaan/code/ocr/cwl/vudnc-select-files.cwl
     in:
       in_dir: in_dir
     out:
     - out_files
-  folia2ocr-and-gs:
-    run: /home/jvdzwaan/code/ocr/cwl/folia2ocr-and-gs.cwl
+  vudnc2ocr-and-gs:
+    run: /home/jvdzwaan/code/ocr/cwl/vudnc2ocr-and-gs.cwl
     in:
-      in_file: select-folia-files/out_files
+      in_file: vudnc-select-files/out_files
     out:
     - gs
     - ocr
@@ -55,8 +55,8 @@ steps:
   remove-empty-files:
     run: /home/jvdzwaan/code/ocr/cwl/remove-empty-files.cwl
     in:
-      ocr_files: folia2ocr-and-gs/ocr
-      gs_files: folia2ocr-and-gs/gs
+      ocr_files: vudnc2ocr-and-gs/ocr
+      gs_files: vudnc2ocr-and-gs/gs
     out:
     - gs
     - ocr
