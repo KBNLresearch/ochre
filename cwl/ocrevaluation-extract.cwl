@@ -1,7 +1,7 @@
 #!/usr/bin/env cwlrunner
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: ["python", "-m", "ocrtools.ocrevaluation_extract"]
+baseCommand: ["python", "-m", "ochre.ocrevaluation_extract"]
 
 inputs:
   in_file:

@@ -2,7 +2,7 @@
 cwlVersion: v1.0
 class: CommandLineTool
 
-baseCommand: ["python", "-m", "ocrtools.remove_empty_files"]
+baseCommand: ["python", "-m", "ochre.remove_empty_files"]
 
 requirements:
   InitialWorkDirRequirement:

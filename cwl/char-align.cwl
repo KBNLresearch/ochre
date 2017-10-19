@@ -1,7 +1,7 @@
 #!/usr/bin/env cwlrunner
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: ["python", "-m", "ocrtools.char_align"]
+baseCommand: ["python", "-m", "ochre.char_align"]
 
 inputs:
   ocr_text:

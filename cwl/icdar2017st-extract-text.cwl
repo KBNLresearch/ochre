@@ -1,7 +1,7 @@
 #!/usr/bin/env cwlrunner
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: ["python", "-m", "ocrtools.icdar2017st_extract_text"]
+baseCommand: ["python", "-m", "ochre.icdar2017st_extract_text"]
 
 inputs:
   in_file:

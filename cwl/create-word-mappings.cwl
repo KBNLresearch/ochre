@@ -1,7 +1,7 @@
 #!/usr/bin/env cwlrunner
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: ["python", "-m", "ocrtools.create_word_mappings"]
+baseCommand: ["python", "-m", "ochre.create_word_mappings"]
 
 inputs:
   txt:

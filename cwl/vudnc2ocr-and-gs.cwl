@@ -1,7 +1,7 @@
 #!/usr/bin/env cwlrunner
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: ["python", "-m", "ocrtools.vudnc2ocr_and_gs"]
+baseCommand: ["python", "-m", "ochre.vudnc2ocr_and_gs"]
 
 inputs:
   in_file:

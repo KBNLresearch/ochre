@@ -1,6 +1,6 @@
 import pytest
 
-from ocrtools.ocrerrors import hyphenation_error
+from ochre.ocrerrors import hyphenation_error
 
 
 def test_hyphenation_error_true():
