@@ -1,6 +1,6 @@
 # Ochre
 
-Ochre is an OCR post-correction toolbox.
+Ochre is a toolbox for OCR post-correction. 
 
 * Overview of OCR post-correction data sets
 * Preprocess data sets
@@ -29,6 +29,16 @@ Ochre is an OCR post-correction toolbox.
   - Paper: http://scholarsarchive.byu.edu/cgi/viewcontent.cgi?article=2664&context=facpub
   - Not (yet) available
 
+## Installation
+
+```
+git clone git@github.com:KBNLresearch/Ochre.git
+cd Ochre
+python setup.py develop
+```
+* Using the CWL workflows requires (the development version of) [nlppln](https://github.com/WhatWorksWhenForWhom/nlppln) and cwltool (`pip install cwltool`)
+*
+
 ## Preprocessing
 
 The software needs the data in the following formats:
@@ -43,7 +53,7 @@ The software needs the data in the following formats:
 ```
 
 To create data in these formats, CWL workflows are available:
-* VU DNC corpus: `vudnc2texts.cwl`
+* VU DNC corpus: `vudnc-preprocess.cwl`
 * ICDAR 2017 shared task on OCR post correction: `icdar2017st-extract-data-all.cwl`
 
 ## Training networks for OCR post-correction
@@ -86,7 +96,7 @@ the OCR text of the word:
 ```
 This csv file can be used to analyze the errors. See `notebooks/categorize errors based on word mappings.ipynb` for an example.
 
-We use heuristics to categorize the following types of errors (`ocrtools/ocrerrors.py`):
+We use heuristics to categorize the following types of errors (`ochre/ocrerrors.py`):
 
 * TODO: add error types
 
