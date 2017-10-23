@@ -7,6 +7,7 @@ from ochre.utils import initialize_model, initialize_model_bidirectional, \
 import click
 import os
 import json
+import codecs
 
 
 @click.command()
@@ -48,6 +49,15 @@ def train_lstm(datasets, data_dir, weights_dir):
     chars = sorted(list(set(raw_text)))
     chars.append(u'\n')                      # padding character
     char_to_int = get_char_to_int(chars)
+
+    # save charset to file
+    if lowercase:
+        fname = 'chars-lower.txt'
+    else:
+        fname = 'chars.txt'
+    chars_file = os.path.join(weights_dir, fname)
+    with codecs.open(chars_file, 'wb', encoding='utf-8') as f:
+        f.write(u''.join(chars))
 
     n_chars = len(raw_text)
     n_vocab = len(chars)
