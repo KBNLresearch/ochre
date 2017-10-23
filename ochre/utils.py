@@ -177,6 +177,23 @@ def read_texts(data_files, data_dir):
     return ' '.join(raw_text), gs_text, ocr_text
 
 
+def read_text_to_predict(text, seq_length, lowercase, n_vocab,
+                         char_to_int, padding_char, step=1):
+    dataX = []
+    text_length = len(text)
+    for i in range(0, text_length-seq_length + 1, step):
+        seq_in = text[i:i+seq_length]
+        dataX.append(to_string(seq_in, lowercase))
+
+    X = np.zeros((len(dataX), seq_length, n_vocab), dtype=np.bool)
+    for i, sentenceX in enumerate(dataX):
+        for j, c in enumerate(sentenceX):
+            X[i, j, char_to_int[c]] = 1
+        for j in range(seq_length-len(sentenceX)):
+            X[i, len(sentenceX) + j, char_to_int[padding_char]] = 1
+    return X
+
+
 def get_char_to_int(chars):
     return dict((c, i) for i, c in enumerate(chars))
 
