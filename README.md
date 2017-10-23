@@ -1,6 +1,6 @@
 # Ochre
 
-Ochre is a toolbox for OCR post-correction. 
+Ochre is a toolbox for OCR post-correction.
 
 * Overview of OCR post-correction data sets
 * Preprocess data sets
@@ -32,8 +32,8 @@ Ochre is a toolbox for OCR post-correction.
 ## Installation
 
 ```
-git clone git@github.com:KBNLresearch/Ochre.git
-cd Ochre
+git clone git@github.com:KBNLresearch/ochre.git
+cd ochre
 python setup.py develop
 ```
 * Using the CWL workflows requires (the development version of) [nlppln](https://github.com/WhatWorksWhenForWhom/nlppln) and cwltool (`pip install cwltool`)
