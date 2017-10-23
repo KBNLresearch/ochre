@@ -13,7 +13,7 @@ inputs:
     type: string
     default: ocr
   data_div: File
-  lowercase: boolean
+  lowercase: boolean?
   align_m: string?
   align_c: string?
   wm_name: string?

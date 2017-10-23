@@ -7,7 +7,7 @@ requirements:
 inputs:
   gs_dir: Directory
   ocr_dir: Directory
-  lowercase: boolean
+  lowercase: boolean?
   align_m: string?
   align_c: string?
   wm_name: string?
