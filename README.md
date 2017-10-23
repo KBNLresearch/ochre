@@ -59,7 +59,22 @@ To create data in these formats, CWL workflows are available:
 
 ## Training networks for OCR post-correction
 
-* Create datadivision
+First, you need to divide the data into a train, validation and test set:
+
+```
+python -m ochre.create_data_division /path/to/aligned
+```
+
+The result of this command is a json file containing lists of file names, for example:
+
+```
+{
+    "train": ["1.json", "2.json", "3.json", "4.json", "5.json", ...],
+    "test": ["6.json", ...],
+    "val": ["7.json", ...]
+}
+```
+
 * Script: `lstm_synched.py`
 
 ## OCR post-correction
@@ -102,7 +117,20 @@ post-correction methods may be suitable for fixing different types of errors.
 Therefore, it is useful to gain insight into what types of OCR errors occur.
 We chose to approach this problem on the word level. In order to be able to
 compare OCR errors on the word level, words in the OCR text and gold standard
-text need to be mapped. This can be done with `cwl/word-mapping-wf.cwl`.
+text need to be mapped. CWL workflows are available to do this. To create word
+mappings for the test files of a dataset, use:
+
+```
+cwltool  /path/to/ochre/cwl/word-mapping-test-files.cwl --data_div /path/to/datadivision --gs_dir /path/to/directory/containing/the/gold/standard/texts --ocr_dir /path/to/directory/containing/the/ocr/texts/ --wm_name name-of-the-output-file.csv
+```
+
+To create word mappings for two directories of files, do:
+
+```
+cwltool  /path/to/ochre/cwl/word-mapping-wf.cwl --gs_dir /path/to/directory/containing/the/gold/standard/texts/ --ocr_dir /path/to/directory/containing/the/ocr/texts/ --wm_name name-of-the-output-file.csv
+```
+
+(These workflows can be regenerated using the notebook [word-mapping-workflow.ipynb](https://github.com/KBNLresearch/ochre/blob/master/notebooks/word-mapping-workflow.ipynb).)
 
 The result is a csv-file containing mapped words. The first column contains
 a word id, the second column the gold standard text and the third column contains
