@@ -7,11 +7,14 @@ from keras.layers import TimeDistributed
 from keras.layers import Bidirectional
 from keras.layers import RepeatVector
 
+from char_align import align_characters
+
 import os
 import codecs
 import glob2
 import json
 import re
+import edlib
 
 
 def initialize_model(n, dropout, seq_length, chars, output_size, layers,
@@ -180,3 +183,18 @@ def get_char_to_int(chars):
 
 def get_int_to_char(chars):
     return dict((i, c) for i, c in enumerate(chars))
+
+
+def align_output_to_input(input_str, output_str, empty_char=u'@'):
+    t_output_str = output_str.encode('ASCII', 'replace')
+    t_input_str = input_str.encode('ASCII', 'replace')
+    try:
+        r = edlib.align(t_input_str, t_output_str, task='path')
+    except:
+        print input_str
+        print output_str
+    r1, r2 = align_characters(input_str, output_str, r.get('cigar'),
+                              empty_char=empty_char, sanity_check=False)
+    while len(r2) < len(input_str):
+        r2.append(empty_char)
+    return u''.join(r2)
