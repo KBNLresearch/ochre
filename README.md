@@ -55,7 +55,7 @@ The software needs the data in the following formats:
 
 To create data in these formats, CWL workflows are available:
 * VU DNC corpus: `vudnc-preprocess.cwl` (regenerate with notebook [vudnc-preprocess-workflow.ipynb](https://github.com/KBNLresearch/ochre/blob/master/notebooks/vudnc-preprocess-workflow.ipynb))
-* ICDAR 2017 shared task on OCR post correction: `icdar2017st-extract-data-all.cwl` (regenerate with notebook [extract ICDAR2017 shared task data.ipynb](https://github.com/KBNLresearch/ochre/blob/master/notebooks/extract ICDAR2017 shared task data.ipynb))
+* ICDAR 2017 shared task on OCR post correction: `icdar2017st-extract-data-all.cwl` (regenerate with notebook [extract ICDAR2017 shared task data.ipynb](https://github.com/KBNLresearch/ochre/blob/master/notebooks/extract%20ICDAR2017%20shared%20task%20data.ipynb))
 
 ## Training networks for OCR post-correction
 
@@ -108,6 +108,13 @@ cwltool /path/to/ochre/cwl/post_correct_dir.cwl --charset /path/to/text/file/con
 ## Performance
 
 * The ocrevaluation docker needs to be published on github and dockerhub.
+
+To calculate performance of the OCR (post-correction), the external tool
+[ocrevalUAtion](https://github.com/impactcentre/ocrevalUAtion) is used. More
+information about this tool can be found on the
+[website](https://sites.google.com/site/textdigitisation/) and
+[wiki](https://github.com/impactcentre/ocrevalUAtion/wiki).
+
 * ocrevaluation-performance-wf.cwl
 
 ## OCR error analysis
