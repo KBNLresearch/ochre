@@ -63,13 +63,29 @@ To create data in these formats, CWL workflows are available:
 
 ## OCR post-correction
 
-Currently, only available in a Jupyter notebook, needs to be converted to a command/workflow.
+If you trained a model, you can use it to correct OCR text using the `lstm_synced_correct_ocr` command:
 
-* Load model
-* Load (test) data
-* Predict sequences
-* Aggregate sequences
-* Write text to file
+```
+python -m ochre.lstm_synced_correct_ocr /path/to/keras/model/file /path/to/text/file/containing/the/characters/in/the/training/data /path/to/ocr/text/file
+```
+or
+```
+cwltool /path/to/ochre/cwl/lstm_synced_correct_ocr.cwl --charset /path/to/text/file/containing/the/characters/in/the/training/data --model /path/to/keras/model/file --txt /path/to/ocr/text/file
+```
+
+The command creates a text file containing the corrected text.
+
+To generate corrected text for the test files of a dataset, do:
+
+```
+cwltool /path/to/ochre/cwl/post_correct_test_files.cwl --charset /path/to/text/file/containing/the/characters/in/the/training/data --model /path/to/keras/model/file --datadivision /path/to/data/division --in_dir /path/to/directory/with/ocr/text/files
+```
+
+To run it for a directory of text files, use:
+
+```
+cwltool /path/to/ochre/cwl/post_correct_dir.cwl --charset /path/to/text/file/containing/the/characters/in/the/training/data --model /path/to/keras/model/file --in_dir /path/to/directory/with/ocr/text/files
+```
 
 ## Performance
 
