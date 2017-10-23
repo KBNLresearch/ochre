@@ -1,4 +1,8 @@
 click
 lxml
 beautifulsoup4
+keras
+tensorflow
+edlib
+jupyter
 pytest
