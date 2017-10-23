@@ -1,6 +1,6 @@
 from keras.callbacks import ModelCheckpoint
 
-from ocrtools.utils import initialize_model, initialize_model_bidirectional, \
+from ochre.utils import initialize_model, initialize_model_bidirectional, \
                            initialize_model_seq2seq, load_weights, \
                            create_synced_data, read_texts, get_char_to_int
 
@@ -56,8 +56,8 @@ def train_lstm(datasets, data_dir, weights_dir):
     print('Total Vocab: {}'.format(n_vocab))
 
     numTrainSamples, trainDataGen = create_synced_data(ocr_train, gs_train, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size, lowercase=lowercase, step=step)
-    numTestSamples, testDataGen = create_synced_data(ocr_test, gs_test, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size, lowercase=lowercase, step=step)
-    numValSamples, valDataGen = create_synced_data(ocr_val, gs_val, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size, lowercase=lowercase, step=step)
+    numTestSamples, testDataGen = create_synced_data(ocr_test, gs_test, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size, lowercase=lowercase)
+    numValSamples, valDataGen = create_synced_data(ocr_val, gs_val, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size, lowercase=lowercase)
 
     n_patterns = numTrainSamples
     print("Train Patterns: {}".format(n_patterns))
