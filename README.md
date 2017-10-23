@@ -54,8 +54,8 @@ The software needs the data in the following formats:
 ```
 
 To create data in these formats, CWL workflows are available:
-* VU DNC corpus: `vudnc-preprocess.cwl` (regenerate with notebook [vudnc-preprocess-workflow.ipynb](../notebooks/vudnc-preprocess-workflow.ipynb))
-* ICDAR 2017 shared task on OCR post correction: `icdar2017st-extract-data-all.cwl` (regenerate with notebook [extract ICDAR2017 shared task data.ipynb](../notebooks/extract ICDAR2017 shared task data.ipynb))
+* VU DNC corpus: `vudnc-preprocess.cwl` (regenerate with notebook [vudnc-preprocess-workflow.ipynb](https://github.com/KBNLresearch/ochre/blob/master/notebooks/vudnc-preprocess-workflow.ipynb))
+* ICDAR 2017 shared task on OCR post correction: `icdar2017st-extract-data-all.cwl` (regenerate with notebook [extract ICDAR2017 shared task data.ipynb](https://github.com/KBNLresearch/ochre/blob/master/notebooks/extract ICDAR2017 shared task data.ipynb))
 
 ## Training networks for OCR post-correction
 
@@ -88,7 +88,7 @@ To run it for a directory of text files, use:
 cwltool /path/to/ochre/cwl/post_correct_dir.cwl --charset /path/to/text/file/containing/the/characters/in/the/training/data --model /path/to/keras/model/file --in_dir /path/to/directory/with/ocr/text/files
 ```
 
-(Regenerate with notebook [post_correction_workflows.ipynb](../notebooks/post_correction_workflows.ipynb))
+(Regenerate with notebook [post_correction_workflows.ipynb](https://github.com/KBNLresearch/ochre/blob/master/notebooks/post_correction_workflows.ipynb))
 
 ## Performance
 
