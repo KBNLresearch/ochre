@@ -34,10 +34,11 @@ Ochre is a toolbox for OCR post-correction.
 ```
 git clone git@github.com:KBNLresearch/ochre.git
 cd ochre
+pip install -r requirements.txt
 python setup.py develop
 ```
 * Using the CWL workflows requires (the development version of) [nlppln](https://github.com/WhatWorksWhenForWhom/nlppln) and cwltool (`pip install cwltool`)
-*
+* Please note that the CWL workflows contain absolute paths, if you want to use them on your own machine, regenerate them using the associated Jupyter Notebooks.
 
 ## Preprocessing
 
@@ -53,8 +54,8 @@ The software needs the data in the following formats:
 ```
 
 To create data in these formats, CWL workflows are available:
-* VU DNC corpus: `vudnc-preprocess.cwl`
-* ICDAR 2017 shared task on OCR post correction: `icdar2017st-extract-data-all.cwl`
+* VU DNC corpus: `vudnc-preprocess.cwl` (regenerate with notebook [vudnc-preprocess-workflow.ipynb](../notebooks/vudnc-preprocess-workflow.ipynb))
+* ICDAR 2017 shared task on OCR post correction: `icdar2017st-extract-data-all.cwl` (regenerate with notebook [extract ICDAR2017 shared task data.ipynb](../notebooks/extract ICDAR2017 shared task data.ipynb))
 
 ## Training networks for OCR post-correction
 
@@ -86,6 +87,8 @@ To run it for a directory of text files, use:
 ```
 cwltool /path/to/ochre/cwl/post_correct_dir.cwl --charset /path/to/text/file/containing/the/characters/in/the/training/data --model /path/to/keras/model/file --in_dir /path/to/directory/with/ocr/text/files
 ```
+
+(Regenerate with notebook [post_correction_workflows.ipynb](../notebooks/post_correction_workflows.ipynb))
 
 ## Performance
 
