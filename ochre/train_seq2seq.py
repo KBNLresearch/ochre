@@ -1,12 +1,10 @@
-from keras.callbacks import ModelCheckpoint
-
-from ochre.utils import initialize_model_seq2seq, load_weights, \
-                           create_training_data, read_texts, get_char_to_int
+from ochre.utils import initialize_model_seq2seq, load_weights, save_charset, \
+                           create_training_data, read_texts, get_chars, \
+                           add_checkpoint
 
 import click
 import os
 import json
-import codecs
 
 
 @click.command()
@@ -14,8 +12,6 @@ import codecs
 @click.argument('data_dir', type=click.Path(exists=True))
 @click.option('--weights_dir', '-w', default=os.getcwd(), type=click.Path())
 def train_lstm(datasets, data_dir, weights_dir):
-    # lees data in en maak character mappings
-    # genereer trainings data
     seq_length = 25
     predict_chars = 1
     num_nodes = 256
@@ -23,6 +19,7 @@ def train_lstm(datasets, data_dir, weights_dir):
     batch_size = 100
     step = 3  # step size used to create data (3 = use every third sequence)
     lowercase = True
+    pad = u'\n'
 
     print('Sequence length: {}'.format(seq_length))
     print('Predict characters: {}'.format(predict_chars))
@@ -37,28 +34,11 @@ def train_lstm(datasets, data_dir, weights_dir):
     raw_test, gs_test, ocr_test = read_texts(division.get('test'), data_dir)
     raw_train, gs_train, ocr_train = read_texts(division.get('train'), data_dir)
 
-    raw_text = ''.join([raw_val, raw_test, raw_train])
-    if lowercase:
-        raw_text = raw_text.lower()
-
-    chars = sorted(list(set(raw_text)))
-    chars.append(u'\n')                      # padding character
-    char_to_int = get_char_to_int(chars)
-
+    chars, n_vocab, char_to_int = get_chars(raw_val, raw_test, raw_train,
+                                            lowercase, padding_char=pad)
     # save charset to file
-    if lowercase:
-        fname = 'chars-lower.txt'
-    else:
-        fname = 'chars.txt'
-    chars_file = os.path.join(weights_dir, fname)
-    with codecs.open(chars_file, 'wb', encoding='utf-8') as f:
-        print repr(chars)
-        f.write(u''.join(chars))
+    save_charset(weights_dir, chars, lowercase)
 
-    n_chars = len(raw_text)
-    n_vocab = len(chars)
-
-    print('Total Characters: {}'.format(n_chars))
     print('Total Vocab: {}'.format(n_vocab))
 
     numTrainSamples, trainDataGen = create_training_data(ocr_train, gs_train, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size, lowercase=lowercase, step=step, predict_chars=predict_chars)
@@ -74,12 +54,7 @@ def train_lstm(datasets, data_dir, weights_dir):
     model = initialize_model_seq2seq(num_nodes, 0.5, seq_length, predict_chars,
                                      n_vocab, layers)
     epoch, model = load_weights(model, weights_dir)
-
-    # initialize saving of weights
-    filepath = os.path.join(weights_dir, '{loss:.4f}-{epoch:02d}.hdf5')
-    checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1,
-                                 save_best_only=True, mode='min')
-    callbacks_list = [checkpoint]
+    callbacks_list = [add_checkpoint(weights_dir)]
 
     # do training (and save weights)
     model.fit_generator(trainDataGen, steps_per_epoch=int(numTrainSamples/batch_size), epochs=40, validation_data=valDataGen, validation_steps=int(numValSamples/batch_size), callbacks=callbacks_list, initial_epoch=epoch)

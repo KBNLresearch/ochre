@@ -6,6 +6,7 @@ from keras.layers import LSTM
 from keras.layers import TimeDistributed
 from keras.layers import Bidirectional
 from keras.layers import RepeatVector
+from keras.callbacks import ModelCheckpoint
 
 from char_align import align_characters
 
@@ -91,6 +92,13 @@ def load_weights(model, weights_dir, loss='categorical_crossentropy',
             epoch = int(m.group(1))
 
     return epoch, model
+
+
+def add_checkpoint(weights_dir):
+    filepath = os.path.join(weights_dir, '{loss:.4f}-{epoch:02d}.hdf5')
+    checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1,
+                                 save_best_only=True, mode='min')
+    return checkpoint
 
 
 def to_string(char_list, lowercase):
@@ -218,3 +226,25 @@ def align_output_to_input(input_str, output_str, empty_char=u'@'):
     while len(r2) < len(input_str):
         r2.append(empty_char)
     return u''.join(r2)
+
+
+def save_charset(weights_dir, chars, lowercase):
+    if lowercase:
+        fname = 'chars-lower.txt'
+    else:
+        fname = 'chars.txt'
+    chars_file = os.path.join(weights_dir, fname)
+    with codecs.open(chars_file, 'wb', encoding='utf-8') as f:
+        f.write(u''.join(chars))
+
+
+def get_chars(raw_val, raw_test, raw_train, lowercase, padding_char=u'\n'):
+    raw_text = ''.join([raw_val, raw_test, raw_train])
+    if lowercase:
+        raw_text = raw_text.lower()
+
+    chars = sorted(list(set(raw_text)))
+    chars.append(padding_char)
+    char_to_int = get_char_to_int(chars)
+
+    return chars, len(chars), char_to_int
