@@ -54,14 +54,15 @@ def initialize_model_bidirectional(n, dropout, seq_length, chars, output_size,
     return model
 
 
-def initialize_model_seq2seq(n, dropout, seq_length, output_size, layers,
+def initialize_model_seq2seq(n, dropout, seq_length, predict_chars,
+                             output_size, layers,
                              loss='categorical_crossentropy', optimizer='adam',
                              metrics=['accuracy']):
     model = Sequential()
     # encoder
     model.add(LSTM(n, input_shape=(seq_length, output_size)))
     # For the decoder's input, we repeat the encoded input for each time step
-    model.add(RepeatVector(seq_length))
+    model.add(RepeatVector(seq_length+predict_chars))
     # The decoder RNN could be multiple layers stacked or a single layer
     for _ in range(layers-1):
         model.add(LSTM(n, return_sequences=True))
@@ -98,9 +99,9 @@ def to_string(char_list, lowercase):
     return u''.join(char_list)
 
 
-def create_synced_data(text_in, text_out, char_to_int, n_vocab, seq_length=25,
-                       batch_size=100, padding_char=u'\n', lowercase=False,
-                       step=1):
+def create_training_data(text_in, text_out, char_to_int, n_vocab,
+                         seq_length=25, batch_size=100, padding_char=u'\n',
+                         lowercase=False, predict_chars=0, step=1):
     """Create padded one-hot encoded data sets from aligned text.
 
     A sample consists of seq_length characters from text_in (e.g., the ocr
@@ -119,21 +120,23 @@ def create_synced_data(text_in, text_out, char_to_int, n_vocab, seq_length=25,
     dataX = []
     dataY = []
     text_length = len(text_in)
-    for i in range(0, text_length-seq_length + 1, step):
+    for i in range(0, text_length-seq_length-predict_chars+1, step):
         seq_in = text_in[i:i+seq_length]
-        seq_out = text_out[i:i+seq_length]
+        seq_out = text_out[i:i+seq_length+predict_chars]
         dataX.append(to_string(seq_in, lowercase))
         dataY.append(to_string(seq_out, lowercase))
-    return len(dataX), synced_data_gen(dataX, dataY, seq_length, n_vocab,
-                                       char_to_int, batch_size, padding_char)
+    return len(dataX), data_generator(dataX, dataY, seq_length, predict_chars,
+                                      n_vocab, char_to_int, batch_size,
+                                      padding_char)
 
 
-def synced_data_gen(dataX, dataY, seq_length, n_vocab, char_to_int, batch_size,
-                    padding_char):
+def data_generator(dataX, dataY, seq_length, predict_chars, n_vocab,
+                   char_to_int, batch_size, padding_char):
     while 1:
         for batch_idx in range(0, len(dataX), batch_size):
             X = np.zeros((batch_size, seq_length, n_vocab), dtype=np.bool)
-            Y = np.zeros((batch_size, seq_length, n_vocab), dtype=np.bool)
+            Y = np.zeros((batch_size, seq_length+predict_chars, n_vocab),
+                         dtype=np.bool)
             sliceX = dataX[batch_idx:batch_idx+batch_size]
             sliceY = dataY[batch_idx:batch_idx+batch_size]
             for i, (sentenceX, sentenceY) in enumerate(zip(sliceX, sliceY)):
@@ -143,7 +146,7 @@ def synced_data_gen(dataX, dataY, seq_length, n_vocab, char_to_int, batch_size,
                     X[i, len(sentenceX) + j, char_to_int[padding_char]] = 1
                 for j, c in enumerate(sentenceY):
                     Y[i, j, char_to_int[c]] = 1
-                for j in range(seq_length-len(sentenceY)):
+                for j in range(seq_length+predict_chars-len(sentenceY)):
                     Y[i, len(sentenceY) + j, char_to_int[padding_char]] = 1
             yield X, Y
 
