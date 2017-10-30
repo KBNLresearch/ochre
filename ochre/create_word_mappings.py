@@ -25,10 +25,7 @@ def find_word_boundaries(txt, aligned):
     while i < len(aligned) and j < len(unaligned):
         if unaligned[j] == '@':
             w = u''.join(aligned[prev:i])
-            if w.startswith(' '):
-                s = prev + 1
-            else:
-                s = prev
+            s = prev
             wb.append((s, i))
             prev = i
             j += 1
@@ -40,7 +37,7 @@ def find_word_boundaries(txt, aligned):
         else:
             i += 1
     # add last word
-    wb.append((prev+1, len(aligned)))
+    wb.append((prev, len(aligned)))
     return wb
 
 
@@ -71,8 +68,8 @@ def create_word_mappings(txt, alignments, lowercase, out_dir):
         w1 = u''.join(aligned1[s:e])
         w2 = u''.join(aligned2[s:e])
 
-        res['gs'].append(w1)
-        res['ocr'].append(w2)
+        res['gs'].append(w1.strip())
+        res['ocr'].append(w2.strip())
 
     # Use pandas DataFrame to create the csv, so commas and quotes are properly
     # escaped.

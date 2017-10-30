@@ -98,18 +98,18 @@ def to_string(char_list, lowercase):
     return u''.join(char_list)
 
 
-def create_synced_data(ocr_text, gs_text, char_to_int, n_vocab, seq_length=25,
+def create_synced_data(text_in, text_out, char_to_int, n_vocab, seq_length=25,
                        batch_size=100, padding_char=u'\n', lowercase=False,
                        step=1):
-    """Create padded one-hot encoded data sets from text.
+    """Create padded one-hot encoded data sets from aligned text.
 
-    A sample consists of seq_length characters from ocr_text
-    (includes empty characters) (input), and seq_length characters from
-    gs_text (includes empty characters) (output).
-    ocr_text and gs_tetxt contain aligned arrays of characters.
+    A sample consists of seq_length characters from text_in (e.g., the ocr
+    text) (may include empty characters), and seq_length characters from
+    text_out (e.g., the gold standard text) (may include empty characters).
+    text_in and text_out contain aligned arrays of characters.
     Because of the empty characters ('' in the character arrays), the input
     and output sequences may not have equal length. Therefore input and
-    output are padded with a padding character (newline).
+    output are padded with a padding character (default: newline).
 
     Returns:
       int: the number of samples in the dataset
@@ -118,10 +118,10 @@ def create_synced_data(ocr_text, gs_text, char_to_int, n_vocab, seq_length=25,
     """
     dataX = []
     dataY = []
-    text_length = len(ocr_text)
+    text_length = len(text_in)
     for i in range(0, text_length-seq_length + 1, step):
-        seq_in = ocr_text[i:i+seq_length]
-        seq_out = gs_text[i:i+seq_length]
+        seq_in = text_in[i:i+seq_length]
+        seq_out = text_out[i:i+seq_length]
         dataX.append(to_string(seq_in, lowercase))
         dataY.append(to_string(seq_out, lowercase))
     return len(dataX), synced_data_gen(dataX, dataY, seq_length, n_vocab,
