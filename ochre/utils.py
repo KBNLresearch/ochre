@@ -8,8 +8,6 @@ from keras.layers import Bidirectional
 from keras.layers import RepeatVector
 from keras.callbacks import ModelCheckpoint
 
-from char_align import align_characters
-
 import os
 import codecs
 import glob2
@@ -211,6 +209,55 @@ def get_char_to_int(chars):
 
 def get_int_to_char(chars):
     return dict((i, c) for i, c in enumerate(chars))
+
+
+def align_characters(ocr, gs, cigar, empty_char='', sanity_check=True):
+    matches = re.findall(r'(\d+)(.)', cigar)
+    offset1 = 0
+    offset2 = 0
+
+    gs_a = []
+    ocr_a = []
+
+    for m in matches:
+        n = int(m[0])
+        typ = m[1]
+
+        if typ == '=':
+            # sanity check - strings should be equal
+            if sanity_check:
+                assert(ocr[offset1:offset1+n] == gs[offset2:offset2+n])
+
+            for c in ocr[offset1:offset1+n]:
+                ocr_a.append(c)
+            for c in gs[offset2:offset2+n]:
+                gs_a.append(c)
+
+            offset1 += n
+            offset2 += n
+        elif typ == 'D':  # Inserted
+            for _ in range(n):
+                ocr_a.append(empty_char)
+            for c in gs[offset2:offset2+n]:
+                gs_a.append(c)
+
+            offset2 += n
+        elif typ == 'X':
+            for c in ocr[offset1:offset1+n]:
+                ocr_a.append(c)
+            for c in gs[offset2:offset2+n]:
+                gs_a.append(c)
+
+            offset1 += n
+            offset2 += n
+        elif typ == 'I':  # Deleted
+            for c in ocr[offset1:offset1+n]:
+                ocr_a.append(c)
+            for _ in range(n):
+                gs_a.append(empty_char)
+
+            offset1 += n
+    return ocr_a, gs_a
 
 
 def align_output_to_input(input_str, output_str, empty_char=u'@'):
