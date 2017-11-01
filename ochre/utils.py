@@ -266,8 +266,8 @@ def align_output_to_input(input_str, output_str, empty_char=u'@'):
     try:
         r = edlib.align(t_input_str, t_output_str, task='path')
     except:
-        print input_str
-        print output_str
+        print(input_str)
+        print(output_str)
     r1, r2 = align_characters(input_str, output_str, r.get('cigar'),
                               empty_char=empty_char, sanity_check=False)
     while len(r2) < len(input_str):
