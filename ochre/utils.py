@@ -88,6 +88,7 @@ def load_weights(model, weights_dir, loss='categorical_crossentropy',
         m = re.match(r'.+-(\d\d).hdf5', fname)
         if m:
             epoch = int(m.group(1))
+            epoch += 1
 
     return epoch, model
 

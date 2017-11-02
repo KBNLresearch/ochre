@@ -85,7 +85,7 @@ def train_lstm(datasets, data_dir, weights_dir):
                         validation_data=valData,
                         validation_steps=int(nValSamples/batch_size),
                         callbacks=callbacks_list,
-                        initial_epoch=epoch+1)
+                        initial_epoch=epoch)
 
 
 if __name__ == '__main__':
