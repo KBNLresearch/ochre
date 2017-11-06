@@ -6,6 +6,7 @@ from keras.layers import LSTM
 from keras.layers import TimeDistributed
 from keras.layers import Bidirectional
 from keras.layers import RepeatVector
+from keras.layers import Embedding
 from keras.callbacks import ModelCheckpoint
 
 import os
@@ -54,12 +55,17 @@ def initialize_model_bidirectional(n, dropout, seq_length, chars, output_size,
 
 
 def initialize_model_seq2seq(n, dropout, seq_length, predict_chars,
-                             output_size, layers,
+                             output_size, layers, char_embedding_size=0,
                              loss='categorical_crossentropy', optimizer='adam',
                              metrics=['accuracy']):
     model = Sequential()
     # encoder
-    model.add(LSTM(n, input_shape=(seq_length, output_size)))
+    if char_embedding_size:
+        n_embed = char_embedding_size
+        model.add(Embedding(output_size, n_embed, input_length=seq_length))
+        model.add(LSTM(n))
+    else:
+        model.add(LSTM(n, input_shape=(seq_length, output_size)))
     # For the decoder's input, we repeat the encoded input for each time step
     model.add(RepeatVector(seq_length+predict_chars))
     # The decoder RNN could be multiple layers stacked or a single layer
@@ -108,7 +114,8 @@ def to_string(char_list, lowercase):
 
 def create_training_data(text_in, text_out, char_to_int, n_vocab,
                          seq_length=25, batch_size=100, padding_char=u'\n',
-                         lowercase=False, predict_chars=0, step=1):
+                         lowercase=False, predict_chars=0, step=1,
+                         char_embedding=False):
     """Create padded one-hot encoded data sets from aligned text.
 
     A sample consists of seq_length characters from text_in (e.g., the ocr
@@ -132,9 +139,17 @@ def create_training_data(text_in, text_out, char_to_int, n_vocab,
         seq_out = text_out[i:i+seq_length+predict_chars]
         dataX.append(to_string(seq_in, lowercase))
         dataY.append(to_string(seq_out, lowercase))
-    return len(dataX), data_generator(dataX, dataY, seq_length, predict_chars,
-                                      n_vocab, char_to_int, batch_size,
-                                      padding_char)
+    if char_embedding:
+        data_gen = data_generator_embedding(dataX, dataY, seq_length,
+                                            predict_chars, n_vocab,
+                                            char_to_int, batch_size,
+                                            padding_char)
+    else:
+        data_gen = data_generator(dataX, dataY, seq_length, predict_chars,
+                                  n_vocab, char_to_int, batch_size,
+                                  padding_char)
+
+    return len(dataX), data_gen
 
 
 def data_generator(dataX, dataY, seq_length, predict_chars, n_vocab,
@@ -151,6 +166,27 @@ def data_generator(dataX, dataY, seq_length, predict_chars, n_vocab,
                     X[i, j, char_to_int[c]] = 1
                 for j in range(seq_length-len(sentenceX)):
                     X[i, len(sentenceX) + j, char_to_int[padding_char]] = 1
+                for j, c in enumerate(sentenceY):
+                    Y[i, j, char_to_int[c]] = 1
+                for j in range(seq_length+predict_chars-len(sentenceY)):
+                    Y[i, len(sentenceY) + j, char_to_int[padding_char]] = 1
+            yield X, Y
+
+
+def data_generator_embedding(dataX, dataY, seq_length, predict_chars, n_vocab,
+                             char_to_int, batch_size, padding_char):
+    while 1:
+        for batch_idx in range(0, len(dataX), batch_size):
+            X = np.zeros((batch_size, seq_length), dtype=np.int)
+            Y = np.zeros((batch_size, seq_length+predict_chars, n_vocab),
+                         dtype=np.bool)
+            sliceX = dataX[batch_idx:batch_idx+batch_size]
+            sliceY = dataY[batch_idx:batch_idx+batch_size]
+            for i, (sentenceX, sentenceY) in enumerate(zip(sliceX, sliceY)):
+                for j, c in enumerate(sentenceX):
+                    X[i, j] = char_to_int[c]
+                for j in range(seq_length-len(sentenceX)):
+                    X[i, len(sentenceX) + j] = char_to_int[padding_char]
                 for j, c in enumerate(sentenceY):
                     Y[i, j, char_to_int[c]] = 1
                 for j in range(seq_length+predict_chars-len(sentenceY)):

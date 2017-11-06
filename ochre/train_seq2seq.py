@@ -19,10 +19,14 @@ def train_lstm(datasets, data_dir, weights_dir):
     batch_size = 100
     step = 3  # step size used to create data (3 = use every third sequence)
     lowercase = True
+    char_embedding_size = 16
     pad = u'\n'
 
     print('Sequence length: {}'.format(seq_length))
     print('Predict characters: {}'.format(pred_chars))
+    print('Use character embedding: {}'.format(bool(char_embedding_size)))
+    if char_embedding_size:
+        print('Char embedding size: {}'.format(char_embedding_size))
     print('Number of nodes in hidden layers: {}'.format(num_nodes))
     print('Number of hidden layers: {}'.format(layers))
     print('Batch size: {}'.format(batch_size))
@@ -41,6 +45,7 @@ def train_lstm(datasets, data_dir, weights_dir):
 
     print('Total Vocab: {}'.format(n_vocab))
 
+    embed = bool(char_embedding_size)
     nTrainSamples, trainData = create_training_data(ocr_train,
                                                     gs_train,
                                                     char_to_int,
@@ -49,7 +54,8 @@ def train_lstm(datasets, data_dir, weights_dir):
                                                     batch_size=batch_size,
                                                     lowercase=lowercase,
                                                     step=step,
-                                                    predict_chars=pred_chars)
+                                                    predict_chars=pred_chars,
+                                                    char_embedding=embed)
     nTestSamples, testData = create_training_data(ocr_test,
                                                   gs_test,
                                                   char_to_int,
@@ -57,7 +63,8 @@ def train_lstm(datasets, data_dir, weights_dir):
                                                   seq_length=seq_length,
                                                   batch_size=batch_size,
                                                   lowercase=lowercase,
-                                                  predict_chars=pred_chars)
+                                                  predict_chars=pred_chars,
+                                                  char_embedding=embed)
     nValSamples, valData = create_training_data(ocr_val,
                                                 gs_val,
                                                 char_to_int,
@@ -65,7 +72,8 @@ def train_lstm(datasets, data_dir, weights_dir):
                                                 seq_length=seq_length,
                                                 batch_size=batch_size,
                                                 lowercase=lowercase,
-                                                predict_chars=pred_chars)
+                                                predict_chars=pred_chars,
+                                                char_embedding=embed)
 
     n_patterns = nTrainSamples
     print("Train Patterns: {}".format(n_patterns))
@@ -74,7 +82,7 @@ def train_lstm(datasets, data_dir, weights_dir):
     print('Total: {}'.format(nTrainSamples+nTestSamples+nValSamples))
 
     model = initialize_model_seq2seq(num_nodes, 0.5, seq_length, pred_chars,
-                                     n_vocab, layers)
+                                     n_vocab, layers, char_embedding_size)
     epoch, model = load_weights(model, weights_dir)
     callbacks_list = [add_checkpoint(weights_dir)]
 
