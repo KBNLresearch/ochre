@@ -5,6 +5,8 @@ import json
 
 import pandas as pd
 
+from string import punctuation
+
 from nlppln.utils import create_dirs, remove_ext, out_file_name
 from nlppln.commands.pattern_nl import parse
 
@@ -25,7 +27,12 @@ def find_word_boundaries(txt, aligned):
     while i < len(aligned) and j < len(unaligned):
         if unaligned[j] == '@':
             w = u''.join(aligned[prev:i])
-            s = prev
+            # Punctuation that occurs in the ocr but not in the gold standard
+            # is ignored.
+            if len(w) > 1 and (w[0] == u' ' or w[0] in punctuation):
+                s = prev + 1
+            else:
+                s = prev
             wb.append((s, i))
             prev = i
             j += 1
