@@ -224,19 +224,31 @@ def read_texts(data_files, data_dir):
 
 
 def read_text_to_predict(text, seq_length, lowercase, n_vocab,
-                         char_to_int, padding_char, step=1):
+                         char_to_int, padding_char, predict_chars=0, step=1,
+                         char_embedding=False):
     dataX = []
     text_length = len(text)
-    for i in range(0, text_length-seq_length + 1, step):
+    for i in range(0, text_length-seq_length-predict_chars+1, step):
         seq_in = text[i:i+seq_length]
         dataX.append(to_string(seq_in, lowercase))
 
-    X = np.zeros((len(dataX), seq_length, n_vocab), dtype=np.bool)
+    if char_embedding:
+        X = np.zeros((len(dataX), seq_length), dtype=np.int)
+    else:
+        X = np.zeros((len(dataX), seq_length, n_vocab), dtype=np.bool)
+
     for i, sentenceX in enumerate(dataX):
         for j, c in enumerate(sentenceX):
-            X[i, j, char_to_int[c]] = 1
+            if char_embedding:
+                X[i, j] = char_to_int[c]
+            else:
+                X[i, j, char_to_int[c]] = 1
         for j in range(seq_length-len(sentenceX)):
-            X[i, len(sentenceX) + j, char_to_int[padding_char]] = 1
+            if char_embedding:
+                X[i, len(sentenceX) + j] = char_to_int[padding_char]
+            else:
+                X[i, len(sentenceX) + j, char_to_int[padding_char]] = 1
+
     return X
 
 
