@@ -21,11 +21,6 @@ inputs:
     type: File[]
   gs_files:
     type: File[]
-  out_dir:
-    type: Directory?
-    inputBinding:
-      prefix: --out_dir=
-      separate: false
 
 stdout: cwl.output.json
 

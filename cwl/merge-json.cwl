@@ -20,11 +20,6 @@ inputs:
     inputBinding:
       prefix: --name=
       separate: false
-  out_dir:
-    type: Directory?
-    inputBinding:
-      prefix: --out_dir=
-      separate: false
 
 outputs:
   merged:

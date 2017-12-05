@@ -8,11 +8,6 @@ inputs:
     type: File
     inputBinding:
       position: 1
-  out_dir:
-    type: Directory?
-    inputBinding:
-      prefix: --out_dir=
-      separate: false
 
 outputs:
   gs:
