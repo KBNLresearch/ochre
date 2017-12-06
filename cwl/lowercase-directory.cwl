@@ -11,9 +11,9 @@ inputs:
 outputs:
   out_dir:
     type: Directory
-    outputSource: save-files-to-dir/out
+    outputSource: save-files-to-dir-4/out
 steps:
-  ls:
+  ls-1:
     run:
       cwlVersion: v1.0
       class: CommandLineTool
@@ -23,27 +23,27 @@ steps:
       - type: Directory
         inputBinding:
           position: 2
-        id: _:ls#in_dir
+        id: _:ls-1#in_dir
       - type:
         - 'null'
         - boolean
         inputBinding:
           prefix: --recursive
 
-        id: _:ls#recursive
+        id: _:ls-1#recursive
       stdout: cwl.output.json
 
       outputs:
       - type:
           type: array
           items: File
-        id: _:ls#out_files
-      id: _:ls
+        id: _:ls-1#out_files
+      id: _:ls-1
     in:
       in_dir: in_dir
     out:
     - out_files
-  lowercase:
+  lowercase-1:
     run:
       cwlVersion: v1.0
       class: CommandLineTool
@@ -53,31 +53,24 @@ steps:
       - type: File
         inputBinding:
           position: 1
-        id: _:lowercase#in_file
-      - type:
-        - 'null'
-        - Directory
-        inputBinding:
-          prefix: --out_dir=
-          separate: false
 
-        id: _:lowercase#out_dir
+        id: _:lowercase-1#in_file
       stdout: $(inputs.in_file.nameroot).txt
 
       outputs:
       - type: File
         outputBinding:
           glob: $(inputs.in_file.nameroot).txt
-        id: _:lowercase#out_files
-      id: _:lowercase
+        id: _:lowercase-1#out_files
+      id: _:lowercase-1
     in:
-      in_file: ls/out_files
+      in_file: ls-1/out_files
     out:
     - out_files
     scatter:
     - in_file
     scatterMethod: dotproduct
-  save-files-to-dir:
+  save-files-to-dir-4:
     run:
       cwlVersion: v1.0
       class: ExpressionTool
@@ -87,14 +80,14 @@ steps:
 
       inputs:
       - type: string
-        id: _:save-files-to-dir#dir_name
+        id: _:save-files-to-dir-4#dir_name
       - type:
           type: array
           items: File
-        id: _:save-files-to-dir#in_files
+        id: _:save-files-to-dir-4#in_files
       outputs:
       - type: Directory
-        id: _:save-files-to-dir#out
+        id: _:save-files-to-dir-4#out
       expression: |
         ${
           return {"out": {
@@ -103,9 +96,9 @@ steps:
             "listing": inputs.in_files
           } };
         }
-      id: _:save-files-to-dir
+      id: _:save-files-to-dir-4
     in:
       dir_name: dir_name
-      in_files: lowercase/out_files
+      in_files: lowercase-1/out_files
     out:
     - out
