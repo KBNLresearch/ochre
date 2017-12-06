@@ -9,14 +9,14 @@ inputs:
   in_dir3: Directory
   in_dir4: Directory
   ocr_dir_name:
-    type: string
     default: ocr
+    type: string
   gs_dir_name:
-    type: string
     default: gs
-  aligned_dir_name:
     type: string
+  aligned_dir_name:
     default: aligned
+    type: string
 outputs:
   gs1:
     type: Directory
@@ -67,21 +67,21 @@ steps:
     - gs_dir
     - ocr_dir
   save-dir-to-subdir:
-    run: /home/jvdzwaan/code/nlppln/cwl/save-dir-to-subdir.cwl
+    run: /home/jvdzwaan/code/nlppln/nlppln/cwl/save-dir-to-subdir.cwl
     in:
       outer_dir: in_dir1
       inner_dir: icdar2017st-extract-data/gs_dir
     out:
     - out
   save-dir-to-subdir-1:
-    run: /home/jvdzwaan/code/nlppln/cwl/save-dir-to-subdir.cwl
+    run: /home/jvdzwaan/code/nlppln/nlppln/cwl/save-dir-to-subdir.cwl
     in:
       outer_dir: in_dir1
       inner_dir: icdar2017st-extract-data/ocr_dir
     out:
     - out
   save-dir-to-subdir-2:
-    run: /home/jvdzwaan/code/nlppln/cwl/save-dir-to-subdir.cwl
+    run: /home/jvdzwaan/code/nlppln/nlppln/cwl/save-dir-to-subdir.cwl
     in:
       outer_dir: in_dir1
       inner_dir: icdar2017st-extract-data/aligned_dir
@@ -99,21 +99,21 @@ steps:
     - gs_dir
     - ocr_dir
   save-dir-to-subdir-3:
-    run: /home/jvdzwaan/code/nlppln/cwl/save-dir-to-subdir.cwl
+    run: /home/jvdzwaan/code/nlppln/nlppln/cwl/save-dir-to-subdir.cwl
     in:
       outer_dir: in_dir2
       inner_dir: icdar2017st-extract-data-1/gs_dir
     out:
     - out
   save-dir-to-subdir-4:
-    run: /home/jvdzwaan/code/nlppln/cwl/save-dir-to-subdir.cwl
+    run: /home/jvdzwaan/code/nlppln/nlppln/cwl/save-dir-to-subdir.cwl
     in:
       outer_dir: in_dir2
       inner_dir: icdar2017st-extract-data-1/ocr_dir
     out:
     - out
   save-dir-to-subdir-5:
-    run: /home/jvdzwaan/code/nlppln/cwl/save-dir-to-subdir.cwl
+    run: /home/jvdzwaan/code/nlppln/nlppln/cwl/save-dir-to-subdir.cwl
     in:
       outer_dir: in_dir2
       inner_dir: icdar2017st-extract-data-1/aligned_dir
@@ -131,21 +131,21 @@ steps:
     - gs_dir
     - ocr_dir
   save-dir-to-subdir-6:
-    run: /home/jvdzwaan/code/nlppln/cwl/save-dir-to-subdir.cwl
+    run: /home/jvdzwaan/code/nlppln/nlppln/cwl/save-dir-to-subdir.cwl
     in:
       outer_dir: in_dir3
       inner_dir: icdar2017st-extract-data-2/gs_dir
     out:
     - out
   save-dir-to-subdir-7:
-    run: /home/jvdzwaan/code/nlppln/cwl/save-dir-to-subdir.cwl
+    run: /home/jvdzwaan/code/nlppln/nlppln/cwl/save-dir-to-subdir.cwl
     in:
       outer_dir: in_dir3
       inner_dir: icdar2017st-extract-data-2/ocr_dir
     out:
     - out
   save-dir-to-subdir-8:
-    run: /home/jvdzwaan/code/nlppln/cwl/save-dir-to-subdir.cwl
+    run: /home/jvdzwaan/code/nlppln/nlppln/cwl/save-dir-to-subdir.cwl
     in:
       outer_dir: in_dir3
       inner_dir: icdar2017st-extract-data-2/aligned_dir
@@ -163,21 +163,21 @@ steps:
     - gs_dir
     - ocr_dir
   save-dir-to-subdir-9:
-    run: /home/jvdzwaan/code/nlppln/cwl/save-dir-to-subdir.cwl
+    run: /home/jvdzwaan/code/nlppln/nlppln/cwl/save-dir-to-subdir.cwl
     in:
       outer_dir: in_dir4
       inner_dir: icdar2017st-extract-data-3/gs_dir
     out:
     - out
   save-dir-to-subdir-10:
-    run: /home/jvdzwaan/code/nlppln/cwl/save-dir-to-subdir.cwl
+    run: /home/jvdzwaan/code/nlppln/nlppln/cwl/save-dir-to-subdir.cwl
     in:
       outer_dir: in_dir4
       inner_dir: icdar2017st-extract-data-3/ocr_dir
     out:
     - out
   save-dir-to-subdir-11:
-    run: /home/jvdzwaan/code/nlppln/cwl/save-dir-to-subdir.cwl
+    run: /home/jvdzwaan/code/nlppln/nlppln/cwl/save-dir-to-subdir.cwl
     in:
       outer_dir: in_dir4
       inner_dir: icdar2017st-extract-data-3/aligned_dir
