@@ -15,6 +15,7 @@ Ochre is a toolbox for OCR post-correction.
   - Language: nl
   - Format: FoLiA
   - ~3340 newspaper articles, different genres, 5 newspapers, 1950/1951
+  - Gold standard is noisy
 * [ICDAR 2017 shared task on OCR post correction](https://sites.google.com/view/icdar2017-postcorrectionocr/dataset)
   - Language: en and fr
   - Format: txt (more info on the website)
@@ -37,8 +38,8 @@ cd ochre
 pip install -r requirements.txt
 python setup.py develop
 ```
-* Using the CWL workflows requires (the development version of) [nlppln](https://github.com/WhatWorksWhenForWhom/nlppln) and cwltool (`pip install cwltool`)
-* Please note that the CWL workflows contain absolute paths, if you want to use them on your own machine, regenerate them using the associated Jupyter Notebooks.
+* Using the CWL workflows requires (the development version of) [nlppln](https://github.com/nlppln/nlppln) and cwltool (`pip install cwltool`)
+* Please note that some of the CWL workflows contain absolute paths, if you want to use them on your own machine, regenerate them using the associated Jupyter Notebooks.
 
 ## Preprocessing
 
@@ -54,8 +55,9 @@ The software needs the data in the following formats:
 ```
 
 To create data in these formats, CWL workflows are available:
-* VU DNC corpus: `vudnc-preprocess.cwl` (regenerate with notebook [vudnc-preprocess-workflow.ipynb](https://github.com/KBNLresearch/ochre/blob/master/notebooks/vudnc-preprocess-workflow.ipynb))
-* ICDAR 2017 shared task on OCR post correction: `icdar2017st-extract-data-all.cwl` (regenerate with notebook [extract ICDAR2017 shared task data.ipynb](https://github.com/KBNLresearch/ochre/blob/master/notebooks/extract%20ICDAR2017%20shared%20task%20data.ipynb))
+* VU DNC corpus: `vudnc-preprocess.cwl` (can be run as stand-alone; associated notebook [vudnc-preprocess-workflow.ipynb](https://github.com/KBNLresearch/ochre/blob/master/notebooks/vudnc-preprocess-workflow.ipynb))
+* ICDAR 2017 shared task on OCR post correction: `icdar2017st-extract-data-all.cwl` (cannot be run as stand-alone;
+  regenerate with notebook [ICDAR2017_shared_task_workflows.ipynb](https://github.com/KBNLresearch/ochre/blob/master/notebooks/ICDAR2017_shared_task_workflows.ipynb))
 
 ## Training networks for OCR post-correction
 
@@ -103,7 +105,9 @@ To run it for a directory of text files, use:
 cwltool /path/to/ochre/cwl/post_correct_dir.cwl --charset /path/to/text/file/containing/the/characters/in/the/training/data --model /path/to/keras/model/file --in_dir /path/to/directory/with/ocr/text/files
 ```
 
-(Regenerate with notebook [post_correction_workflows.ipynb](https://github.com/KBNLresearch/ochre/blob/master/notebooks/post_correction_workflows.ipynb))
+(these CWL workflows can be run as stand-alone; associated notebook [post_correction_workflows.ipynb](https://github.com/KBNLresearch/ochre/blob/master/notebooks/post_correction_workflows.ipynb))
+
+* Explain merging of predictions
 
 ## Performance
 
@@ -116,6 +120,7 @@ information about this tool can be found on the
 [wiki](https://github.com/impactcentre/ocrevalUAtion/wiki).
 
 * ocrevaluation-performance-wf.cwl
+* lowercase-directory.cwl
 
 ## OCR error analysis
 

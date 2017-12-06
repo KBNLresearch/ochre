@@ -18,11 +18,6 @@ inputs:
     type: string?
     inputBinding:
       prefix: --name
-  out_dir:
-    type: Directory?
-    inputBinding:
-      prefix: --out_dir=
-      separate: false
 
 outputs:
   out_files:

@@ -25,7 +25,11 @@ def lstm_synced_correct_ocr(model, charset, text, out_dir):
     # load model
     model = load_model(model)
     conf = model.get_config()
-    _, seq_length, batch_size = conf[0].get('config').get('batch_input_shape')
+    conf_result = conf[0].get('config').get('batch_input_shape')
+    seq_length = conf_result[1]
+    char_embedding = False
+    if conf[0].get('class_name') == u'Embedding':
+        char_embedding = True
 
     charset = charset.read()
     n_vocab = len(charset)
@@ -40,7 +44,8 @@ def lstm_synced_correct_ocr(model, charset, text, out_dir):
     pad = u'\n'
 
     to_predict = read_text_to_predict(text.read(), seq_length, lowercase,
-                                      n_vocab, char_to_int, padding_char=pad)
+                                      n_vocab, char_to_int, padding_char=pad,
+                                      char_embedding=char_embedding)
 
     outputs = []
     inputs = []
@@ -51,7 +56,10 @@ def lstm_synced_correct_ocr(model, charset, text, out_dir):
         pred_str = u''.join([int_to_char[j] for j in predicted_indices])
         outputs.append(pred_str)
 
-        indices = np.where(to_predict[i:i+1, :, :] == True)[2]
+        if char_embedding:
+            indices = to_predict[i]
+        else:
+            indices = np.where(to_predict[i:i+1, :, :] == True)[2]
         inp = u''.join([int_to_char[j] for j in indices])
         inputs.append(inp)
 
