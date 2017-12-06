@@ -91,15 +91,8 @@ steps:
         inputBinding:
           prefix: --name=
           separate: false
-        id: _:merge-json#name
-      - type:
-        - 'null'
-        - Directory
-        inputBinding:
-          prefix: --out_dir=
-          separate: false
 
-        id: _:merge-json#out_dir
+        id: _:merge-json#name
       outputs:
       - type: File
         outputBinding:
@@ -137,15 +130,8 @@ steps:
         inputBinding:
           prefix: --name=
           separate: false
-        id: _:merge-json-1#name
-      - type:
-        - 'null'
-        - Directory
-        inputBinding:
-          prefix: --out_dir=
-          separate: false
 
-        id: _:merge-json-1#out_dir
+        id: _:merge-json-1#name
       outputs:
       - type: File
         outputBinding:
@@ -171,19 +157,12 @@ steps:
       - type: File
         inputBinding:
           position: 3
+
         id: _:char-align#metadata
       - type: File
         inputBinding:
           position: 1
         id: _:char-align#ocr_text
-      - type:
-        - 'null'
-        - Directory
-        inputBinding:
-          prefix: --out_dir=
-          separate: false
-
-        id: _:char-align#out_dir
       outputs:
       - type: File
         outputBinding:
