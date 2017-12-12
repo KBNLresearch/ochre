@@ -344,3 +344,10 @@ def get_chars(raw_val, raw_test, raw_train, lowercase, padding_char=u'\n'):
     char_to_int = get_char_to_int(chars)
 
     return chars, len(chars), char_to_int
+
+
+def cwl_path():
+    """Return the path to the directory containing CWL steps.
+    """
+    module_path = os.path.dirname(os.path.realpath(__file__))
+    return os.path.abspath(os.path.join(module_path, 'cwl'))
