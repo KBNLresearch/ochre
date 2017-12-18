@@ -18,6 +18,7 @@ def get_error_types():
     error_types['whitespace'] = whitespace_error
     error_types['accent'] = accent_error
     error_types['real_word'] = real_word_error
+    error_types['other'] = other_error
 
     return error_types
 
@@ -148,3 +149,15 @@ def real_word_error(row, terms, gs='gs', ocr='ocr'):
     ocr = row[ocr]
 
     return ocr in terms
+
+
+def other_error(row, gs='gs', ocr='ocr'):
+    num_false = 0
+    err_types = get_error_types()
+    del(err_types['other'])
+    for err_type in err_types:
+        if row[err_type] == False:
+            num_false += 1
+    if num_false == len(err_types.keys()):
+        return True
+    return False
