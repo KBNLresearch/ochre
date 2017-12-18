@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 import unicodedata
 
+import warnings
+
 from collections import OrderedDict
 from string import punctuation
 
@@ -35,6 +37,12 @@ def categorize_errors(df, terms, gs_name='gs', ocr_name='ocr'):
             df[err_name] = df.apply(err_function, gs_name='gs', ocr_name='ocr',
                                     axis=1)
         total_errors += df[err_name].sum()
+
+        if total_errors != df.shape[0]:
+            msg = 'The number of errors classified ({}) is not equal to the ' \
+                  'number of errors in the input ({}).'.format(total_errors,
+                                                               df.shape[0])
+            warnings.warn(msg)
 
     return df
 
