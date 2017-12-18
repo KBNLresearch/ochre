@@ -32,58 +32,58 @@ def remove_errors(df, error_function, args=None):
     return df[df.apply(error_function, args=args, axis=1) == False]
 
 
-def hyphenation_error(row, gs='gs', ocr='ocr'):
+def hyphenation_error(row, gs_name='gs', ocr_name='ocr'):
     """Check wether row contains a word with a hyphenation error.
 
     """
     #ocr = 'gesta- tionneerd'
     #gs = 'gestationneerd'
-    gs = row[gs]
-    ocr = row[ocr]
+    gs = row[gs_name]
+    ocr = row[ocr_name]
 
     if ocr != gs and ocr.replace(u'- ', u'') == gs:
         return True
     return False
 
 
-def hyphenation_error2(row, gs='gs', ocr='ocr'):
+def hyphenation_error2(row, gs_name='gs', ocr_name='ocr'):
     #ocr = 'gesta-tionneerd'
     #gs = 'gestationneerd'
-    gs = row[gs]
-    ocr = row[ocr]
+    gs = row[gs_name]
+    ocr = row[ocr_name]
 
     if ocr.replace(u'-', u'') == gs:
         return True
     return False
 
 
-def case_error(row, gs='gs', ocr='ocr'):
+def case_error(row, gs_name='gs', ocr_name='ocr'):
     #ocr = 'Woord'
     #gs = 'WOORD'
-    gs = row[gs]
-    ocr = row[ocr]
+    gs = row[gs_name]
+    ocr = row[ocr_name]
 
     if ocr.lower() == gs.lower():
         return True
     return False
 
 
-def punctuation_mark_error(row, gs='gs', ocr='ocr'):
+def punctuation_mark_error(row, gs_name='gs', ocr_name='ocr'):
     #ocr = '.'
     #gs = ','
-    gs = row[gs]
-    ocr = row[ocr]
+    gs = row[gs_name]
+    ocr = row[ocr_name]
 
     if ocr in punctuation and gs in punctuation:
         return True
     return False
 
 
-def missing_punctuation_mark_error(row, gs='gs', ocr='ocr'):
+def missing_punctuation_mark_error(row, gs_name='gs', ocr_name='ocr'):
     #ocr = ''
     #gs = ','
-    gs = row[gs]
-    ocr = row[ocr]
+    gs = row[gs_name]
+    ocr = row[ocr_name]
 
     #print type(ocr)
     #print type(gs)
@@ -93,34 +93,34 @@ def missing_punctuation_mark_error(row, gs='gs', ocr='ocr'):
     return False
 
 
-def number_error(row, gs='gs', ocr='ocr'):
+def number_error(row, gs_name='gs', ocr_name='ocr'):
     #ocr = '64-jarige'
     #gs = '-jarig'
-    gs = row[gs]
-    ocr = row[ocr]
+    gs = row[gs_name]
+    ocr = row[ocr_name]
 
     if filter(lambda x: not x.isdigit(), ocr) == filter(lambda x: not x.isdigit(), gs):
         return True
     return False
 
 
-def whitespace_error(row, gs='gs', ocr='ocr'):
+def whitespace_error(row, gs_name='gs', ocr_name='ocr'):
     #ocr = 'Wo or'
     #gs = 'WOORD'
-    gs = row[gs]
-    ocr = row[ocr]
+    gs = row[gs_name]
+    ocr = row[ocr_name]
 
     if u''.join(ocr.split()) == u''.join(gs.split()):
         return True
     return False
 
 
-def accent_error(row, gs='gs', ocr='ocr'):
+def accent_error(row, gs_name='gs', ocr_name='ocr'):
     #gs = u'décors'
     #ocr = u'decors'
 
-    gs = row[gs]
-    ocr = row[ocr]
+    gs = row[gs_name]
+    ocr = row[ocr_name]
 
     no_accents = u''.join((c for c in unicodedata.normalize('NFD', unicode(gs)) if unicodedata.category(c) != 'Mn'))
     if no_accents == ocr:
@@ -128,9 +128,9 @@ def accent_error(row, gs='gs', ocr='ocr'):
     return False
 
 
-def missing_word_error(row, gs='gs', ocr='ocr'):
-    gs = row[gs]
-    ocr = row[ocr]
+def missing_word_error(row, gs_name='gs', ocr_name='ocr'):
+    gs = row[gs_name]
+    ocr = row[ocr_name]
 
     #print type(ocr)
     #print type(gs)
@@ -141,17 +141,20 @@ def missing_word_error(row, gs='gs', ocr='ocr'):
     return False
 
 
-def real_word_error(row, terms, gs='gs', ocr='ocr'):
+def real_word_error(row, terms, gs_name='gs', ocr_name='ocr'):
     #gs = u'hallo'
     #ocr = u'boom'
 
-    gs = row[gs]
-    ocr = row[ocr]
+    gs = row[gs_name]
+    ocr = row[ocr_name]
 
-    return ocr in terms
+    # Make sure accent_error and real_word_error are mutually exclusive
+    if not accent_error(row, gs_name=gs_name, ocr_name=ocr_name):
+        return ocr in terms
+    return False
 
 
-def other_error(row, gs='gs', ocr='ocr'):
+def other_error(row, gs_name='gs', ocr_name='ocr'):
     num_false = 0
     err_types = get_error_types()
     del(err_types['other'])
