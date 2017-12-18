@@ -26,6 +26,7 @@ def get_error_types():
 
 
 def categorize_errors(df, terms, gs_name='gs', ocr_name='ocr'):
+    df = df.copy()
     err_types = get_error_types()
 
     total_errors = 0
