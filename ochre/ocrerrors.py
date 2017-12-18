@@ -23,6 +23,22 @@ def get_error_types():
     return error_types
 
 
+def categorize_errors(df, terms, gs_name='gs', ocr_name='ocr'):
+    err_types = get_error_types()
+
+    total_errors = 0
+    for err_name, err_function in err_types.items():
+        if err_name == 'real_word':
+            df[err_name] = df.apply(err_function, args=(terms,), gs_name='gs',
+                                    ocr_name='ocr', axis=1)
+        else:
+            df[err_name] = df.apply(err_function, gs_name='gs', ocr_name='ocr',
+                                    axis=1)
+        total_errors += df[err_name].sum()
+
+    return df
+
+
 def num_errors(df, error_function, args=None):
     s = df[df.apply(error_function, args=args, axis=1)].shape
     return s[0]
