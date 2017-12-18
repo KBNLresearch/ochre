@@ -31,18 +31,18 @@ def categorize_errors(df, terms, gs_name='gs', ocr_name='ocr'):
     total_errors = 0
     for err_name, err_function in err_types.items():
         if err_name == 'real_word':
-            df[err_name] = df.apply(err_function, args=(terms,), gs_name='gs',
-                                    ocr_name='ocr', axis=1)
+            df[err_name] = df.apply(err_function, args=(terms,),
+                                    gs_name=gs_name, ocr_name=ocr_name, axis=1)
         else:
-            df[err_name] = df.apply(err_function, gs_name='gs', ocr_name='ocr',
-                                    axis=1)
+            df[err_name] = df.apply(err_function, gs_name=gs_name,
+                                    ocr_name=ocr_name, axis=1)
         total_errors += df[err_name].sum()
 
-        if total_errors != df.shape[0]:
-            msg = 'The number of errors classified ({}) is not equal to the ' \
-                  'number of errors in the input ({}).'.format(total_errors,
-                                                               df.shape[0])
-            warnings.warn(msg)
+    if total_errors != df.shape[0]:
+        msg = 'The number of errors classified ({}) is not equal to the ' \
+              'number of errors in the input ({}).'.format(total_errors,
+                                                           df.shape[0])
+        warnings.warn(msg)
 
     return df
 
