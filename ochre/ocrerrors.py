@@ -20,32 +20,41 @@ def get_error_types():
     error_types['whitespace'] = whitespace_error
     error_types['accent'] = accent_error
     error_types['real_word'] = real_word_error
-    error_types['other'] = other_error
 
     return error_types
 
 
 def categorize_errors(df, terms, gs_name='gs', ocr_name='ocr'):
     df = df.copy()
-    err_types = get_error_types()
 
-    total_errors = 0
-    for err_name, err_function in err_types.items():
-        if err_name == 'real_word':
-            df[err_name] = df.apply(err_function, args=(terms,),
-                                    gs_name=gs_name, ocr_name=ocr_name, axis=1)
-        else:
-            df[err_name] = df.apply(err_function, gs_name=gs_name,
-                                    ocr_name=ocr_name, axis=1)
-        total_errors += df[err_name].sum()
-
-    if total_errors != df.shape[0]:
-        msg = 'The number of errors classified ({}) is not equal to the ' \
-              'number of errors in the input ({}).'.format(total_errors,
-                                                           df.shape[0])
-        warnings.warn(msg)
+    df['error_type'] = df.apply(find_errors, terms=terms, gs_name=gs_name,
+                                ocr_name=ocr_name, axis=1)
 
     return df
+
+
+def find_errors(row, terms=[], gs_name='gs', ocr_name='ocr'):
+    err_types = get_error_types()
+
+    errors = []
+    for err_name, err_function in err_types.items():
+        if err_name == 'real_word':
+            if err_function(row, terms, gs_name=gs_name, ocr_name=ocr_name):
+                errors.append(err_name)
+        else:
+            if err_function(row, gs_name=gs_name, ocr_name=ocr_name):
+                errors.append(err_name)
+
+    if len(errors) == 1:
+        return errors[0]
+    elif len(errors) > 1:
+        errs = u', '.join(errors)
+        msg = u'Found multiple errors for "{}"-"{}" ({})'.format(row[gs_name],
+                                                                 row[ocr_name],
+                                                                 errs)
+        warnings.warn(msg)
+        return 'multiple'
+    return 'other'
 
 
 def num_errors(df, error_function, args=None):
@@ -176,16 +185,4 @@ def real_word_error(row, terms, gs_name='gs', ocr_name='ocr'):
     # Make sure accent_error and real_word_error are mutually exclusive
     if not accent_error(row, gs_name=gs_name, ocr_name=ocr_name):
         return ocr in terms
-    return False
-
-
-def other_error(row, gs_name='gs', ocr_name='ocr'):
-    num_false = 0
-    err_types = get_error_types()
-    del(err_types['other'])
-    for err_type in err_types:
-        if row[err_type] == False:
-            num_false += 1
-    if num_false == len(err_types.keys()):
-        return True
     return False
