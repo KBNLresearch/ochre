@@ -24,8 +24,9 @@ def get_error_types():
     return error_types
 
 
-def categorize_errors(df, terms, gs_name='gs', ocr_name='ocr'):
+def categorize_errors(df, terms=[], gs_name='gs', ocr_name='ocr'):
     df = df.copy()
+    terms = set(terms)
 
     df['error_type'] = df.apply(find_errors, terms=terms, gs_name=gs_name,
                                 ocr_name=ocr_name, axis=1)
@@ -33,7 +34,7 @@ def categorize_errors(df, terms, gs_name='gs', ocr_name='ocr'):
     return df
 
 
-def find_errors(row, terms=[], gs_name='gs', ocr_name='ocr'):
+def find_errors(row, terms, gs_name='gs', ocr_name='ocr'):
     err_types = get_error_types()
 
     errors = []
@@ -178,6 +179,7 @@ def missing_word_error(row, gs_name='gs', ocr_name='ocr'):
 def real_word_error(row, terms, gs_name='gs', ocr_name='ocr'):
     if terms == []:
         warnings.warn('Word list is empty. So, not finding real word errors.')
+
     #gs = u'hallo'
     #ocr = u'boom'
 
