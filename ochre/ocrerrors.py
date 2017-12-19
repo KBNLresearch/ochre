@@ -176,6 +176,8 @@ def missing_word_error(row, gs_name='gs', ocr_name='ocr'):
 
 
 def real_word_error(row, terms, gs_name='gs', ocr_name='ocr'):
+    if terms == []:
+        warnings.warn('Word list is empty. So, not finding real word errors.')
     #gs = u'hallo'
     #ocr = u'boom'
 
