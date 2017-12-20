@@ -7,6 +7,8 @@ import warnings
 from collections import OrderedDict
 from string import punctuation
 
+from .rmgarbage import get_rmgarbage_errors
+
 
 def get_error_types():
     error_types = OrderedDict()
@@ -20,6 +22,7 @@ def get_error_types():
     error_types['whitespace'] = whitespace_error
     error_types['accent'] = accent_error
     error_types['real_word'] = real_word_error
+    error_types['garbage_string'] = garbage_string_error
 
     return error_types
 
@@ -189,4 +192,19 @@ def real_word_error(row, terms, gs_name='gs', ocr_name='ocr'):
     # Make sure accent_error and real_word_error are mutually exclusive
     if not accent_error(row, gs_name=gs_name, ocr_name=ocr_name):
         return ocr in terms
+    return False
+
+
+def garbage_string_error(row, gs_name='gs', ocr_name='ocr', empty_word='@@@'):
+    #ocr = 'CslwWkrm bla'
+    #gs = 'bla'
+    gs = row[gs_name]
+    ocr = row[ocr_name]
+
+    if ocr != empty_word:
+        words = ocr.split()
+        for w in words:
+            errors = get_rmgarbage_errors(w)
+            if len(errors) > 0:
+                return True
     return False
