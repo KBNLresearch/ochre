@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """Implementation of rmgarbage.
 
 As described in the paper:
@@ -56,10 +57,9 @@ def rmgarbage_row(string, rep=4):
 
 
 def rmgarbage_vowels(string):
-    # TODO: deal with accented characters
     string = string.lower()
     if len(string) > 2 and string.isalpha():
-        vowels = sum(c in 'aeuio' for c in string)
+        vowels = sum(c in u'aáâàåãäeéèëêuúûùüiíîìïoóôòøõö' for c in string)
         consonants = len(string) - vowels
 
         low = min(vowels, consonants)
