@@ -37,16 +37,18 @@ def categorize_errors(df, terms=[], gs_name='gs', ocr_name='ocr'):
     return df
 
 
-def find_errors(row, terms, gs_name='gs', ocr_name='ocr'):
+def find_errors(row, terms, gs_name='gs', ocr_name='ocr', empty_word='@@@'):
     err_types = get_error_types()
 
     errors = []
     for err_name, err_function in err_types.items():
         if err_name == 'real_word':
-            if err_function(row, terms, gs_name=gs_name, ocr_name=ocr_name):
+            if err_function(row, terms, gs_name=gs_name, ocr_name=ocr_name,
+                            empty_word=empty_word):
                 errors.append(err_name)
         else:
-            if err_function(row, gs_name=gs_name, ocr_name=ocr_name):
+            if err_function(row, gs_name=gs_name, ocr_name=ocr_name,
+                            empty_word=empty_word):
                 errors.append(err_name)
 
     if len(errors) == 1:
@@ -70,7 +72,7 @@ def remove_errors(df, error_function, args=None):
     return df[df.apply(error_function, args=args, axis=1) == False]
 
 
-def hyphenation_error(row, gs_name='gs', ocr_name='ocr'):
+def hyphenation_error(row, gs_name='gs', ocr_name='ocr', empty_word='@@@'):
     """Check wether row contains a word with a hyphenation error.
 
     """
@@ -84,7 +86,7 @@ def hyphenation_error(row, gs_name='gs', ocr_name='ocr'):
     return False
 
 
-def hyphenation_error2(row, gs_name='gs', ocr_name='ocr'):
+def hyphenation_error2(row, gs_name='gs', ocr_name='ocr', empty_word='@@@'):
     #ocr = 'gesta-tionneerd'
     #gs = 'gestationneerd'
     gs = row[gs_name]
@@ -95,7 +97,7 @@ def hyphenation_error2(row, gs_name='gs', ocr_name='ocr'):
     return False
 
 
-def case_error(row, gs_name='gs', ocr_name='ocr'):
+def case_error(row, gs_name='gs', ocr_name='ocr', empty_word='@@@'):
     #ocr = 'Woord'
     #gs = 'WOORD'
     gs = row[gs_name]
@@ -106,7 +108,8 @@ def case_error(row, gs_name='gs', ocr_name='ocr'):
     return False
 
 
-def punctuation_mark_error(row, gs_name='gs', ocr_name='ocr'):
+def punctuation_mark_error(row, gs_name='gs', ocr_name='ocr',
+                           empty_word='@@@'):
     #ocr = '.'
     #gs = ','
     gs = row[gs_name]
@@ -117,7 +120,8 @@ def punctuation_mark_error(row, gs_name='gs', ocr_name='ocr'):
     return False
 
 
-def missing_punctuation_mark_error(row, gs_name='gs', ocr_name='ocr'):
+def missing_punctuation_mark_error(row, gs_name='gs', ocr_name='ocr',
+                                   empty_word='@@@'):
     #ocr = ''
     #gs = ','
     gs = row[gs_name]
@@ -126,12 +130,12 @@ def missing_punctuation_mark_error(row, gs_name='gs', ocr_name='ocr'):
     #print type(ocr)
     #print type(gs)
 
-    if gs in punctuation and ocr == u'@@@':
+    if gs in punctuation and ocr == empty_word:
         return True
     return False
 
 
-def number_error(row, gs_name='gs', ocr_name='ocr'):
+def number_error(row, gs_name='gs', ocr_name='ocr', empty_word='@@@'):
     #ocr = '64-jarige'
     #gs = '-jarig'
     gs = row[gs_name]
@@ -142,7 +146,7 @@ def number_error(row, gs_name='gs', ocr_name='ocr'):
     return False
 
 
-def whitespace_error(row, gs_name='gs', ocr_name='ocr'):
+def whitespace_error(row, gs_name='gs', ocr_name='ocr', empty_word='@@@'):
     #ocr = 'Wo or'
     #gs = 'WOORD'
     gs = row[gs_name]
@@ -153,7 +157,7 @@ def whitespace_error(row, gs_name='gs', ocr_name='ocr'):
     return False
 
 
-def accent_error(row, gs_name='gs', ocr_name='ocr'):
+def accent_error(row, gs_name='gs', ocr_name='ocr', empty_word='@@@'):
     #gs = u'décors'
     #ocr = u'decors'
 
@@ -166,7 +170,7 @@ def accent_error(row, gs_name='gs', ocr_name='ocr'):
     return False
 
 
-def missing_word_error(row, gs_name='gs', ocr_name='ocr'):
+def missing_word_error(row, gs_name='gs', ocr_name='ocr', empty_word='@@@'):
     gs = row[gs_name]
     ocr = row[ocr_name]
 
@@ -179,7 +183,8 @@ def missing_word_error(row, gs_name='gs', ocr_name='ocr'):
     return False
 
 
-def real_word_error(row, terms, gs_name='gs', ocr_name='ocr'):
+def real_word_error(row, terms, gs_name='gs', ocr_name='ocr',
+                    empty_word='@@@'):
     if terms == []:
         warnings.warn('Word list is empty. So, not finding real word errors.')
 
