@@ -18,6 +18,23 @@ from string import punctuation
 from nlppln.utils import create_dirs, out_file_name
 
 
+def get_rmgarbage_errors(word):
+    errors = []
+    if rmgarbage_long(word):
+        errors.append('L')
+    if rmgarbage_alphanumeric(word):
+        errors.append('A')
+    if rmgarbage_row(word):
+        errors.append('R')
+    if rmgarbage_vowels(word):
+        errors.append('V')
+    if rmgarbage_punctuation(word):
+        errors.append('P')
+    if rmgarbage_case(word):
+        errors.append('C')
+    return errors
+
+
 def rmgarbage_long(string, threshold=40):
     if len(string) > threshold:
         return True
@@ -92,19 +109,7 @@ def rmgarbage(in_file, out_dir):
     removed = []
 
     for word in words:
-        errors = []
-        if rmgarbage_long(word):
-            errors.append('L')
-        if rmgarbage_alphanumeric(word):
-            errors.append('A')
-        if rmgarbage_row(word):
-            errors.append('R')
-        if rmgarbage_vowels(word):
-            errors.append('V')
-        if rmgarbage_punctuation(word):
-            errors.append('P')
-        if rmgarbage_case(word):
-            errors.append('C')
+        errors = get_rmgarbage_errors(word)
 
         if len(errors) == 0:
             result.append(word)
