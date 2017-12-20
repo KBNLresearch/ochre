@@ -43,7 +43,7 @@ def rmgarbage_long(string, threshold=40):
 
 def rmgarbage_alphanumeric(string):
     alphanumeric_chars = sum(c.isalnum() for c in string)
-    if (alphanumeric_chars+0.0)/len(string) < 0.5:
+    if len(string) > 2 and (alphanumeric_chars+0.0)/len(string) < 0.5:
         return True
     return False
 

@@ -14,6 +14,7 @@ def test_rmgarbage_alphanumeric():
     assert rmgarbage_alphanumeric('.M~y~l~i~c~.I~') is True
     assert rmgarbage_alphanumeric('______________J.~:ys~,.<F9>j}ss.') is True
     assert rmgarbage_alphanumeric('14.9tv="~;<F9>ia.~:..') is True
+    assert rmgarbage_alphanumeric('.') is False
 
 
 def test_rmgarbage_row():
