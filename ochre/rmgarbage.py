@@ -10,7 +10,6 @@ As described in the paper:
 import click
 import codecs
 import os
-import re
 import pandas as pd
 
 from string import punctuation
@@ -49,11 +48,9 @@ def rmgarbage_alphanumeric(string):
 
 
 def rmgarbage_row(string, rep=4):
-    # TODO: deal with accented characters
     for c in string:
         if c.isalnum():
-            pattern = r'{}{{{}}}'.format(c, rep)
-            if re.search(pattern, string):
+            if c * rep in string:
                 return True
     return False
 

@@ -23,6 +23,10 @@ def test_rmgarbage_row():
     assert rmgarbage_row('11111k1U1M.il.uu4ailuidt]i') is True
 
 
+def test_rmgarbage_row_non_ascii():
+    assert rmgarbage_row(u'ÐÐÐÐææææ') is True
+
+
 def test_rmgarbage_vowels():
     assert rmgarbage_vowels('CslwWkrm') is True
     assert rmgarbage_vowels('Tptpmn') is True
