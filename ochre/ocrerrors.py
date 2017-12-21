@@ -167,6 +167,10 @@ def accent_error(row, gs_name='gs', ocr_name='ocr', empty_word='@@@'):
     no_accents = u''.join((c for c in unicodedata.normalize('NFD', unicode(gs)) if unicodedata.category(c) != 'Mn'))
     if no_accents == ocr:
         return True
+
+    no_accents = u''.join((c for c in unicodedata.normalize('NFD', unicode(ocr)) if unicodedata.category(c) != 'Mn'))
+    if no_accents == gs:
+        return True
     return False
 
 

@@ -25,6 +25,13 @@ def test_accent_error_true():
     assert accent_error(row) is True
 
 
+def test_accent_error_true_ocr():
+    row = {'ocr': u'patiënten',
+           'gs': u'patienten'
+           }
+    assert accent_error(row) is True
+
+
 def test_real_word_error_vs_accent_error():
     row = {'ocr': u'zeker',
            'gs': u'zéker'
