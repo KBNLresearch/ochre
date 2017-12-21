@@ -23,7 +23,7 @@ def command(in_dir, datadivision, name, out_dir):
     create_dirs(out_dir)
 
     div = json.load(datadivision)
-    test_files = [remove_ext(f) for f in div.get('test', [])]
+    test_files = [remove_ext(f) for f in div.get(name, [])]
 
     files_out = []
 
