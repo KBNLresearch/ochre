@@ -15,6 +15,7 @@ import glob2
 import json
 import re
 import edlib
+import pandas as pd
 
 
 def initialize_model(n, dropout, seq_length, chars, output_size, layers,
@@ -351,3 +352,32 @@ def cwl_path():
     """
     module_path = os.path.dirname(os.path.realpath(__file__))
     return os.path.abspath(os.path.join(module_path, 'cwl'))
+
+
+def merge_wordmappings(wm_improved_ocr, wm_original_ocr):
+    def to_list_of_dfs(df):
+        dfs = []
+        start = 0
+        for i in df.index[1:]:
+            res = df.loc[i]
+            if res['Unnamed: 0'] == 0:
+                dfs.append(df.loc[start:i-1])
+                start = i
+        dfs.append(df.loc[start:])
+        return dfs
+    io_dfs = to_list_of_dfs(wm_improved_ocr)
+    oo_dfs = to_list_of_dfs(wm_original_ocr)
+
+    res = []
+    for d1, d2 in zip(io_dfs, oo_dfs):
+        d1 = d1.reset_index()
+        del d1['index']
+        d2 = d2.reset_index()
+        del d2['index']
+        r = pd.concat([d1, d2], axis=1)
+        r.columns = ['wordindex1', 'gs', 'corrected-ocr', 'wordindex2', 'gs2',
+                     'original-ocr']
+        res.append(r[['gs', 'corrected-ocr', 'original-ocr']])
+    df = pd.concat(res)
+    df = df.reset_index()
+    return df
