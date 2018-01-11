@@ -6,6 +6,7 @@ baseCommand: ocr-transform
 requirements:
   - class: DockerRequirement
     dockerPull: ubma/ocr-fileformat
+  - class: InlineJavascriptRequirement
 
 inputs:
   in_fmt:
@@ -21,10 +22,18 @@ inputs:
     inputBinding:
       position: 3
 
-stdout: $(inputs.in_file.nameroot)
+stdout: |
+  ${
+    var nameroot = inputs.in_file.nameroot;
+    var ext = 'xml';
+    if(inputs.out_fmt == 'text'){
+      ext = 'txt';
+    }
+    return nameroot + '.' + ext;
+  }
 
 outputs:
   out_file:
     type: File
     outputBinding:
-      glob: $(inputs.in_file.nameroot)
+      glob: $(inputs.in_file.nameroot).*
