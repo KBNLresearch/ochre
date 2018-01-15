@@ -4,7 +4,7 @@ class: CommandLineTool
 baseCommand: ["python", "-m", "ochre.create_word_mappings"]
 
 inputs:
-  txt:
+  saf:
     type: File
     inputBinding:
       position: 1

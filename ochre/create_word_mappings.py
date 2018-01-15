@@ -8,12 +8,9 @@ import pandas as pd
 from string import punctuation
 
 from nlppln.utils import create_dirs, remove_ext, out_file_name
-from nlppln.commands.pattern_nl import parse
 
 
-def find_word_boundaries(txt, aligned):
-    words = [w['word'] for w in parse(txt)]
-
+def find_word_boundaries(words, aligned):
     unaligned = []
     for w in words:
         for c in w:
@@ -49,24 +46,27 @@ def find_word_boundaries(txt, aligned):
 
 
 @click.command()
-@click.argument('txt', type=click.File(encoding='utf-8'))
+@click.argument('saf', type=click.File(encoding='utf-8'))
 @click.argument('alignments', type=click.File(encoding='utf-8'))
 @click.option('--lowercase/--no-lowercase', default=False)
 @click.option('--out_dir', '-o', default=os.getcwd(), type=click.Path())
-def create_word_mappings(txt, alignments, lowercase, out_dir):
+def create_word_mappings(saf, alignments, lowercase, out_dir):
     create_dirs(out_dir)
 
     alignment_data = json.load(alignments)
     aligned1 = alignment_data['gs']
     aligned2 = alignment_data['ocr']
 
-    t = txt.read()
+    saf = json.load(saf)
     if lowercase:
-        t = t.lower()
+        words = [w['word'].lower() for w in saf['tokens']]
+    else:
+        words = [w['word'] for w in saf['tokens']]
+
         aligned1 = [c.lower() for c in aligned1]
         aligned2 = [c.lower() for c in aligned2]
 
-    wb = find_word_boundaries(t, aligned1)
+    wb = find_word_boundaries(words, aligned1)
 
     doc_id = remove_ext(alignments.name)
 
