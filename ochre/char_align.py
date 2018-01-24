@@ -21,7 +21,12 @@ def command(ocr_text, gs_text, metadata, out_dir):
     gs = gs_text.read()
     md = json.load(metadata)
 
-    ocr_a, gs_a = align_characters(ocr, gs, md['cigar'])
+    check = True
+    # Too many strange characters, so disable sanity check
+    if len(set(ocr+gs)) > 127:
+        check = False
+
+    ocr_a, gs_a = align_characters(ocr, gs, md['cigar'], sanity_check=check)
 
     out_file = out_file_name(out_dir, md['doc_id'], 'json')
     with codecs.open(out_file, 'wb', encoding='utf-8') as f:
