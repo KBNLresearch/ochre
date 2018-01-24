@@ -13,6 +13,19 @@ def match(name, beginnings):
     return False
 
 
+def get_files(in_dir, div, name):
+    files_out = []
+
+    files = [remove_ext(f) for f in div.get(name, [])]
+
+    for f in os.listdir(in_dir):
+        fi = os.path.join(in_dir, f)
+        if os.path.isfile(fi) and match(f, files):
+            files_out.append(fi)
+    files_out.sort()
+    return files_out
+
+
 @click.command()
 @click.argument('in_dir', type=click.Path(exists=True))
 @click.argument('datadivision', type=click.File(encoding='utf-8'))
@@ -23,16 +36,7 @@ def command(in_dir, datadivision, name, out_dir):
     create_dirs(out_dir)
 
     div = json.load(datadivision)
-    test_files = [remove_ext(f) for f in div.get(name, [])]
-
-    files_out = []
-
-    for f in os.listdir(in_dir):
-        fi = os.path.join(in_dir, f)
-        if os.path.isfile(fi) and match(f, test_files):
-            files_out.append(cwl_file(fi))
-
-    files_out.sort(key=lambda x: x.get('path'))
+    files_out = [cwl_file(f) for f in get_files(in_dir, div, name)]
 
     stdout_text = click.get_text_stream('stdout')
     stdout_text.write(json.dumps({'out_files': files_out}))
