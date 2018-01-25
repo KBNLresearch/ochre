@@ -586,11 +586,16 @@
             ], 
             "inputs": [
                 {
+                    "default": "align-Karmac-Origineel", 
+                    "type": "string", 
+                    "id": "#main/karmac_aligned_name"
+                }, 
+                {
                     "type": "Directory", 
                     "id": "#main/karmac_dir"
                 }, 
                 {
-                    "default": "align-Karmac-Origineel", 
+                    "default": "Karmac", 
                     "type": "string", 
                     "id": "#main/karmac_name"
                 }, 
@@ -604,11 +609,16 @@
                     "id": "#main/orignal_dir"
                 }, 
                 {
+                    "default": "align-X-Cago-Origineel", 
+                    "type": "string", 
+                    "id": "#main/xcago_aligned_name"
+                }, 
+                {
                     "type": "Directory", 
                     "id": "#main/xcago_dir"
                 }, 
                 {
-                    "default": "aign-X-Cago-Origineel", 
+                    "default": "X-Cago", 
                     "type": "string", 
                     "id": "#main/xcago_name"
                 }
@@ -616,27 +626,27 @@
             "outputs": [
                 {
                     "type": "Directory", 
-                    "outputSource": "#main/save-files-to-dir-18/out", 
+                    "outputSource": "#main/save-files-to-dir-12/out", 
                     "id": "#main/karmac"
                 }, 
                 {
                     "type": "Directory", 
-                    "outputSource": "#main/save-files-to-dir-21/out", 
+                    "outputSource": "#main/save-files-to-dir-15/out", 
                     "id": "#main/karmac_align"
                 }, 
                 {
                     "type": "Directory", 
-                    "outputSource": "#main/save-files-to-dir-19/out", 
+                    "outputSource": "#main/save-files-to-dir-13/out", 
                     "id": "#main/original"
                 }, 
                 {
                     "type": "Directory", 
-                    "outputSource": "#main/save-files-to-dir-20/out", 
+                    "outputSource": "#main/save-files-to-dir-14/out", 
                     "id": "#main/xcago"
                 }, 
                 {
                     "type": "Directory", 
-                    "outputSource": "#main/save-files-to-dir-22/out", 
+                    "outputSource": "#main/save-files-to-dir-16/out", 
                     "id": "#main/xcago_align"
                 }
             ], 
@@ -646,38 +656,38 @@
                     "in": [
                         {
                             "source": "#main/kb-tss-remove-empty-files/files1", 
-                            "id": "#main/align-texts-wf-4/gs"
+                            "id": "#main/align-texts-wf-2/gs"
                         }, 
                         {
                             "source": "#main/kb-tss-remove-empty-files/files2", 
-                            "id": "#main/align-texts-wf-4/ocr"
+                            "id": "#main/align-texts-wf-2/ocr"
                         }
                     ], 
                     "out": [
-                        "#main/align-texts-wf-4/alignments", 
-                        "#main/align-texts-wf-4/changes", 
-                        "#main/align-texts-wf-4/metadata"
+                        "#main/align-texts-wf-2/alignments", 
+                        "#main/align-texts-wf-2/changes", 
+                        "#main/align-texts-wf-2/metadata"
                     ], 
-                    "id": "#main/align-texts-wf-4"
+                    "id": "#main/align-texts-wf-2"
                 }, 
                 {
                     "run": "#align-texts-wf.cwl", 
                     "in": [
                         {
                             "source": "#main/kb-tss-remove-empty-files/files3", 
-                            "id": "#main/align-texts-wf-5/gs"
+                            "id": "#main/align-texts-wf-3/gs"
                         }, 
                         {
                             "source": "#main/kb-tss-remove-empty-files/files2", 
-                            "id": "#main/align-texts-wf-5/ocr"
+                            "id": "#main/align-texts-wf-3/ocr"
                         }
                     ], 
                     "out": [
-                        "#main/align-texts-wf-5/alignments", 
-                        "#main/align-texts-wf-5/changes", 
-                        "#main/align-texts-wf-5/metadata"
+                        "#main/align-texts-wf-3/alignments", 
+                        "#main/align-texts-wf-3/changes", 
+                        "#main/align-texts-wf-3/metadata"
                     ], 
-                    "id": "#main/align-texts-wf-5"
+                    "id": "#main/align-texts-wf-3"
                 }, 
                 {
                     "run": "#kb-tss-preprocess-single-dir.cwl", 
@@ -722,15 +732,15 @@
                     "run": "#kb-tss-remove-empty-files.cwl", 
                     "in": [
                         {
-                            "source": "#main/save-files-to-dir-15/out", 
+                            "source": "#main/save-files-to-dir-9/out", 
                             "id": "#main/kb-tss-remove-empty-files/in_dir1"
                         }, 
                         {
-                            "source": "#main/save-files-to-dir-16/out", 
+                            "source": "#main/save-files-to-dir-10/out", 
                             "id": "#main/kb-tss-remove-empty-files/in_dir2"
                         }, 
                         {
-                            "source": "#main/save-files-to-dir-17/out", 
+                            "source": "#main/save-files-to-dir-11/out", 
                             "id": "#main/kb-tss-remove-empty-files/in_dir3"
                         }
                     ], 
@@ -745,11 +755,96 @@
                     "run": "#save-files-to-dir.cwl", 
                     "in": [
                         {
+                            "source": "#main/original_name", 
+                            "id": "#main/save-files-to-dir-10/dir_name"
+                        }, 
+                        {
+                            "source": "#main/kb-tss-preprocess-single-dir-1/text_files", 
+                            "id": "#main/save-files-to-dir-10/in_files"
+                        }
+                    ], 
+                    "out": [
+                        "#main/save-files-to-dir-10/out"
+                    ], 
+                    "id": "#main/save-files-to-dir-10"
+                }, 
+                {
+                    "run": "#save-files-to-dir.cwl", 
+                    "in": [
+                        {
+                            "source": "#main/xcago_name", 
+                            "id": "#main/save-files-to-dir-11/dir_name"
+                        }, 
+                        {
+                            "source": "#main/kb-tss-preprocess-single-dir-2/text_files", 
+                            "id": "#main/save-files-to-dir-11/in_files"
+                        }
+                    ], 
+                    "out": [
+                        "#main/save-files-to-dir-11/out"
+                    ], 
+                    "id": "#main/save-files-to-dir-11"
+                }, 
+                {
+                    "run": "#save-files-to-dir.cwl", 
+                    "in": [
+                        {
                             "source": "#main/karmac_name", 
+                            "id": "#main/save-files-to-dir-12/dir_name"
+                        }, 
+                        {
+                            "source": "#main/kb-tss-remove-empty-files/files1", 
+                            "id": "#main/save-files-to-dir-12/in_files"
+                        }
+                    ], 
+                    "out": [
+                        "#main/save-files-to-dir-12/out"
+                    ], 
+                    "id": "#main/save-files-to-dir-12"
+                }, 
+                {
+                    "run": "#save-files-to-dir.cwl", 
+                    "in": [
+                        {
+                            "source": "#main/original_name", 
+                            "id": "#main/save-files-to-dir-13/dir_name"
+                        }, 
+                        {
+                            "source": "#main/kb-tss-remove-empty-files/files2", 
+                            "id": "#main/save-files-to-dir-13/in_files"
+                        }
+                    ], 
+                    "out": [
+                        "#main/save-files-to-dir-13/out"
+                    ], 
+                    "id": "#main/save-files-to-dir-13"
+                }, 
+                {
+                    "run": "#save-files-to-dir.cwl", 
+                    "in": [
+                        {
+                            "source": "#main/xcago_name", 
+                            "id": "#main/save-files-to-dir-14/dir_name"
+                        }, 
+                        {
+                            "source": "#main/kb-tss-remove-empty-files/files3", 
+                            "id": "#main/save-files-to-dir-14/in_files"
+                        }
+                    ], 
+                    "out": [
+                        "#main/save-files-to-dir-14/out"
+                    ], 
+                    "id": "#main/save-files-to-dir-14"
+                }, 
+                {
+                    "run": "#save-files-to-dir.cwl", 
+                    "in": [
+                        {
+                            "source": "#main/karmac_aligned_name", 
                             "id": "#main/save-files-to-dir-15/dir_name"
                         }, 
                         {
-                            "source": "#main/kb-tss-preprocess-single-dir/text_files", 
+                            "source": "#main/align-texts-wf-2/alignments", 
                             "id": "#main/save-files-to-dir-15/in_files"
                         }
                     ], 
@@ -762,11 +857,11 @@
                     "run": "#save-files-to-dir.cwl", 
                     "in": [
                         {
-                            "source": "#main/original_name", 
+                            "source": "#main/xcago_aligned_name", 
                             "id": "#main/save-files-to-dir-16/dir_name"
                         }, 
                         {
-                            "source": "#main/kb-tss-preprocess-single-dir-1/text_files", 
+                            "source": "#main/align-texts-wf-3/alignments", 
                             "id": "#main/save-files-to-dir-16/in_files"
                         }
                     ], 
@@ -779,103 +874,18 @@
                     "run": "#save-files-to-dir.cwl", 
                     "in": [
                         {
-                            "source": "#main/xcago_name", 
-                            "id": "#main/save-files-to-dir-17/dir_name"
-                        }, 
-                        {
-                            "source": "#main/kb-tss-preprocess-single-dir-2/text_files", 
-                            "id": "#main/save-files-to-dir-17/in_files"
-                        }
-                    ], 
-                    "out": [
-                        "#main/save-files-to-dir-17/out"
-                    ], 
-                    "id": "#main/save-files-to-dir-17"
-                }, 
-                {
-                    "run": "#save-files-to-dir.cwl", 
-                    "in": [
-                        {
                             "source": "#main/karmac_name", 
-                            "id": "#main/save-files-to-dir-18/dir_name"
+                            "id": "#main/save-files-to-dir-9/dir_name"
                         }, 
                         {
-                            "source": "#main/kb-tss-remove-empty-files/files1", 
-                            "id": "#main/save-files-to-dir-18/in_files"
+                            "source": "#main/kb-tss-preprocess-single-dir/text_files", 
+                            "id": "#main/save-files-to-dir-9/in_files"
                         }
                     ], 
                     "out": [
-                        "#main/save-files-to-dir-18/out"
+                        "#main/save-files-to-dir-9/out"
                     ], 
-                    "id": "#main/save-files-to-dir-18"
-                }, 
-                {
-                    "run": "#save-files-to-dir.cwl", 
-                    "in": [
-                        {
-                            "source": "#main/original_name", 
-                            "id": "#main/save-files-to-dir-19/dir_name"
-                        }, 
-                        {
-                            "source": "#main/kb-tss-remove-empty-files/files2", 
-                            "id": "#main/save-files-to-dir-19/in_files"
-                        }
-                    ], 
-                    "out": [
-                        "#main/save-files-to-dir-19/out"
-                    ], 
-                    "id": "#main/save-files-to-dir-19"
-                }, 
-                {
-                    "run": "#save-files-to-dir.cwl", 
-                    "in": [
-                        {
-                            "source": "#main/xcago_name", 
-                            "id": "#main/save-files-to-dir-20/dir_name"
-                        }, 
-                        {
-                            "source": "#main/kb-tss-remove-empty-files/files3", 
-                            "id": "#main/save-files-to-dir-20/in_files"
-                        }
-                    ], 
-                    "out": [
-                        "#main/save-files-to-dir-20/out"
-                    ], 
-                    "id": "#main/save-files-to-dir-20"
-                }, 
-                {
-                    "run": "#save-files-to-dir.cwl", 
-                    "in": [
-                        {
-                            "source": "#main/karmac_name", 
-                            "id": "#main/save-files-to-dir-21/dir_name"
-                        }, 
-                        {
-                            "source": "#main/align-texts-wf-4/alignments", 
-                            "id": "#main/save-files-to-dir-21/in_files"
-                        }
-                    ], 
-                    "out": [
-                        "#main/save-files-to-dir-21/out"
-                    ], 
-                    "id": "#main/save-files-to-dir-21"
-                }, 
-                {
-                    "run": "#save-files-to-dir.cwl", 
-                    "in": [
-                        {
-                            "source": "#main/xcago_name", 
-                            "id": "#main/save-files-to-dir-22/dir_name"
-                        }, 
-                        {
-                            "source": "#main/align-texts-wf-5/alignments", 
-                            "id": "#main/save-files-to-dir-22/in_files"
-                        }
-                    ], 
-                    "out": [
-                        "#main/save-files-to-dir-22/out"
-                    ], 
-                    "id": "#main/save-files-to-dir-22"
+                    "id": "#main/save-files-to-dir-9"
                 }
             ], 
             "id": "#main"
