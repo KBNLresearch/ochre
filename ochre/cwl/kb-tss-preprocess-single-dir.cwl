@@ -24,11 +24,11 @@ inputs:
 outputs:
   text_files:
     type:
-      items: File
       type: array
-    outputSource: ocr-transform/out_file
+      items: File
+    outputSource: kb-tss-concat-files/out_files
 steps:
-  ls-5:
+  ls:
     run: ls.cwl
     in:
       endswith: endswith
@@ -36,24 +36,30 @@ steps:
       recursive: recursive
     out:
     - out_files
-  remove-xml-elements:
+  remove-xml-elements-1:
     run: remove-xml-elements.cwl
     in:
-      xml_file: ls-5/out_files
+      xml_file: ls/out_files
       element: element
     out:
     - out_file
     scatter:
     - xml_file
     scatterMethod: dotproduct
-  ocr-transform:
+  ocr-transform-1:
     run: ocr-transform.cwl
     in:
       out_fmt: out_fmt
-      in_file: remove-xml-elements/out_file
+      in_file: remove-xml-elements-1/out_file
       in_fmt: in_fmt
     out:
     - out_file
     scatter:
     - in_file
     scatterMethod: dotproduct
+  kb-tss-concat-files:
+    run: kb-tss-concat-files.cwl
+    in:
+      in_files: ocr-transform-1/out_file
+    out:
+    - out_files
