@@ -60,11 +60,11 @@ def create_word_mappings(saf, alignments, lowercase, out_dir):
     saf = json.load(saf)
     if lowercase:
         words = [w['word'].lower() for w in saf['tokens']]
-    else:
-        words = [w['word'] for w in saf['tokens']]
 
         aligned1 = [c.lower() for c in aligned1]
         aligned2 = [c.lower() for c in aligned2]
+    else:
+        words = [w['word'] for w in saf['tokens']]
 
     wb = find_word_boundaries(words, aligned1)
 
