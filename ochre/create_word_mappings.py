@@ -70,13 +70,14 @@ def create_word_mappings(saf, alignments, lowercase, out_dir):
 
     doc_id = remove_ext(alignments.name)
 
-    res = {'gs': [], 'ocr': []}
+    res = {'gs': [], 'ocr': [], 'doc_id': []}
     for s, e in wb:
         w1 = u''.join(aligned1[s:e])
         w2 = u''.join(aligned2[s:e])
 
         res['gs'].append(w1.strip())
         res['ocr'].append(w2.strip())
+        res['doc_id'].append(doc_id)
 
     # Use pandas DataFrame to create the csv, so commas and quotes are properly
     # escaped.
