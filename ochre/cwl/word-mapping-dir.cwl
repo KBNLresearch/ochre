@@ -242,6 +242,55 @@
             "baseCommand": [
                 "python", 
                 "-m", 
+                "nlppln.commands.ls"
+            ], 
+            "doc": "List files in a directory.\n\nThis command can be used to convert a ``Directory`` into a list of files. This list can be filtered on file name by specifying ``--endswith``.\n", 
+            "inputs": [
+                {
+                    "type": [
+                        "null", 
+                        "string"
+                    ], 
+                    "inputBinding": {
+                        "prefix": "--endswith"
+                    }, 
+                    "id": "#ls.cwl/endswith"
+                }, 
+                {
+                    "type": "Directory", 
+                    "inputBinding": {
+                        "position": 2
+                    }, 
+                    "id": "#ls.cwl/in_dir"
+                }, 
+                {
+                    "type": [
+                        "null", 
+                        "boolean"
+                    ], 
+                    "inputBinding": {
+                        "prefix": "--recursive"
+                    }, 
+                    "id": "#ls.cwl/recursive"
+                }
+            ], 
+            "stdout": "cwl.output.json", 
+            "outputs": [
+                {
+                    "type": {
+                        "type": "array", 
+                        "items": "File"
+                    }, 
+                    "id": "#ls.cwl/out_files"
+                }
+            ], 
+            "id": "#ls.cwl"
+        }, 
+        {
+            "class": "CommandLineTool", 
+            "baseCommand": [
+                "python", 
+                "-m", 
                 "nlppln.commands.merge_csv"
             ], 
             "requirements": [
@@ -366,51 +415,6 @@
                 }
             ], 
             "id": "#normalize-whitespace-punctuation.cwl"
-        }, 
-        {
-            "class": "CommandLineTool", 
-            "baseCommand": [
-                "python", 
-                "-m", 
-                "ochre.select_test_files"
-            ], 
-            "stdout": "cwl.output.json", 
-            "inputs": [
-                {
-                    "type": "File", 
-                    "inputBinding": {
-                        "position": 2
-                    }, 
-                    "id": "#select-test-files.cwl/datadivision"
-                }, 
-                {
-                    "type": "Directory", 
-                    "inputBinding": {
-                        "position": 1
-                    }, 
-                    "id": "#select-test-files.cwl/in_dir"
-                }, 
-                {
-                    "type": [
-                        "null", 
-                        "string"
-                    ], 
-                    "inputBinding": {
-                        "prefix": "--name"
-                    }, 
-                    "id": "#select-test-files.cwl/name"
-                }
-            ], 
-            "outputs": [
-                {
-                    "type": {
-                        "type": "array", 
-                        "items": "File"
-                    }, 
-                    "id": "#select-test-files.cwl/out_files"
-                }
-            ], 
-            "id": "#select-test-files.cwl"
         }, 
         {
             "class": "Workflow", 
@@ -629,10 +633,6 @@
                     "id": "#main/align_m"
                 }, 
                 {
-                    "type": "File", 
-                    "id": "#main/data_div"
-                }, 
-                {
                     "type": "Directory", 
                     "id": "#main/gs_dir"
                 }, 
@@ -668,38 +668,30 @@
             ], 
             "steps": [
                 {
-                    "run": "#select-test-files.cwl", 
+                    "run": "#ls.cwl", 
                     "in": [
-                        {
-                            "source": "#main/data_div", 
-                            "id": "#main/select-test-files-3/datadivision"
-                        }, 
                         {
                             "source": "#main/gs_dir", 
-                            "id": "#main/select-test-files-3/in_dir"
+                            "id": "#main/ls-2/in_dir"
                         }
                     ], 
                     "out": [
-                        "#main/select-test-files-3/out_files"
+                        "#main/ls-2/out_files"
                     ], 
-                    "id": "#main/select-test-files-3"
+                    "id": "#main/ls-2"
                 }, 
                 {
-                    "run": "#select-test-files.cwl", 
+                    "run": "#ls.cwl", 
                     "in": [
                         {
-                            "source": "#main/data_div", 
-                            "id": "#main/select-test-files-4/datadivision"
-                        }, 
-                        {
                             "source": "#main/ocr_dir", 
-                            "id": "#main/select-test-files-4/in_dir"
+                            "id": "#main/ls-5/in_dir"
                         }
                     ], 
                     "out": [
-                        "#main/select-test-files-4/out_files"
+                        "#main/ls-5/out_files"
                     ], 
-                    "id": "#main/select-test-files-4"
+                    "id": "#main/ls-5"
                 }, 
                 {
                     "run": "#word-mapping-wf.cwl", 
@@ -713,7 +705,7 @@
                             "id": "#main/word-mapping-wf-1/align_m"
                         }, 
                         {
-                            "source": "#main/select-test-files-3/out_files", 
+                            "source": "#main/ls-2/out_files", 
                             "id": "#main/word-mapping-wf-1/gs_files"
                         }, 
                         {
@@ -725,7 +717,7 @@
                             "id": "#main/word-mapping-wf-1/lowercase"
                         }, 
                         {
-                            "source": "#main/select-test-files-4/out_files", 
+                            "source": "#main/ls-5/out_files", 
                             "id": "#main/word-mapping-wf-1/ocr_files"
                         }, 
                         {
