@@ -10,26 +10,14 @@ import numpy as np
 from ochre.select_test_files import get_files
 
 
-@click.command()
-@click.argument('datasets', type=click.File())
-@click.argument('data_dir', type=click.Path(exists=True))
-@click.option('--weights_dir', '-w', default=os.getcwd(), type=click.Path())
-def train_lstm(datasets, data_dir, weights_dir):
-    batch_size = 64  # Batch size for training.
-    epochs = 10  # Number of epochs to train for.
-    latent_dim = 256  # Latent dimensionality of the encoding space.
-
-    div = json.load(datasets)
-
-    in_files = get_files(data_dir, div, 'train')
+def read_texts(data_dir, div, name):
+    in_files = get_files(data_dir, div, name)
 
     print in_files
 
     # Vectorize the data.
     input_texts = []
     target_texts = []
-    input_characters = set()
-    target_characters = set()
 
     for in_file in in_files:
         print(in_file)
@@ -42,28 +30,11 @@ def train_lstm(datasets, data_dir, weights_dir):
             target_text = '\t' + target_text
             input_texts.append(input_text)
             target_texts.append(target_text)
-            for char in input_text:
-                if char not in input_characters:
-                    input_characters.add(char)
-            for char in target_text:
-                if char not in target_characters:
-                    target_characters.add(char)
 
-    input_characters = sorted(list(input_characters))
-    target_characters = sorted(list(target_characters))
-    num_encoder_tokens = len(input_characters)
-    num_decoder_tokens = len(target_characters)
-    max_encoder_seq_length = max([len(txt) for txt in input_texts])
-    max_decoder_seq_length = max([len(txt) for txt in target_texts])
+        return input_texts, target_texts
 
-    print('Number of samples:', len(input_texts))
-    print('Number of unique input tokens:', num_encoder_tokens)
-    print('Number of unique output tokens:', num_decoder_tokens)
-    print('Max sequence length for inputs:', max_encoder_seq_length)
-    print('Max sequence length for outputs:', max_decoder_seq_length)
-    print('Input characters:', u''.join(input_characters))
-    print('Output characters:', u''.join(target_characters))
 
+def convert(input_texts, target_texts, input_characters, target_characters, max_encoder_seq_length, num_encoder_tokens, max_decoder_seq_length, num_decoder_tokens):
     input_token_index = dict(
         [(char, i) for i, char in enumerate(input_characters)])
     target_token_index = dict(
@@ -90,6 +61,49 @@ def train_lstm(datasets, data_dir, weights_dir):
                 # and will not include the start character.
                 decoder_target_data[i, t - 1, target_token_index[char]] = 1.
 
+    return encoder_input_data, decoder_input_data, decoder_target_data
+
+
+@click.command()
+@click.argument('datasets', type=click.File())
+@click.argument('data_dir', type=click.Path(exists=True))
+@click.option('--weights_dir', '-w', default=os.getcwd(), type=click.Path())
+def train_lstm(datasets, data_dir, weights_dir):
+    batch_size = 64  # Batch size for training.
+    epochs = 10  # Number of epochs to train for.
+    latent_dim = 256  # Latent dimensionality of the encoding space.
+
+    div = json.load(datasets)
+
+    train_input, train_target = read_texts(data_dir, div, 'train')
+    val_input, val_target = read_texts(data_dir, div, 'train')
+    #test_input, test_target = read_texts(data_dir, div, 'test')
+
+    input_characters = sorted(list(set(u''.join(train_input) + u''.join(val_input))))
+    target_characters = sorted(list(set(u''.join(train_target) + u''.join(val_target))))
+    num_encoder_tokens = len(input_characters)
+    num_decoder_tokens = len(target_characters)
+    max_encoder_seq_length = max([len(txt) for txt in train_input])
+    max_decoder_seq_length = max([len(txt) for txt in train_target])
+
+    print('Number of samples:', len(train_input))
+    print('Number of unique input tokens:', num_encoder_tokens)
+    print('Number of unique output tokens:', num_decoder_tokens)
+    print('Max sequence length for inputs:', max_encoder_seq_length)
+    print('Max sequence length for outputs:', max_decoder_seq_length)
+    print('Input characters:', u''.join(input_characters))
+    print('Output characters:', u''.join(target_characters))
+
+    train_enc_input, train_dec_input, train_dec_target = convert(train_input,
+            train_target, input_characters, target_characters,
+            max_encoder_seq_length, num_encoder_tokens, max_decoder_seq_length,
+            num_decoder_tokens)
+
+    val_enc_input, val_dec_input, val_dec_target = convert(val_input,
+            val_target, input_characters, target_characters,
+            max_encoder_seq_length, num_encoder_tokens, max_decoder_seq_length,
+            num_decoder_tokens)
+
     # Define an input sequence and process it.
     encoder_inputs = Input(shape=(None, num_encoder_tokens))
     encoder = LSTM(latent_dim, return_state=True)
@@ -114,10 +128,10 @@ def train_lstm(datasets, data_dir, weights_dir):
 
     # Run training
     model.compile(optimizer='rmsprop', loss='categorical_crossentropy')
-    model.fit([encoder_input_data, decoder_input_data], decoder_target_data,
+    model.fit([train_enc_input, train_dec_input], train_dec_target,
               batch_size=batch_size,
               epochs=epochs,
-              validation_split=0.2)
+              validation_data=([val_enc_input, val_dec_input], val_dec_target))
     # Save model
     model.save('s2s.h5')
 
