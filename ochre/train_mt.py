@@ -8,7 +8,7 @@ from keras.layers import Input, LSTM, Dense
 import numpy as np
 
 from ochre.select_test_files import get_files
-from ochre.utils import add_checkpoint
+from ochre.utils import add_checkpoint, load_weights
 
 
 def read_texts(data_dir, div, name):
@@ -71,7 +71,7 @@ def convert(input_texts, target_texts, input_characters, target_characters, max_
 @click.option('--weights_dir', '-w', default=os.getcwd(), type=click.Path())
 def train_lstm(datasets, data_dir, weights_dir):
     batch_size = 64  # Batch size for training.
-    epochs = 10  # Number of epochs to train for.
+    epochs = 100  # Number of epochs to train for.
     latent_dim = 256  # Latent dimensionality of the encoding space.
 
     div = json.load(datasets)
@@ -129,12 +129,14 @@ def train_lstm(datasets, data_dir, weights_dir):
 
     # Run training
     model.compile(optimizer='rmsprop', loss='categorical_crossentropy')
+    epoch, model = load_weights(model, weights_dir, optimizer='rmsprop', loss='categorical_crossentropy')
     callbacks_list = [add_checkpoint(weights_dir)]
     model.fit([train_enc_input, train_dec_input], train_dec_target,
               batch_size=batch_size,
               epochs=epochs,
               validation_data=([val_enc_input, val_dec_input], val_dec_target),
-              callbacks=callbacks_list)
+              callbacks=callbacks_list,
+              initial_epoch=epoch)
 
 
 if __name__ == '__main__':
