@@ -14,14 +14,11 @@ from ochre.utils import add_checkpoint, load_weights
 def read_texts(data_dir, div, name):
     in_files = get_files(data_dir, div, name)
 
-    print in_files
-
     # Vectorize the data.
     input_texts = []
     target_texts = []
 
     for in_file in in_files:
-        print(in_file)
         lines = codecs.open(in_file, 'r', encoding='utf-8').readlines()
         for line in lines:
             #print line.split('||@@||')
@@ -53,14 +50,26 @@ def convert(input_texts, target_texts, input_characters, target_characters, max_
 
     for i, (input_text, target_text) in enumerate(zip(input_texts, target_texts)):
         for t, char in enumerate(input_text):
-            encoder_input_data[i, t, input_token_index[char]] = 1.
+            try:
+                encoder_input_data[i, t, input_token_index[char]] = 1.
+            except IndexError:
+                # sequence longer than max length of training inputs
+                pass
         for t, char in enumerate(target_text):
             # decoder_target_data is ahead of decoder_input_data by one timestep
-            decoder_input_data[i, t, target_token_index[char]] = 1.
+            try:
+                decoder_input_data[i, t, target_token_index[char]] = 1.
+            except IndexError:
+                # sequence longer than max length of training inputs
+                pass
             if t > 0:
                 # decoder_target_data will be ahead by one timestep
                 # and will not include the start character.
-                decoder_target_data[i, t - 1, target_token_index[char]] = 1.
+                try:
+                    decoder_target_data[i, t - 1, target_token_index[char]] = 1.
+                except IndexError:
+                    # sequence longer than max length of training inputs
+                    pass
 
     return encoder_input_data, decoder_input_data, decoder_target_data
 
