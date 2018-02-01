@@ -77,7 +77,7 @@ def train_lstm(datasets, data_dir, weights_dir):
     div = json.load(datasets)
 
     train_input, train_target = read_texts(data_dir, div, 'train')
-    val_input, val_target = read_texts(data_dir, div, 'train')
+    val_input, val_target = read_texts(data_dir, div, 'val')
     #test_input, test_target = read_texts(data_dir, div, 'test')
 
     input_characters = sorted(list(set(u''.join(train_input) + u''.join(val_input))))
