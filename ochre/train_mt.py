@@ -8,6 +8,7 @@ from keras.layers import Input, LSTM, Dense
 import numpy as np
 
 from ochre.select_test_files import get_files
+from ochre.utils import add_checkpoint
 
 
 def read_texts(data_dir, div, name):
@@ -128,12 +129,12 @@ def train_lstm(datasets, data_dir, weights_dir):
 
     # Run training
     model.compile(optimizer='rmsprop', loss='categorical_crossentropy')
+    callbacks_list = [add_checkpoint(weights_dir)]
     model.fit([train_enc_input, train_dec_input], train_dec_target,
               batch_size=batch_size,
               epochs=epochs,
-              validation_data=([val_enc_input, val_dec_input], val_dec_target))
-    # Save model
-    model.save('s2s.h5')
+              validation_data=([val_enc_input, val_dec_input], val_dec_target),
+              callbacks=callbacks_list)
 
 
 if __name__ == '__main__':
