@@ -381,3 +381,23 @@ def merge_wordmappings(wm_improved_ocr, wm_original_ocr):
     df = pd.concat(res)
     df = df.reset_index()
     return df
+
+
+def match(name, beginnings):
+    for b in beginnings:
+        if name.startswith(b) and name[len(b)] in ('.', '_', '-'):
+            return True
+    return False
+
+
+def get_files(in_dir, div, name):
+    files_out = []
+
+    files = [os.path.splitext(os.path.basename(f))[0] for f in div.get(name, [])]
+
+    for f in os.listdir(in_dir):
+        fi = os.path.join(in_dir, f)
+        if os.path.isfile(fi) and match(f, files):
+            files_out.append(fi)
+    files_out.sort()
+    return files_out

@@ -3,27 +3,7 @@ import click
 import os
 import json
 
-from nlppln.utils import create_dirs, remove_ext, cwl_file
-
-
-def match(name, beginnings):
-    for b in beginnings:
-        if name.startswith(b) and name[len(b)] in ('.', '_', '-'):
-            return True
-    return False
-
-
-def get_files(in_dir, div, name):
-    files_out = []
-
-    files = [remove_ext(f) for f in div.get(name, [])]
-
-    for f in os.listdir(in_dir):
-        fi = os.path.join(in_dir, f)
-        if os.path.isfile(fi) and match(f, files):
-            files_out.append(fi)
-    files_out.sort()
-    return files_out
+from ochre.utils import get_files
 
 
 @click.command()

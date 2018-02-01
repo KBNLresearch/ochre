@@ -7,8 +7,7 @@ from keras.models import Model
 from keras.layers import Input, LSTM, Dense
 import numpy as np
 
-from ochre.select_test_files import get_files
-from ochre.utils import add_checkpoint, load_weights
+from ochre.utils import add_checkpoint, load_weights, get_files
 
 
 def read_texts(data_dir, div, name):
