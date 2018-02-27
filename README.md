@@ -9,6 +9,8 @@ Ochre is a toolbox for OCR post-correction.
 * Assess the performance of OCR post-correction
 * Analyze OCR errors
 
+Ochre contains ready-to-use data processing workflows (based on [CWL](http://www.commonwl.org/)). The software also allows you to create your own (OCR post-correction related) workflows. Examples of how to create these can be found in the [notebooks directory](https://github.com/KBNLresearch/ochre/tree/master/notebooks) (to be able to use those, make sure you have [Jupyter Notebooks](http://jupyter.readthedocs.io/en/latest/install.html) installed). This directory also contains notebooks that show how results can be analyzed and visualized.
+
 ## Data sets
 
 * [VU DNC corpus](http://tst-centrale.org/nl/tst-materialen/corpora/vu-dnc-corpus-detail)
@@ -38,7 +40,7 @@ cd ochre
 pip install -r requirements.txt
 python setup.py develop
 ```
-* Using the CWL workflows requires (the development version of) [nlppln](https://github.com/nlppln/nlppln) and cwltool (`pip install cwltool`)
+* Using the CWL workflows requires (the development version of) [nlppln](https://github.com/nlppln/nlppln) and its requirements ([see installation guidelines](http://nlppln.readthedocs.io/en/latest/installation.html)).
 * Please note that some of the CWL workflows contain absolute paths, if you want to use them on your own machine, regenerate them using the associated Jupyter Notebooks.
 
 ## Preprocessing
@@ -111,13 +113,17 @@ cwltool /path/to/ochre/cwl/post_correct_dir.cwl --charset /path/to/text/file/con
 
 ## Performance
 
-* The ocrevaluation docker needs to be published on github and dockerhub.
-
 To calculate performance of the OCR (post-correction), the external tool
 [ocrevalUAtion](https://github.com/impactcentre/ocrevalUAtion) is used. More
 information about this tool can be found on the
 [website](https://sites.google.com/site/textdigitisation/) and
 [wiki](https://github.com/impactcentre/ocrevalUAtion/wiki).
+
+To use this tool in your workflows, you have to add it to the `WorkflowGenerator's` steps
+library:
+```
+wf.load(step_file='https://raw.githubusercontent.com/nlppln/ocrevaluation-docker/master/ocrevaluation.cwl')
+```
 
 * ocrevaluation-performance-wf.cwl
 * lowercase-directory.cwl
