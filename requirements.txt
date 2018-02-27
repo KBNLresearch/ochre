@@ -6,3 +6,4 @@ tensorflow
 edlib
 jupyter
 pytest
+nlppln>=0.3.1
