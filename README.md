@@ -48,12 +48,28 @@ python setup.py develop
 The software needs the data in the following formats:
 * ocr: text files containing the ocr-ed text, one file per unit (article, page, book, etc.)
 * gs: text files containing the gold standard (correct) text, one file per unit (article, page, book, etc.)
-* alinged: json files containing aligned character sequences:
+* aligned: json files containing aligned character sequences:
 ```
 {
     "ocr": ["E", "x", "a", "m", "p", "", "c"],
     "gs": ["E", "x", "a", "m", "p", "l", "e"]
 }
+```
+
+Corresponding files in these directories should have the same name (or at least the same prefix), for example:
+```
+├── gs
+│   ├── 1.txt
+│   ├── 2.txt
+│   └── 3.txt
+├── ocr
+│   ├── 1.txt
+│   ├── 2.txt
+│   └── 3.txt
+└── aligned
+    ├── 1.json
+    ├── 2.json
+    └── 3.json
 ```
 
 To create data in these formats, CWL workflows are available:
@@ -119,14 +135,26 @@ information about this tool can be found on the
 [website](https://sites.google.com/site/textdigitisation/) and
 [wiki](https://github.com/impactcentre/ocrevalUAtion/wiki).
 
-To use this tool in your workflows, you have to add it to the `WorkflowGenerator's` steps
+Two workflows are available for calculating performance. The first calculates
+performance for all files in a directory. To use it type:
+```
+cwltool /path/to/ochre/cwl/ocrevaluation-performance-wf-pack.cwl#main --gt /path/to/dir/containing/the/gold/standard/ --ocr /path/to/dir/containing/ocr/texts/ [--out_name name-of-output-file.csv]
+```
+
+The second calculates performance for all files in the test set:
+```
+cwltool /path/to/ochre/cwl/ocrevaluation-performance-test-files-wf-pack.cwl --datadivision /path/to/datadivision.json --gt /path/to/dir/containing/the/gold/standard/ --ocr /path/to/dir/containing/ocr/texts/ [--out_name name-of-output-file.csv]
+```
+
+Both of these workflows are stand-alone (packed). The corresponding Jupyter notebook is [ocr-evaluation-workflow.ipynb](https://github.com/KBNLresearch/ochre/blob/master/notebooks/ocr-evaluation-workflow.ipynb).
+
+To use the ocrevalUAtion tool in your workflows, you have to add it to the `WorkflowGenerator's` steps
 library:
 ```
 wf.load(step_file='https://raw.githubusercontent.com/nlppln/ocrevaluation-docker/master/ocrevaluation.cwl')
 ```
 
-* ocrevaluation-performance-wf.cwl
-* lowercase-directory.cwl
+* TODO: explain how to calculate performance with ignore case (or use lowercase-directory.cwl)
 
 ## OCR error analysis
 
