@@ -199,7 +199,7 @@
                     "run": "#merge-csv.cwl", 
                     "in": [
                         {
-                            "source": "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract/global_data", 
+                            "source": "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract-1/global_data", 
                             "id": "#ocrevaluation-performance-wf.cwl/merge-csv-1/in_files"
                         }, 
                         {
@@ -217,40 +217,40 @@
                     "in": [
                         {
                             "source": "#ocrevaluation-performance-wf.cwl/ls-7/out_files", 
-                            "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation/gt"
+                            "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation-1/gt"
                         }, 
                         {
                             "source": "#ocrevaluation-performance-wf.cwl/ls-6/out_files", 
-                            "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation/ocr"
+                            "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation-1/ocr"
                         }
                     ], 
                     "out": [
-                        "#ocrevaluation-performance-wf.cwl/ocrevaluation/out_file"
+                        "#ocrevaluation-performance-wf.cwl/ocrevaluation-1/out_file"
                     ], 
                     "scatter": [
-                        "#ocrevaluation-performance-wf.cwl/ocrevaluation/gt", 
-                        "#ocrevaluation-performance-wf.cwl/ocrevaluation/ocr"
+                        "#ocrevaluation-performance-wf.cwl/ocrevaluation-1/gt", 
+                        "#ocrevaluation-performance-wf.cwl/ocrevaluation-1/ocr"
                     ], 
                     "scatterMethod": "dotproduct", 
-                    "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation"
+                    "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation-1"
                 }, 
                 {
                     "run": "#ocrevaluation-extract.cwl", 
                     "in": [
                         {
-                            "source": "#ocrevaluation-performance-wf.cwl/ocrevaluation/out_file", 
-                            "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract/in_file"
+                            "source": "#ocrevaluation-performance-wf.cwl/ocrevaluation-1/out_file", 
+                            "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract-1/in_file"
                         }
                     ], 
                     "out": [
-                        "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract/character_data", 
-                        "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract/global_data"
+                        "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract-1/character_data", 
+                        "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract-1/global_data"
                     ], 
                     "scatter": [
-                        "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract/in_file"
+                        "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract-1/in_file"
                     ], 
                     "scatterMethod": "dotproduct", 
-                    "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract"
+                    "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract-1"
                 }
             ], 
             "id": "#ocrevaluation-performance-wf.cwl"

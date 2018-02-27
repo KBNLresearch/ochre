@@ -164,7 +164,7 @@
             "outputs": [
                 {
                     "type": "File", 
-                    "outputSource": "#main/merge-csv/merged", 
+                    "outputSource": "#main/merge-csv-1/merged", 
                     "id": "#main/performance"
                 }
             ], 
@@ -174,83 +174,83 @@
                     "in": [
                         {
                             "source": "#main/ocr", 
-                            "id": "#main/ls-2/in_dir"
+                            "id": "#main/ls-6/in_dir"
                         }
                     ], 
                     "out": [
-                        "#main/ls-2/out_files"
+                        "#main/ls-6/out_files"
                     ], 
-                    "id": "#main/ls-2"
+                    "id": "#main/ls-6"
                 }, 
                 {
                     "run": "#ls.cwl", 
                     "in": [
                         {
                             "source": "#main/gt", 
-                            "id": "#main/ls-5/in_dir"
+                            "id": "#main/ls-7/in_dir"
                         }
                     ], 
                     "out": [
-                        "#main/ls-5/out_files"
+                        "#main/ls-7/out_files"
                     ], 
-                    "id": "#main/ls-5"
+                    "id": "#main/ls-7"
                 }, 
                 {
                     "run": "#merge-csv.cwl", 
                     "in": [
                         {
-                            "source": "#main/ocrevaluation-extract/global_data", 
-                            "id": "#main/merge-csv/in_files"
+                            "source": "#main/ocrevaluation-extract-1/global_data", 
+                            "id": "#main/merge-csv-1/in_files"
                         }, 
                         {
                             "source": "#main/out_name", 
-                            "id": "#main/merge-csv/name"
+                            "id": "#main/merge-csv-1/name"
                         }
                     ], 
                     "out": [
-                        "#main/merge-csv/merged"
+                        "#main/merge-csv-1/merged"
                     ], 
-                    "id": "#main/merge-csv"
+                    "id": "#main/merge-csv-1"
                 }, 
                 {
                     "run": "#ocrevaluation.cwl", 
                     "in": [
                         {
-                            "source": "#main/ls-5/out_files", 
-                            "id": "#main/ocrevaluation/gt"
+                            "source": "#main/ls-7/out_files", 
+                            "id": "#main/ocrevaluation-1/gt"
                         }, 
                         {
-                            "source": "#main/ls-2/out_files", 
-                            "id": "#main/ocrevaluation/ocr"
+                            "source": "#main/ls-6/out_files", 
+                            "id": "#main/ocrevaluation-1/ocr"
                         }
                     ], 
                     "out": [
-                        "#main/ocrevaluation/out_file"
+                        "#main/ocrevaluation-1/out_file"
                     ], 
                     "scatter": [
-                        "#main/ocrevaluation/gt", 
-                        "#main/ocrevaluation/ocr"
+                        "#main/ocrevaluation-1/gt", 
+                        "#main/ocrevaluation-1/ocr"
                     ], 
                     "scatterMethod": "dotproduct", 
-                    "id": "#main/ocrevaluation"
+                    "id": "#main/ocrevaluation-1"
                 }, 
                 {
                     "run": "#ocrevaluation-extract.cwl", 
                     "in": [
                         {
-                            "source": "#main/ocrevaluation/out_file", 
-                            "id": "#main/ocrevaluation-extract/in_file"
+                            "source": "#main/ocrevaluation-1/out_file", 
+                            "id": "#main/ocrevaluation-extract-1/in_file"
                         }
                     ], 
                     "out": [
-                        "#main/ocrevaluation-extract/character_data", 
-                        "#main/ocrevaluation-extract/global_data"
+                        "#main/ocrevaluation-extract-1/character_data", 
+                        "#main/ocrevaluation-extract-1/global_data"
                     ], 
                     "scatter": [
-                        "#main/ocrevaluation-extract/in_file"
+                        "#main/ocrevaluation-extract-1/in_file"
                     ], 
                     "scatterMethod": "dotproduct", 
-                    "id": "#main/ocrevaluation-extract"
+                    "id": "#main/ocrevaluation-extract-1"
                 }
             ], 
             "id": "#main"

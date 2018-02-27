@@ -26,7 +26,7 @@ steps:
       in_dir: gt
     out:
     - out_files
-  ocrevaluation:
+  ocrevaluation-1:
     run: https://raw.githubusercontent.com/nlppln/ocrevaluation-docker/master/ocrevaluation.cwl
     in:
       ocr: ls-6/out_files
@@ -37,10 +37,10 @@ steps:
     - gt
     - ocr
     scatterMethod: dotproduct
-  ocrevaluation-extract:
+  ocrevaluation-extract-1:
     run: ocrevaluation-extract.cwl
     in:
-      in_file: ocrevaluation/out_file
+      in_file: ocrevaluation-1/out_file
     out:
     - character_data
     - global_data
@@ -50,7 +50,7 @@ steps:
   merge-csv-1:
     run: merge-csv.cwl
     in:
-      in_files: ocrevaluation-extract/global_data
+      in_files: ocrevaluation-extract-1/global_data
       name: out_name
     out:
     - merged
