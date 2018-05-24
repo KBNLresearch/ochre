@@ -20,6 +20,8 @@ def train_lstm(datasets, data_dir, weights_dir):
     seq_length = 25
     num_nodes = 256
     layers = 2
+    pred_chars = 1
+    char_embedding_size = 16
     batch_size = 100
     step = 3  # step size used to create data (3 = use every third sequence)
     lowercase = True
@@ -29,6 +31,10 @@ def train_lstm(datasets, data_dir, weights_dir):
     print('Sequence lenght: {}'.format(seq_length))
     print('Number of nodes in hidden layers: {}'.format(num_nodes))
     print('Number of hidden layers: {}'.format(layers))
+    print('Predict characters: {}'.format(pred_chars))
+    print('Use character embedding: {}'.format(bool(char_embedding_size)))
+    if char_embedding_size:
+        print('Char embedding size: {}'.format(char_embedding_size))
     print('Batch size: {}'.format(batch_size))
     print('Lowercase data: {}'.format(lowercase))
     print('Bidirectional layers: {}'.format(bidirectional))
@@ -65,9 +71,10 @@ def train_lstm(datasets, data_dir, weights_dir):
     print('Total Characters: {}'.format(n_chars))
     print('Total Vocab: {}'.format(n_vocab))
 
-    numTrainSamples, trainDataGen = create_training_data(ocr_train, gs_train, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size, lowercase=lowercase, step=step)
-    numTestSamples, testDataGen = create_training_data(ocr_test, gs_test, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size, lowercase=lowercase)
-    numValSamples, valDataGen = create_training_data(ocr_val, gs_val, char_to_int, n_vocab, seq_length=seq_length, batch_size=batch_size, lowercase=lowercase)
+    embed = bool(char_embedding_size)
+    numTrainSamples, trainDataGen = create_training_data(ocr_train, gs_train, char_to_int, n_vocab, predict_chars=pred_chars, seq_length=seq_length, batch_size=batch_size, lowercase=lowercase, step=step, char_embedding=embed)
+    numTestSamples, testDataGen = create_training_data(ocr_test, gs_test, char_to_int, n_vocab, predict_chars=pred_chars, seq_length=seq_length, batch_size=batch_size, lowercase=lowercase, char_embedding=embed)
+    numValSamples, valDataGen = create_training_data(ocr_val, gs_val, char_to_int, n_vocab, predict_chars=pred_chars, seq_length=seq_length, batch_size=batch_size, lowercase=lowercase, char_embedding=embed)
 
     n_patterns = numTrainSamples
     print("Train Patterns: {}".format(n_patterns))
@@ -79,8 +86,8 @@ def train_lstm(datasets, data_dir, weights_dir):
         model = initialize_model_bidirectional(num_nodes, 0.5, seq_length,
                                                chars, n_vocab, layers)
     elif seq2seq:
-        model = initialize_model_seq2seq(num_nodes, 0.5, seq_length,
-                                         n_vocab, layers)
+        model = initialize_model_seq2seq(num_nodes, 0.5, seq_length, pred_chars,
+                                         n_vocab, layers, char_embedding_size)
     else:
         model = initialize_model(num_nodes, 0.5, seq_length, chars, n_vocab,
                                  layers)
