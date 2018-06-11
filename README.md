@@ -1,6 +1,6 @@
 # Ochre
 
-Ochre is a toolbox for OCR post-correction.
+Ochre is a toolbox for OCR post-correction. **Please note that this software is experimental and very much a work in progress!**
 
 * Overview of OCR post-correction data sets
 * Preprocess data sets
