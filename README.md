@@ -41,6 +41,7 @@ pip install -r requirements.txt
 python setup.py develop
 ```
 * Using the CWL workflows requires (the development version of) [nlppln](https://github.com/nlppln/nlppln) and its requirements ([see installation guidelines](http://nlppln.readthedocs.io/en/latest/installation.html)).
+* To run a CWL workflow type: `cwltool|cwl-runner path/to/workflow.cwl <inputs>` (if you run the command without inputs, the tool will tell you about what inputs are required and how to specify them). For more information on running CWL workflows, have a look at the [nlppln documentation](http://nlppln.readthedocs.io/en/latest/). This is especially relevant for Windows users.
 * Please note that some of the CWL workflows contain absolute paths, if you want to use them on your own machine, regenerate them using the associated Jupyter Notebooks.
 
 ## Preprocessing
