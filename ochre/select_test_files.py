@@ -10,8 +10,7 @@ from ochre.utils import get_files
 @click.command()
 @click.argument('in_dir', type=click.Path(exists=True))
 @click.argument('datadivision', type=click.File(encoding='utf-8'))
-@click.option('--name', '-n', type=click.Choice(['train', 'test', 'val']),
-              default='test')
+@click.option('--name', '-n', default='test')
 @click.option('--out_dir', '-o', default=os.getcwd(), type=click.Path())
 def command(in_dir, datadivision, name, out_dir):
     create_dirs(out_dir)
