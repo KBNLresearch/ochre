@@ -9,6 +9,21 @@
                 "nlppln.commands.ls"
             ], 
             "doc": "List files in a directory.\n\nThis command can be used to convert a ``Directory`` into a list of files. This list can be filtered on file name by specifying ``--endswith``.\n", 
+            "requirements": [
+                {
+                    "envDef": [
+                        {
+                            "envValue": "C.UTF-8", 
+                            "envName": "LANG"
+                        }, 
+                        {
+                            "envValue": "C.UTF-8", 
+                            "envName": "LC_ALL"
+                        }
+                    ], 
+                    "class": "EnvVarRequirement"
+                }
+            ], 
             "inputs": [
                 {
                     "type": [
@@ -58,6 +73,19 @@
                 "nlppln.commands.merge_csv"
             ], 
             "requirements": [
+                {
+                    "envDef": [
+                        {
+                            "envValue": "C.UTF-8", 
+                            "envName": "LANG"
+                        }, 
+                        {
+                            "envValue": "C.UTF-8", 
+                            "envName": "LC_ALL"
+                        }
+                    ], 
+                    "class": "EnvVarRequirement"
+                }, 
                 {
                     "listing": "$(inputs.in_files)", 
                     "class": "InitialWorkDirRequirement"
@@ -343,6 +371,11 @@
                     "id": "#main/datadivision"
                 }, 
                 {
+                    "default": "test", 
+                    "type": "string", 
+                    "id": "#main/div_name"
+                }, 
+                {
                     "type": "Directory", 
                     "id": "#main/gt"
                 }, 
@@ -381,11 +414,11 @@
                     "run": "#ocrevaluation-performance-wf.cwl", 
                     "in": [
                         {
-                            "source": "#main/save-files-to-dir/out", 
+                            "source": "#main/save-files-to-dir-13/out", 
                             "id": "#main/ocrevaluation-performance-wf/gt"
                         }, 
                         {
-                            "source": "#main/save-files-to-dir-5/out", 
+                            "source": "#main/save-files-to-dir-14/out", 
                             "id": "#main/ocrevaluation-performance-wf/ocr"
                         }
                     ], 
@@ -399,34 +432,34 @@
                     "in": [
                         {
                             "source": "#main/gt_dir_name", 
-                            "id": "#main/save-files-to-dir/dir_name"
+                            "id": "#main/save-files-to-dir-13/dir_name"
                         }, 
                         {
                             "source": "#main/select-test-files-1/out_files", 
-                            "id": "#main/save-files-to-dir/in_files"
+                            "id": "#main/save-files-to-dir-13/in_files"
                         }
                     ], 
                     "out": [
-                        "#main/save-files-to-dir/out"
+                        "#main/save-files-to-dir-13/out"
                     ], 
-                    "id": "#main/save-files-to-dir"
+                    "id": "#main/save-files-to-dir-13"
                 }, 
                 {
                     "run": "#save-files-to-dir.cwl", 
                     "in": [
                         {
                             "source": "#main/ocr_dir_name", 
-                            "id": "#main/save-files-to-dir-5/dir_name"
+                            "id": "#main/save-files-to-dir-14/dir_name"
                         }, 
                         {
                             "source": "#main/select-test-files/out_files", 
-                            "id": "#main/save-files-to-dir-5/in_files"
+                            "id": "#main/save-files-to-dir-14/in_files"
                         }
                     ], 
                     "out": [
-                        "#main/save-files-to-dir-5/out"
+                        "#main/save-files-to-dir-14/out"
                     ], 
-                    "id": "#main/save-files-to-dir-5"
+                    "id": "#main/save-files-to-dir-14"
                 }, 
                 {
                     "run": "#select-test-files.cwl", 
@@ -438,6 +471,10 @@
                         {
                             "source": "#main/ocr", 
                             "id": "#main/select-test-files/in_dir"
+                        }, 
+                        {
+                            "source": "#main/div_name", 
+                            "id": "#main/select-test-files/name"
                         }
                     ], 
                     "out": [
@@ -455,6 +492,10 @@
                         {
                             "source": "#main/gt", 
                             "id": "#main/select-test-files-1/in_dir"
+                        }, 
+                        {
+                            "source": "#main/div_name", 
+                            "id": "#main/select-test-files-1/name"
                         }
                     ], 
                     "out": [
