@@ -9,6 +9,21 @@
                 "nlppln.commands.ls"
             ], 
             "doc": "List files in a directory.\n\nThis command can be used to convert a ``Directory`` into a list of files. This list can be filtered on file name by specifying ``--endswith``.\n", 
+            "requirements": [
+                {
+                    "envDef": [
+                        {
+                            "envValue": "C.UTF-8", 
+                            "envName": "LANG"
+                        }, 
+                        {
+                            "envValue": "C.UTF-8", 
+                            "envName": "LC_ALL"
+                        }
+                    ], 
+                    "class": "EnvVarRequirement"
+                }
+            ], 
             "inputs": [
                 {
                     "type": [
@@ -58,6 +73,19 @@
                 "nlppln.commands.merge_csv"
             ], 
             "requirements": [
+                {
+                    "envDef": [
+                        {
+                            "envValue": "C.UTF-8", 
+                            "envName": "LANG"
+                        }, 
+                        {
+                            "envValue": "C.UTF-8", 
+                            "envName": "LC_ALL"
+                        }
+                    ], 
+                    "class": "EnvVarRequirement"
+                }, 
                 {
                     "listing": "$(inputs.in_files)", 
                     "class": "InitialWorkDirRequirement"
@@ -138,7 +166,69 @@
         }, 
         {
             "class": "Workflow", 
+            "inputs": [
+                {
+                    "type": "File", 
+                    "id": "#ocrevaluation-performance-wf.cwl/gt"
+                }, 
+                {
+                    "type": "File", 
+                    "id": "#ocrevaluation-performance-wf.cwl/ocr"
+                }
+            ], 
+            "outputs": [
+                {
+                    "type": "File", 
+                    "outputSource": "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract-1/character_data", 
+                    "id": "#ocrevaluation-performance-wf.cwl/character_data"
+                }, 
+                {
+                    "type": "File", 
+                    "outputSource": "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract-1/global_data", 
+                    "id": "#ocrevaluation-performance-wf.cwl/global_data"
+                }
+            ], 
+            "steps": [
+                {
+                    "run": "#ocrevaluation.cwl", 
+                    "in": [
+                        {
+                            "source": "#ocrevaluation-performance-wf.cwl/gt", 
+                            "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation-1/gt"
+                        }, 
+                        {
+                            "source": "#ocrevaluation-performance-wf.cwl/ocr", 
+                            "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation-1/ocr"
+                        }
+                    ], 
+                    "out": [
+                        "#ocrevaluation-performance-wf.cwl/ocrevaluation-1/out_file"
+                    ], 
+                    "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation-1"
+                }, 
+                {
+                    "run": "#ocrevaluation-extract.cwl", 
+                    "in": [
+                        {
+                            "source": "#ocrevaluation-performance-wf.cwl/ocrevaluation-1/out_file", 
+                            "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract-1/in_file"
+                        }
+                    ], 
+                    "out": [
+                        "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract-1/character_data", 
+                        "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract-1/global_data"
+                    ], 
+                    "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract-1"
+                }
+            ], 
+            "id": "#ocrevaluation-performance-wf.cwl"
+        }, 
+        {
+            "class": "Workflow", 
             "requirements": [
+                {
+                    "class": "SubworkflowFeatureRequirement"
+                }, 
                 {
                     "class": "ScatterFeatureRequirement"
                 }
@@ -164,7 +254,7 @@
             "outputs": [
                 {
                     "type": "File", 
-                    "outputSource": "#main/merge-csv-1/merged", 
+                    "outputSource": "#main/merge-csv/merged", 
                     "id": "#main/performance"
                 }
             ], 
@@ -174,83 +264,66 @@
                     "in": [
                         {
                             "source": "#main/ocr", 
-                            "id": "#main/ls-6/in_dir"
+                            "id": "#main/ls-2/in_dir"
                         }
                     ], 
                     "out": [
-                        "#main/ls-6/out_files"
+                        "#main/ls-2/out_files"
                     ], 
-                    "id": "#main/ls-6"
+                    "id": "#main/ls-2"
                 }, 
                 {
                     "run": "#ls.cwl", 
                     "in": [
                         {
                             "source": "#main/gt", 
-                            "id": "#main/ls-7/in_dir"
+                            "id": "#main/ls-5/in_dir"
                         }
                     ], 
                     "out": [
-                        "#main/ls-7/out_files"
+                        "#main/ls-5/out_files"
                     ], 
-                    "id": "#main/ls-7"
+                    "id": "#main/ls-5"
                 }, 
                 {
                     "run": "#merge-csv.cwl", 
                     "in": [
                         {
-                            "source": "#main/ocrevaluation-extract-1/global_data", 
-                            "id": "#main/merge-csv-1/in_files"
+                            "source": "#main/ocrevaluation-performance-wf/global_data", 
+                            "id": "#main/merge-csv/in_files"
                         }, 
                         {
                             "source": "#main/out_name", 
-                            "id": "#main/merge-csv-1/name"
+                            "id": "#main/merge-csv/name"
                         }
                     ], 
                     "out": [
-                        "#main/merge-csv-1/merged"
+                        "#main/merge-csv/merged"
                     ], 
-                    "id": "#main/merge-csv-1"
+                    "id": "#main/merge-csv"
                 }, 
                 {
-                    "run": "#ocrevaluation.cwl", 
+                    "run": "#ocrevaluation-performance-wf.cwl", 
                     "in": [
                         {
-                            "source": "#main/ls-7/out_files", 
-                            "id": "#main/ocrevaluation-1/gt"
+                            "source": "#main/ls-5/out_files", 
+                            "id": "#main/ocrevaluation-performance-wf/gt"
                         }, 
                         {
-                            "source": "#main/ls-6/out_files", 
-                            "id": "#main/ocrevaluation-1/ocr"
+                            "source": "#main/ls-2/out_files", 
+                            "id": "#main/ocrevaluation-performance-wf/ocr"
                         }
                     ], 
                     "out": [
-                        "#main/ocrevaluation-1/out_file"
+                        "#main/ocrevaluation-performance-wf/character_data", 
+                        "#main/ocrevaluation-performance-wf/global_data"
                     ], 
                     "scatter": [
-                        "#main/ocrevaluation-1/gt", 
-                        "#main/ocrevaluation-1/ocr"
+                        "#main/ocrevaluation-performance-wf/gt", 
+                        "#main/ocrevaluation-performance-wf/ocr"
                     ], 
                     "scatterMethod": "dotproduct", 
-                    "id": "#main/ocrevaluation-1"
-                }, 
-                {
-                    "run": "#ocrevaluation-extract.cwl", 
-                    "in": [
-                        {
-                            "source": "#main/ocrevaluation-1/out_file", 
-                            "id": "#main/ocrevaluation-extract-1/in_file"
-                        }
-                    ], 
-                    "out": [
-                        "#main/ocrevaluation-extract-1/character_data", 
-                        "#main/ocrevaluation-extract-1/global_data"
-                    ], 
-                    "scatter": [
-                        "#main/ocrevaluation-extract-1/in_file"
-                    ], 
-                    "scatterMethod": "dotproduct", 
-                    "id": "#main/ocrevaluation-extract-1"
+                    "id": "#main/ocrevaluation-performance-wf"
                 }
             ], 
             "id": "#main"

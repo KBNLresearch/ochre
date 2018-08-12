@@ -6,70 +6,6 @@
             "baseCommand": [
                 "python", 
                 "-m", 
-                "nlppln.commands.ls"
-            ], 
-            "doc": "List files in a directory.\n\nThis command can be used to convert a ``Directory`` into a list of files. This list can be filtered on file name by specifying ``--endswith``.\n", 
-            "requirements": [
-                {
-                    "envDef": [
-                        {
-                            "envValue": "C.UTF-8", 
-                            "envName": "LANG"
-                        }, 
-                        {
-                            "envValue": "C.UTF-8", 
-                            "envName": "LC_ALL"
-                        }
-                    ], 
-                    "class": "EnvVarRequirement"
-                }
-            ], 
-            "inputs": [
-                {
-                    "type": [
-                        "null", 
-                        "string"
-                    ], 
-                    "inputBinding": {
-                        "prefix": "--endswith"
-                    }, 
-                    "id": "#ls.cwl/endswith"
-                }, 
-                {
-                    "type": "Directory", 
-                    "inputBinding": {
-                        "position": 2
-                    }, 
-                    "id": "#ls.cwl/in_dir"
-                }, 
-                {
-                    "type": [
-                        "null", 
-                        "boolean"
-                    ], 
-                    "inputBinding": {
-                        "prefix": "--recursive"
-                    }, 
-                    "id": "#ls.cwl/recursive"
-                }
-            ], 
-            "stdout": "cwl.output.json", 
-            "outputs": [
-                {
-                    "type": {
-                        "type": "array", 
-                        "items": "File"
-                    }, 
-                    "id": "#ls.cwl/out_files"
-                }
-            ], 
-            "id": "#ls.cwl"
-        }, 
-        {
-            "class": "CommandLineTool", 
-            "baseCommand": [
-                "python", 
-                "-m", 
                 "nlppln.commands.merge_csv"
             ], 
             "requirements": [
@@ -166,100 +102,44 @@
         }, 
         {
             "class": "Workflow", 
-            "requirements": [
-                {
-                    "class": "ScatterFeatureRequirement"
-                }
-            ], 
             "inputs": [
                 {
-                    "type": "Directory", 
+                    "type": "File", 
                     "id": "#ocrevaluation-performance-wf.cwl/gt"
                 }, 
                 {
-                    "type": "Directory", 
+                    "type": "File", 
                     "id": "#ocrevaluation-performance-wf.cwl/ocr"
-                }, 
-                {
-                    "default": "performance.csv", 
-                    "type": [
-                        "null", 
-                        "string"
-                    ], 
-                    "id": "#ocrevaluation-performance-wf.cwl/out_name"
                 }
             ], 
             "outputs": [
                 {
                     "type": "File", 
-                    "outputSource": "#ocrevaluation-performance-wf.cwl/merge-csv-1/merged", 
-                    "id": "#ocrevaluation-performance-wf.cwl/performance"
+                    "outputSource": "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract-1/character_data", 
+                    "id": "#ocrevaluation-performance-wf.cwl/character_data"
+                }, 
+                {
+                    "type": "File", 
+                    "outputSource": "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract-1/global_data", 
+                    "id": "#ocrevaluation-performance-wf.cwl/global_data"
                 }
             ], 
             "steps": [
                 {
-                    "run": "#ls.cwl", 
-                    "in": [
-                        {
-                            "source": "#ocrevaluation-performance-wf.cwl/ocr", 
-                            "id": "#ocrevaluation-performance-wf.cwl/ls-6/in_dir"
-                        }
-                    ], 
-                    "out": [
-                        "#ocrevaluation-performance-wf.cwl/ls-6/out_files"
-                    ], 
-                    "id": "#ocrevaluation-performance-wf.cwl/ls-6"
-                }, 
-                {
-                    "run": "#ls.cwl", 
-                    "in": [
-                        {
-                            "source": "#ocrevaluation-performance-wf.cwl/gt", 
-                            "id": "#ocrevaluation-performance-wf.cwl/ls-7/in_dir"
-                        }
-                    ], 
-                    "out": [
-                        "#ocrevaluation-performance-wf.cwl/ls-7/out_files"
-                    ], 
-                    "id": "#ocrevaluation-performance-wf.cwl/ls-7"
-                }, 
-                {
-                    "run": "#merge-csv.cwl", 
-                    "in": [
-                        {
-                            "source": "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract-1/global_data", 
-                            "id": "#ocrevaluation-performance-wf.cwl/merge-csv-1/in_files"
-                        }, 
-                        {
-                            "source": "#ocrevaluation-performance-wf.cwl/out_name", 
-                            "id": "#ocrevaluation-performance-wf.cwl/merge-csv-1/name"
-                        }
-                    ], 
-                    "out": [
-                        "#ocrevaluation-performance-wf.cwl/merge-csv-1/merged"
-                    ], 
-                    "id": "#ocrevaluation-performance-wf.cwl/merge-csv-1"
-                }, 
-                {
                     "run": "#ocrevaluation.cwl", 
                     "in": [
                         {
-                            "source": "#ocrevaluation-performance-wf.cwl/ls-7/out_files", 
+                            "source": "#ocrevaluation-performance-wf.cwl/gt", 
                             "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation-1/gt"
                         }, 
                         {
-                            "source": "#ocrevaluation-performance-wf.cwl/ls-6/out_files", 
+                            "source": "#ocrevaluation-performance-wf.cwl/ocr", 
                             "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation-1/ocr"
                         }
                     ], 
                     "out": [
                         "#ocrevaluation-performance-wf.cwl/ocrevaluation-1/out_file"
                     ], 
-                    "scatter": [
-                        "#ocrevaluation-performance-wf.cwl/ocrevaluation-1/gt", 
-                        "#ocrevaluation-performance-wf.cwl/ocrevaluation-1/ocr"
-                    ], 
-                    "scatterMethod": "dotproduct", 
                     "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation-1"
                 }, 
                 {
@@ -274,44 +154,10 @@
                         "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract-1/character_data", 
                         "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract-1/global_data"
                     ], 
-                    "scatter": [
-                        "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract-1/in_file"
-                    ], 
-                    "scatterMethod": "dotproduct", 
                     "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract-1"
                 }
             ], 
             "id": "#ocrevaluation-performance-wf.cwl"
-        }, 
-        {
-            "class": "ExpressionTool", 
-            "requirements": [
-                {
-                    "class": "InlineJavascriptRequirement"
-                }
-            ], 
-            "doc": "Save a list of files to a directory.\n", 
-            "inputs": [
-                {
-                    "type": "string", 
-                    "id": "#save-files-to-dir.cwl/dir_name"
-                }, 
-                {
-                    "type": {
-                        "type": "array", 
-                        "items": "File"
-                    }, 
-                    "id": "#save-files-to-dir.cwl/in_files"
-                }
-            ], 
-            "outputs": [
-                {
-                    "type": "Directory", 
-                    "id": "#save-files-to-dir.cwl/out"
-                }
-            ], 
-            "expression": "${\n  return {\"out\": {\n    \"class\": \"Directory\",\n    \"basename\": inputs.dir_name,\n    \"listing\": inputs.in_files\n  } };\n}\n", 
-            "id": "#save-files-to-dir.cwl"
         }, 
         {
             "class": "CommandLineTool", 
@@ -363,6 +209,9 @@
             "requirements": [
                 {
                     "class": "SubworkflowFeatureRequirement"
+                }, 
+                {
+                    "class": "ScatterFeatureRequirement"
                 }
             ], 
             "inputs": [
@@ -405,61 +254,50 @@
             "outputs": [
                 {
                     "type": "File", 
-                    "outputSource": "#main/ocrevaluation-performance-wf/performance", 
+                    "outputSource": "#main/merge-csv/merged", 
                     "id": "#main/performance"
                 }
             ], 
             "steps": [
                 {
+                    "run": "#merge-csv.cwl", 
+                    "in": [
+                        {
+                            "source": "#main/ocrevaluation-performance-wf/global_data", 
+                            "id": "#main/merge-csv/in_files"
+                        }, 
+                        {
+                            "source": "#main/out_name", 
+                            "id": "#main/merge-csv/name"
+                        }
+                    ], 
+                    "out": [
+                        "#main/merge-csv/merged"
+                    ], 
+                    "id": "#main/merge-csv"
+                }, 
+                {
                     "run": "#ocrevaluation-performance-wf.cwl", 
                     "in": [
                         {
-                            "source": "#main/save-files-to-dir-13/out", 
+                            "source": "#main/select-test-files-1/out_files", 
                             "id": "#main/ocrevaluation-performance-wf/gt"
                         }, 
                         {
-                            "source": "#main/save-files-to-dir-14/out", 
+                            "source": "#main/select-test-files/out_files", 
                             "id": "#main/ocrevaluation-performance-wf/ocr"
                         }
                     ], 
                     "out": [
-                        "#main/ocrevaluation-performance-wf/performance"
+                        "#main/ocrevaluation-performance-wf/character_data", 
+                        "#main/ocrevaluation-performance-wf/global_data"
                     ], 
+                    "scatter": [
+                        "#main/ocrevaluation-performance-wf/gt", 
+                        "#main/ocrevaluation-performance-wf/ocr"
+                    ], 
+                    "scatterMethod": "dotproduct", 
                     "id": "#main/ocrevaluation-performance-wf"
-                }, 
-                {
-                    "run": "#save-files-to-dir.cwl", 
-                    "in": [
-                        {
-                            "source": "#main/gt_dir_name", 
-                            "id": "#main/save-files-to-dir-13/dir_name"
-                        }, 
-                        {
-                            "source": "#main/select-test-files-1/out_files", 
-                            "id": "#main/save-files-to-dir-13/in_files"
-                        }
-                    ], 
-                    "out": [
-                        "#main/save-files-to-dir-13/out"
-                    ], 
-                    "id": "#main/save-files-to-dir-13"
-                }, 
-                {
-                    "run": "#save-files-to-dir.cwl", 
-                    "in": [
-                        {
-                            "source": "#main/ocr_dir_name", 
-                            "id": "#main/save-files-to-dir-14/dir_name"
-                        }, 
-                        {
-                            "source": "#main/select-test-files/out_files", 
-                            "id": "#main/save-files-to-dir-14/in_files"
-                        }
-                    ], 
-                    "out": [
-                        "#main/save-files-to-dir-14/out"
-                    ], 
-                    "id": "#main/save-files-to-dir-14"
                 }, 
                 {
                     "run": "#select-test-files.cwl", 
