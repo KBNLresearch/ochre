@@ -240,10 +240,13 @@
                     "class": "InlineJavascriptRequirement"
                 }
             ], 
-            "doc": "Save a list of files to a directory.\n", 
+            "doc": "Save a list of files to a directory.\n\nIf the ``dir_name`` is not specified, it is set to the string before the rightmost - of the ``nameroot`` of the first input file\n(e.g., ``input-file-1-0000.txt`` becomes ``input-file-1``). If the file name does not contain a -, the ``nameroot`` is used (e.g.\n``input.txt`` becomes ``input``).\n", 
             "inputs": [
                 {
-                    "type": "string", 
+                    "type": [
+                        "null", 
+                        "string"
+                    ], 
                     "id": "#save-files-to-dir.cwl/dir_name"
                 }, 
                 {
@@ -260,7 +263,7 @@
                     "id": "#save-files-to-dir.cwl/out"
                 }
             ], 
-            "expression": "${\n  return {\"out\": {\n    \"class\": \"Directory\",\n    \"basename\": inputs.dir_name,\n    \"listing\": inputs.in_files\n  } };\n}\n", 
+            "expression": "${\n  var dir_name;\n  if (inputs.dir_name == null ){\n     var parts = inputs.in_files[0].nameroot.split('-');\n     if (parts.length > 1){\n       dir_name = parts.slice(0, -1).join('-')\n     } else {\n       dir_name = parts[0]\n     }\n\n  } else {\n    dir_name = inputs.dir_name;\n  }\n  return {\"out\": {\n    \"class\": \"Directory\",\n    \"basename\": dir_name,\n    \"listing\": inputs.in_files\n  } };\n}\n", 
             "id": "#save-files-to-dir.cwl"
         }, 
         {
@@ -326,6 +329,10 @@
                     "id": "#main/data_div"
                 }, 
                 {
+                    "type": "string", 
+                    "id": "#main/div_name"
+                }, 
+                {
                     "type": "Directory", 
                     "id": "#main/gs_dir"
                 }, 
@@ -337,7 +344,7 @@
             "outputs": [
                 {
                     "type": "Directory", 
-                    "outputSource": "#main/save-files-to-dir-9/out", 
+                    "outputSource": "#main/save-files-to-dir-13/out", 
                     "id": "#main/align"
                 }
             ], 
@@ -346,71 +353,79 @@
                     "run": "#align-texts-wf.cwl", 
                     "in": [
                         {
-                            "source": "#main/select-test-files-3/out_files", 
-                            "id": "#main/align-texts-wf-1/gs"
+                            "source": "#main/select-test-files/out_files", 
+                            "id": "#main/align-texts-wf-3/gs"
                         }, 
                         {
-                            "source": "#main/select-test-files-4/out_files", 
-                            "id": "#main/align-texts-wf-1/ocr"
+                            "source": "#main/select-test-files-1/out_files", 
+                            "id": "#main/align-texts-wf-3/ocr"
                         }
                     ], 
                     "out": [
-                        "#main/align-texts-wf-1/alignments", 
-                        "#main/align-texts-wf-1/changes", 
-                        "#main/align-texts-wf-1/metadata"
+                        "#main/align-texts-wf-3/alignments", 
+                        "#main/align-texts-wf-3/changes", 
+                        "#main/align-texts-wf-3/metadata"
                     ], 
-                    "id": "#main/align-texts-wf-1"
+                    "id": "#main/align-texts-wf-3"
                 }, 
                 {
                     "run": "#save-files-to-dir.cwl", 
                     "in": [
                         {
                             "source": "#main/align_dir_name", 
-                            "id": "#main/save-files-to-dir-9/dir_name"
+                            "id": "#main/save-files-to-dir-13/dir_name"
                         }, 
                         {
-                            "source": "#main/align-texts-wf-1/alignments", 
-                            "id": "#main/save-files-to-dir-9/in_files"
+                            "source": "#main/align-texts-wf-3/alignments", 
+                            "id": "#main/save-files-to-dir-13/in_files"
                         }
                     ], 
                     "out": [
-                        "#main/save-files-to-dir-9/out"
+                        "#main/save-files-to-dir-13/out"
                     ], 
-                    "id": "#main/save-files-to-dir-9"
+                    "id": "#main/save-files-to-dir-13"
                 }, 
                 {
                     "run": "#select-test-files.cwl", 
                     "in": [
                         {
                             "source": "#main/data_div", 
-                            "id": "#main/select-test-files-3/datadivision"
+                            "id": "#main/select-test-files/datadivision"
                         }, 
                         {
                             "source": "#main/gs_dir", 
-                            "id": "#main/select-test-files-3/in_dir"
+                            "id": "#main/select-test-files/in_dir"
+                        }, 
+                        {
+                            "source": "#main/div_name", 
+                            "id": "#main/select-test-files/name"
                         }
                     ], 
                     "out": [
-                        "#main/select-test-files-3/out_files"
+                        "#main/select-test-files/out_files"
                     ], 
-                    "id": "#main/select-test-files-3"
+                    "id": "#main/select-test-files"
                 }, 
                 {
                     "run": "#select-test-files.cwl", 
                     "in": [
                         {
                             "source": "#main/data_div", 
-                            "id": "#main/select-test-files-4/datadivision"
+                            "id": "#main/select-test-files-1/datadivision"
                         }, 
                         {
                             "source": "#main/ocr_dir", 
-                            "id": "#main/select-test-files-4/in_dir"
+                            "id": "#main/select-test-files-1/in_dir"
+                        }, 
+                        {
+                            "source": "#main/div_name", 
+                            "id": "#main/select-test-files-1/name"
                         }
                     ], 
                     "out": [
-                        "#main/select-test-files-4/out_files"
+                        "#main/select-test-files-1/out_files"
                     ], 
-                    "id": "#main/select-test-files-4"
+                    "id": "#main/select-test-files-1"
                 }
             ], 
             "id": "#main"
