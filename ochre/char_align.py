@@ -30,7 +30,7 @@ def command(ocr_text, gs_text, metadata, out_dir):
 
     out_file = out_file_name(out_dir, md['doc_id'], 'json')
     with codecs.open(out_file, 'wb', encoding='utf-8') as f:
-        json.dump({'ocr': ocr_a, 'gs': gs_a}, f, encoding='utf-8', indent=4)
+        json.dump({'ocr': ocr_a, 'gs': gs_a}, f, encoding='utf-8')
 
 
 if __name__ == '__main__':
