@@ -15,7 +15,6 @@ from nlppln.utils import get_files, create_dirs, out_file_name
 
 def copy_file(fi, name, out_dir, dest):
     fo = out_file_name(os.path.join(out_dir, dest), name)
-    print fo
     create_dirs(fo, is_file=True)
     shutil.copy2(fi, fo)
 
