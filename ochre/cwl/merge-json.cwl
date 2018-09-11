@@ -7,6 +7,10 @@ baseCommand: ["python", "-m", "ochre.merge_json"]
 requirements:
   InitialWorkDirRequirement:
     listing: $(inputs.in_files)
+  EnvVarRequirement:
+    envDef:
+      LC_ALL: C.UTF-8
+      LANG: C.UTF-8
 
 arguments:
   - valueFrom: $(runtime.outdir)
