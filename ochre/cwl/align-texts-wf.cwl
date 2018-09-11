@@ -14,22 +14,22 @@ inputs:
     type: string
 outputs:
   alignments:
+    outputSource: char-align-1/out_file
     type:
-      items: File
       type: array
-    outputSource: char-align/out_file
+      items: File
   metadata:
+    outputSource: merge-json-2/merged
     type: File
-    outputSource: merge-json/merged
   changes:
+    outputSource: merge-json-3/merged
     type: File
-    outputSource: merge-json-1/merged
 steps:
-  align:
+  align-1:
     run: https://raw.githubusercontent.com/nlppln/edlib-align/master/align.cwl
     in:
-      file2: gs
       file1: ocr
+      file2: gs
     out:
     - changes
     - metadata
@@ -37,26 +37,26 @@ steps:
     - file1
     - file2
     scatterMethod: dotproduct
-  merge-json:
+  merge-json-2:
     run: merge-json.cwl
     in:
-      in_files: align/metadata
+      in_files: align-1/metadata
       name: align_m
     out:
     - merged
-  merge-json-1:
+  merge-json-3:
     run: merge-json.cwl
     in:
-      in_files: align/changes
+      in_files: align-1/changes
       name: align_c
     out:
     - merged
-  char-align:
+  char-align-1:
     run: char-align.cwl
     in:
-      ocr_text: ocr
-      metadata: align/metadata
       gs_text: gs
+      metadata: align-1/metadata
+      ocr_text: ocr
     out:
     - out_file
     scatter:
