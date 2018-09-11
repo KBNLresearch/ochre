@@ -115,12 +115,12 @@
             "outputs": [
                 {
                     "type": "File", 
-                    "outputSource": "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract-1/character_data", 
+                    "outputSource": "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract/character_data", 
                     "id": "#ocrevaluation-performance-wf.cwl/character_data"
                 }, 
                 {
                     "type": "File", 
-                    "outputSource": "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract-1/global_data", 
+                    "outputSource": "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract/global_data", 
                     "id": "#ocrevaluation-performance-wf.cwl/global_data"
                 }
             ], 
@@ -130,31 +130,31 @@
                     "in": [
                         {
                             "source": "#ocrevaluation-performance-wf.cwl/gt", 
-                            "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation-1/gt"
+                            "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation/gt"
                         }, 
                         {
                             "source": "#ocrevaluation-performance-wf.cwl/ocr", 
-                            "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation-1/ocr"
+                            "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation/ocr"
                         }
                     ], 
                     "out": [
-                        "#ocrevaluation-performance-wf.cwl/ocrevaluation-1/out_file"
+                        "#ocrevaluation-performance-wf.cwl/ocrevaluation/out_file"
                     ], 
-                    "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation-1"
+                    "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation"
                 }, 
                 {
                     "run": "#ocrevaluation-extract.cwl", 
                     "in": [
                         {
-                            "source": "#ocrevaluation-performance-wf.cwl/ocrevaluation-1/out_file", 
-                            "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract-1/in_file"
+                            "source": "#ocrevaluation-performance-wf.cwl/ocrevaluation/out_file", 
+                            "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract/in_file"
                         }
                     ], 
                     "out": [
-                        "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract-1/character_data", 
-                        "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract-1/global_data"
+                        "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract/character_data", 
+                        "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract/global_data"
                     ], 
-                    "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract-1"
+                    "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract"
                 }
             ], 
             "id": "#ocrevaluation-performance-wf.cwl"
@@ -349,20 +349,36 @@
             "baseCommand": [
                 "java", 
                 "-cp", 
-                "/ocrevalUAtion/target/ocrevaluation.jar", 
-                "eu.digitisation.Main"
+                "/ocrevalUAtion/target/ocrevaluation.jar"
             ], 
             "requirements": [
                 {
                     "class": "DockerRequirement", 
                     "dockerPull": "nlppln/ocrevaluation-docker"
+                }, 
+                {
+                    "class": "InitialWorkDirRequirement", 
+                    "listing": [
+                        {
+                            "entryname": "$(inputs.gt.nameroot)_out.html", 
+                            "entry": "<table border=\"1\">\n<tr>\n<td>CER</td><td>n/a</td>\n</tr>\n<tr>\n<td>WER</td><td>n/a</td>\n</tr>\n<tr>\n<td>WER (order independent)</td><td>n/a</td>\n</tr>\n</table>\n<table border=\"1\">\n</table>\n<table border=\"1\">\n<tr>\n<td>Character</td><td>Hex code</td><td>Total</td><td>Spurious</td><td>Confused</td><td>Lost</td><td>Error rate</td>\n</tr>\n<tr>\n<td>n/a</td><td>n/a</td><td>n/a</td><td>n/a</td><td>n/a</td><td>n/a</td><td>n/a</td>\n</tr>\n</table>\n"
+                        }
+                    ]
                 }
             ], 
             "arguments": [
                 {
                     "prefix": "-o", 
-                    "valueFrom": "$(runtime.outdir)/$(inputs.gt.nameroot)_out.html"
+                    "valueFrom": "$(runtime.outdir)/$(inputs.gt.nameroot)_out.html", 
+                    "position": 4
+                }, 
+                {
+                    "valueFrom": "eu.digitisation.Main", 
+                    "position": 1
                 }
+            ], 
+            "successCodes": [
+                1
             ], 
             "inputs": [
                 {
@@ -371,14 +387,16 @@
                         "string"
                     ], 
                     "inputBinding": {
-                        "prefix": "-e"
+                        "prefix": "-e", 
+                        "position": 5
                     }, 
                     "id": "#ocrevaluation.cwl/encoding"
                 }, 
                 {
                     "type": "File", 
                     "inputBinding": {
-                        "prefix": "-gt"
+                        "prefix": "-gt", 
+                        "position": 2
                     }, 
                     "id": "#ocrevaluation.cwl/gt"
                 }, 
@@ -388,7 +406,8 @@
                         "boolean"
                     ], 
                     "inputBinding": {
-                        "prefix": "-ic"
+                        "prefix": "-ic", 
+                        "position": 6
                     }, 
                     "id": "#ocrevaluation.cwl/ignore_case"
                 }, 
@@ -398,7 +417,8 @@
                         "boolean"
                     ], 
                     "inputBinding": {
-                        "prefix": "-id"
+                        "prefix": "-id", 
+                        "position": 7
                     }, 
                     "id": "#ocrevaluation.cwl/ignore_diacritics"
                 }, 
@@ -408,16 +428,31 @@
                         "boolean"
                     ], 
                     "inputBinding": {
-                        "prefix": "-ip"
+                        "prefix": "-ip", 
+                        "position": 8
                     }, 
                     "id": "#ocrevaluation.cwl/ignore_punctuation"
                 }, 
                 {
                     "type": "File", 
                     "inputBinding": {
-                        "prefix": "-ocr"
+                        "prefix": "-ocr", 
+                        "position": 3
                     }, 
                     "id": "#ocrevaluation.cwl/ocr"
+                }, 
+                {
+                    "type": [
+                        "null", 
+                        "string"
+                    ], 
+                    "default": "5G", 
+                    "inputBinding": {
+                        "prefix": "-Xmx", 
+                        "separate": false, 
+                        "position": 0
+                    }, 
+                    "id": "#ocrevaluation.cwl/xmx"
                 }
             ], 
             "outputs": [

@@ -4,25 +4,27 @@ class: Workflow
 inputs:
   gt: File
   ocr: File
+  xmx: string?
 outputs:
   character_data:
     type: File
-    outputSource: ocrevaluation-extract-1/character_data
+    outputSource: ocrevaluation-extract/character_data
   global_data:
     type: File
-    outputSource: ocrevaluation-extract-1/global_data
+    outputSource: ocrevaluation-extract/global_data
 steps:
-  ocrevaluation-1:
+  ocrevaluation:
     run: https://raw.githubusercontent.com/nlppln/ocrevaluation-docker/master/ocrevaluation.cwl
     in:
       ocr: ocr
       gt: gt
+      xmx: xmx
     out:
     - out_file
-  ocrevaluation-extract-1:
+  ocrevaluation-extract:
     run: ocrevaluation-extract.cwl
     in:
-      in_file: ocrevaluation-1/out_file
+      in_file: ocrevaluation/out_file
     out:
     - character_data
     - global_data
