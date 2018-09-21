@@ -34,10 +34,10 @@ def ocrevaluation_extract(in_file, out_dir):
 
     with codecs.open(tmpfile, encoding='utf-8') as f:
         soup = BeautifulSoup(f.read(), 'lxml')
+    os.remove(tmpfile)
 
     tables = soup.find_all('table')
     assert len(tables) == 2
-    os.remove(tmpfile)
 
     doc = remove_ext(in_file.name)
 
