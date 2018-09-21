@@ -22,7 +22,7 @@ def clin2018st_extract_text(json_file, out_dir):
         span = w['span']
         # TODO: fix 'after'
         if 'after' in w.keys():
-            print 'Found "after" in {}.'.format(os.path.basename(json_file.name))
+            print('Found "after" in {}.'.format(os.path.basename(json_file.name)))
         for i, w_id in enumerate(span):
             corrections[w_id] = {}
             if i == 0:

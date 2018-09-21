@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import unicodedata
+import six
 
 import warnings
 
@@ -164,11 +165,11 @@ def accent_error(row, gs_name='gs', ocr_name='ocr', empty_word='@@@'):
     gs = row[gs_name]
     ocr = row[ocr_name]
 
-    no_accents = u''.join((c for c in unicodedata.normalize('NFD', unicode(gs)) if unicodedata.category(c) != 'Mn'))
+    no_accents = u''.join((c for c in unicodedata.normalize('NFD', six.text_type(gs)) if unicodedata.category(c) != 'Mn'))
     if no_accents == ocr:
         return True
 
-    no_accents = u''.join((c for c in unicodedata.normalize('NFD', unicode(ocr)) if unicodedata.category(c) != 'Mn'))
+    no_accents = u''.join((c for c in unicodedata.normalize('NFD', six.text_type(ocr)) if unicodedata.category(c) != 'Mn'))
     if no_accents == gs:
         return True
     return False

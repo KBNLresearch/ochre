@@ -2,6 +2,12 @@
 cwlVersion: v1.0
 class: CommandLineTool
 
+requirements:
+  EnvVarRequirement:
+    envDef:
+      LC_ALL: C.UTF-8
+      LANG: C.UTF-8
+
 baseCommand: ["python", "-m", "ochre.kb_tss_concat_files"]
 
 requirements:

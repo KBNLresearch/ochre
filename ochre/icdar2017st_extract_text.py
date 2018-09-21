@@ -32,13 +32,13 @@ def command(in_file, out_dir):
 
     # Write texts
     out_file = out_file_name(os.path.join(out_dir, 'ocr'), os.path.basename(in_file.name))
-    print out_file
+    print(out_file)
     create_dirs(out_file)
     with codecs.open(out_file, 'wb', encoding='utf-8') as f:
         f.write(u''.join(ocr))
 
     out_file = out_file_name(os.path.join(out_dir, 'gs'), os.path.basename(in_file.name))
-    print out_file
+    print(out_file)
     create_dirs(out_file)
     with codecs.open(out_file, 'wb', encoding='utf-8') as f:
         f.write(u''.join(gs))
