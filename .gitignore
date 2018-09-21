@@ -1,11 +1,6 @@
 *.pyc
 *.egg-info
 
-# data
-*.txt
-*.out
-*.csv
-
 !requirements.txt
 
 bower_components
