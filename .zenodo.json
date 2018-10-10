@@ -1,0 +1,19 @@
+{
+    "creators": [
+        {
+            "name": "van der Zwaan, Janneke",
+            "orcid": "0000-0002-8329-7000"
+        }
+    ],
+    "description": "Ochre contains ready-to-use data processing workflows based on CWL (http://www.commonwl.org/). The software also allows you to create your own (OCR post-correction related) workflows. Examples using Jupyter Notebooks are available. Please note that Ochre is still a work in progress.",
+    "keywords": [
+        "optical character recognition",
+        "OCR",
+        "OCR post-correction",
+        "character-based language models"
+    ],
+    "license": {
+        "id": "Apache-2.0"
+    },
+    "title": "Ochre"
+}
