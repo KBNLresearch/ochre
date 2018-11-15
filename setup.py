@@ -61,7 +61,14 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['nlppln>=0.3.2', 'six']
+    install_requires=[
+        'nlppln>=0.3.2',
+        'six',
+        'glob2',
+        'yaml',
+        'edlib',
+        'sh',
+    ]
 
     #scripts=['recipy-cmd']
 )
