@@ -73,10 +73,20 @@ Corresponding files in these directories should have the same name (or at least 
     └── 3.json
 ```
 
-To create data in these formats, CWL workflows are available:
-* VU DNC corpus: `vudnc-preprocess.cwl` (can be run as stand-alone; associated notebook [vudnc-preprocess-workflow.ipynb](https://github.com/KBNLresearch/ochre/blob/master/notebooks/vudnc-preprocess-workflow.ipynb))
+To create data in these formats, CWL workflows are available.
+First run a preprocess workflow to create the `gs` and `ocr` directories containing the expected files.
+Next run an align workflow to create the `align` directory.
+
+* VU DNC corpus: `vudnc-preprocess-pack.cwl` (can be run as stand-alone; associated notebook [vudnc-preprocess-workflow.ipynb](https://github.com/KBNLresearch/ochre/blob/master/notebooks/vudnc-preprocess-workflow.ipynb))
 * ICDAR 2017 shared task on OCR post correction: `icdar2017st-extract-data-all.cwl` (cannot be run as stand-alone;
   regenerate with notebook [ICDAR2017_shared_task_workflows.ipynb](https://github.com/KBNLresearch/ochre/blob/master/notebooks/ICDAR2017_shared_task_workflows.ipynb))
+
+To create the alignments, run one of:
+
+* `align-dir-pack.cwl` to align all files in the `gs` and `ocr` directories
+* `align-test-files-pack.cwl` to align the test files in a data division
+
+These workflows can be run as stand-alone; associated notebook [align-workflow.ipynb](notebooks/align-workflow.ipynb).
 
 ## Training networks for OCR post-correction
 
@@ -207,3 +217,19 @@ Jupyter notebook
 
 * Visualization of probabilities for each character (do the ocr mistakes have lower
   probability?) (probability=color)
+
+## License
+
+Copyright (c) 2017-2018, Koninklijke Bibliotheek, Netherlands eScience Center
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.

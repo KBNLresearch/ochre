@@ -1,16 +1,22 @@
-*.pyc
+*.py[cod]
 *.egg-info
+*.eggs
+.ipynb_checkpoints
 
-# data
-*.txt
-*.out
-*.csv
-
-!requirements.txt
-
-bower_components
-node_modules
 build
 dist
-*.ipynb_checkpoints
 .cache
+__pycache__
+
+htmlcov
+.coverage
+coverage.xml
+.pytest_cache
+
+docs/_build
+docs/apidocs
+
+# ide
+.idea
+.eclipse
+.vscode

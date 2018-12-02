@@ -1,8 +1,6 @@
-#!/usr/bin/env cwlrunner
+#!/usr/bin/env cwl-runner
 cwlVersion: v1.0
 class: CommandLineTool
-
-baseCommand: ["python", "-m", "ochre.remove_empty_files"]
 
 requirements:
   EnvVarRequirement:
@@ -10,20 +8,24 @@ requirements:
       LC_ALL: C.UTF-8
       LANG: C.UTF-8
 
+baseCommand: ["python", "-m", "ochre.match_ocr_and_gs"]
+
 inputs:
   ocr_dir:
     type: Directory
     inputBinding:
-      position: 2
+     position: 0
   gs_dir:
     type: Directory
     inputBinding:
       position: 1
 
-stdout: cwl.output.json
-
 outputs:
   ocr:
-    type: File[]
+    type: Directory
+    outputBinding:
+      glob: $(runtime.outdir)/ocr
   gs:
-    type: File[]
+    type: Directory
+    outputBinding:
+      glob: "gs"

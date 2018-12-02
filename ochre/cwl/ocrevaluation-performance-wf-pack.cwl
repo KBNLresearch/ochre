@@ -9,6 +9,21 @@
                 "nlppln.commands.ls"
             ], 
             "doc": "List files in a directory.\n\nThis command can be used to convert a ``Directory`` into a list of files. This list can be filtered on file name by specifying ``--endswith``.\n", 
+            "requirements": [
+                {
+                    "envDef": [
+                        {
+                            "envValue": "C.UTF-8", 
+                            "envName": "LANG"
+                        }, 
+                        {
+                            "envValue": "C.UTF-8", 
+                            "envName": "LC_ALL"
+                        }
+                    ], 
+                    "class": "EnvVarRequirement"
+                }
+            ], 
             "inputs": [
                 {
                     "type": [
@@ -58,6 +73,19 @@
                 "nlppln.commands.merge_csv"
             ], 
             "requirements": [
+                {
+                    "envDef": [
+                        {
+                            "envValue": "C.UTF-8", 
+                            "envName": "LANG"
+                        }, 
+                        {
+                            "envValue": "C.UTF-8", 
+                            "envName": "LC_ALL"
+                        }
+                    ], 
+                    "class": "EnvVarRequirement"
+                }, 
                 {
                     "listing": "$(inputs.in_files)", 
                     "class": "InitialWorkDirRequirement"
@@ -138,7 +166,80 @@
         }, 
         {
             "class": "Workflow", 
+            "inputs": [
+                {
+                    "type": "File", 
+                    "id": "#ocrevaluation-performance-wf.cwl/gt"
+                }, 
+                {
+                    "type": "File", 
+                    "id": "#ocrevaluation-performance-wf.cwl/ocr"
+                }, 
+                {
+                    "type": [
+                        "null", 
+                        "string"
+                    ], 
+                    "id": "#ocrevaluation-performance-wf.cwl/xmx"
+                }
+            ], 
+            "outputs": [
+                {
+                    "type": "File", 
+                    "outputSource": "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract/character_data", 
+                    "id": "#ocrevaluation-performance-wf.cwl/character_data"
+                }, 
+                {
+                    "type": "File", 
+                    "outputSource": "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract/global_data", 
+                    "id": "#ocrevaluation-performance-wf.cwl/global_data"
+                }
+            ], 
+            "steps": [
+                {
+                    "run": "#ocrevaluation.cwl", 
+                    "in": [
+                        {
+                            "source": "#ocrevaluation-performance-wf.cwl/gt", 
+                            "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation/gt"
+                        }, 
+                        {
+                            "source": "#ocrevaluation-performance-wf.cwl/ocr", 
+                            "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation/ocr"
+                        }, 
+                        {
+                            "source": "#ocrevaluation-performance-wf.cwl/xmx", 
+                            "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation/xmx"
+                        }
+                    ], 
+                    "out": [
+                        "#ocrevaluation-performance-wf.cwl/ocrevaluation/out_file"
+                    ], 
+                    "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation"
+                }, 
+                {
+                    "run": "#ocrevaluation-extract.cwl", 
+                    "in": [
+                        {
+                            "source": "#ocrevaluation-performance-wf.cwl/ocrevaluation/out_file", 
+                            "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract/in_file"
+                        }
+                    ], 
+                    "out": [
+                        "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract/character_data", 
+                        "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract/global_data"
+                    ], 
+                    "id": "#ocrevaluation-performance-wf.cwl/ocrevaluation-extract"
+                }
+            ], 
+            "id": "#ocrevaluation-performance-wf.cwl"
+        }, 
+        {
+            "class": "Workflow", 
             "requirements": [
+                {
+                    "class": "SubworkflowFeatureRequirement"
+                }, 
                 {
                     "class": "ScatterFeatureRequirement"
                 }
@@ -159,12 +260,19 @@
                         "string"
                     ], 
                     "id": "#main/out_name"
+                }, 
+                {
+                    "type": [
+                        "null", 
+                        "string"
+                    ], 
+                    "id": "#main/xmx"
                 }
             ], 
             "outputs": [
                 {
                     "type": "File", 
-                    "outputSource": "#main/merge-csv-1/merged", 
+                    "outputSource": "#main/merge-csv/merged", 
                     "id": "#main/performance"
                 }
             ], 
@@ -174,83 +282,66 @@
                     "in": [
                         {
                             "source": "#main/ocr", 
-                            "id": "#main/ls-6/in_dir"
+                            "id": "#main/ls/in_dir"
                         }
                     ], 
                     "out": [
-                        "#main/ls-6/out_files"
+                        "#main/ls/out_files"
                     ], 
-                    "id": "#main/ls-6"
+                    "id": "#main/ls"
                 }, 
                 {
                     "run": "#ls.cwl", 
                     "in": [
                         {
                             "source": "#main/gt", 
-                            "id": "#main/ls-7/in_dir"
+                            "id": "#main/ls-1/in_dir"
                         }
                     ], 
                     "out": [
-                        "#main/ls-7/out_files"
+                        "#main/ls-1/out_files"
                     ], 
-                    "id": "#main/ls-7"
+                    "id": "#main/ls-1"
                 }, 
                 {
                     "run": "#merge-csv.cwl", 
                     "in": [
                         {
-                            "source": "#main/ocrevaluation-extract-1/global_data", 
-                            "id": "#main/merge-csv-1/in_files"
+                            "source": "#main/ocrevaluation-performance-wf/global_data", 
+                            "id": "#main/merge-csv/in_files"
                         }, 
                         {
                             "source": "#main/out_name", 
-                            "id": "#main/merge-csv-1/name"
+                            "id": "#main/merge-csv/name"
                         }
                     ], 
                     "out": [
-                        "#main/merge-csv-1/merged"
+                        "#main/merge-csv/merged"
                     ], 
-                    "id": "#main/merge-csv-1"
+                    "id": "#main/merge-csv"
                 }, 
                 {
-                    "run": "#ocrevaluation.cwl", 
+                    "run": "#ocrevaluation-performance-wf.cwl", 
                     "in": [
                         {
-                            "source": "#main/ls-7/out_files", 
-                            "id": "#main/ocrevaluation-1/gt"
+                            "source": "#main/ls-1/out_files", 
+                            "id": "#main/ocrevaluation-performance-wf/gt"
                         }, 
                         {
-                            "source": "#main/ls-6/out_files", 
-                            "id": "#main/ocrevaluation-1/ocr"
+                            "source": "#main/ls/out_files", 
+                            "id": "#main/ocrevaluation-performance-wf/ocr"
                         }
                     ], 
                     "out": [
-                        "#main/ocrevaluation-1/out_file"
+                        "#main/ocrevaluation-performance-wf/character_data", 
+                        "#main/ocrevaluation-performance-wf/global_data"
                     ], 
                     "scatter": [
-                        "#main/ocrevaluation-1/gt", 
-                        "#main/ocrevaluation-1/ocr"
+                        "#main/ocrevaluation-performance-wf/gt", 
+                        "#main/ocrevaluation-performance-wf/ocr"
                     ], 
                     "scatterMethod": "dotproduct", 
-                    "id": "#main/ocrevaluation-1"
-                }, 
-                {
-                    "run": "#ocrevaluation-extract.cwl", 
-                    "in": [
-                        {
-                            "source": "#main/ocrevaluation-1/out_file", 
-                            "id": "#main/ocrevaluation-extract-1/in_file"
-                        }
-                    ], 
-                    "out": [
-                        "#main/ocrevaluation-extract-1/character_data", 
-                        "#main/ocrevaluation-extract-1/global_data"
-                    ], 
-                    "scatter": [
-                        "#main/ocrevaluation-extract-1/in_file"
-                    ], 
-                    "scatterMethod": "dotproduct", 
-                    "id": "#main/ocrevaluation-extract-1"
+                    "id": "#main/ocrevaluation-performance-wf"
                 }
             ], 
             "id": "#main"
@@ -260,20 +351,36 @@
             "baseCommand": [
                 "java", 
                 "-cp", 
-                "/ocrevalUAtion/target/ocrevaluation.jar", 
-                "eu.digitisation.Main"
+                "/ocrevalUAtion/target/ocrevaluation.jar"
             ], 
             "requirements": [
                 {
                     "class": "DockerRequirement", 
                     "dockerPull": "nlppln/ocrevaluation-docker"
+                }, 
+                {
+                    "class": "InitialWorkDirRequirement", 
+                    "listing": [
+                        {
+                            "entryname": "$(inputs.gt.nameroot)_out.html", 
+                            "entry": "<table border=\"1\">\n<tr>\n<td>CER</td><td>n/a</td>\n</tr>\n<tr>\n<td>WER</td><td>n/a</td>\n</tr>\n<tr>\n<td>WER (order independent)</td><td>n/a</td>\n</tr>\n</table>\n<table border=\"1\">\n</table>\n<table border=\"1\">\n<tr>\n<td>Character</td><td>Hex code</td><td>Total</td><td>Spurious</td><td>Confused</td><td>Lost</td><td>Error rate</td>\n</tr>\n<tr>\n<td>n/a</td><td>n/a</td><td>n/a</td><td>n/a</td><td>n/a</td><td>n/a</td><td>n/a</td>\n</tr>\n</table>\n"
+                        }
+                    ]
                 }
             ], 
             "arguments": [
                 {
                     "prefix": "-o", 
-                    "valueFrom": "$(runtime.outdir)/$(inputs.gt.nameroot)_out.html"
+                    "valueFrom": "$(runtime.outdir)/$(inputs.gt.nameroot)_out.html", 
+                    "position": 4
+                }, 
+                {
+                    "valueFrom": "eu.digitisation.Main", 
+                    "position": 1
                 }
+            ], 
+            "successCodes": [
+                1
             ], 
             "inputs": [
                 {
@@ -282,14 +389,16 @@
                         "string"
                     ], 
                     "inputBinding": {
-                        "prefix": "-e"
+                        "prefix": "-e", 
+                        "position": 5
                     }, 
                     "id": "#ocrevaluation.cwl/encoding"
                 }, 
                 {
                     "type": "File", 
                     "inputBinding": {
-                        "prefix": "-gt"
+                        "prefix": "-gt", 
+                        "position": 2
                     }, 
                     "id": "#ocrevaluation.cwl/gt"
                 }, 
@@ -299,7 +408,8 @@
                         "boolean"
                     ], 
                     "inputBinding": {
-                        "prefix": "-ic"
+                        "prefix": "-ic", 
+                        "position": 6
                     }, 
                     "id": "#ocrevaluation.cwl/ignore_case"
                 }, 
@@ -309,7 +419,8 @@
                         "boolean"
                     ], 
                     "inputBinding": {
-                        "prefix": "-id"
+                        "prefix": "-id", 
+                        "position": 7
                     }, 
                     "id": "#ocrevaluation.cwl/ignore_diacritics"
                 }, 
@@ -319,16 +430,31 @@
                         "boolean"
                     ], 
                     "inputBinding": {
-                        "prefix": "-ip"
+                        "prefix": "-ip", 
+                        "position": 8
                     }, 
                     "id": "#ocrevaluation.cwl/ignore_punctuation"
                 }, 
                 {
                     "type": "File", 
                     "inputBinding": {
-                        "prefix": "-ocr"
+                        "prefix": "-ocr", 
+                        "position": 3
                     }, 
                     "id": "#ocrevaluation.cwl/ocr"
+                }, 
+                {
+                    "type": [
+                        "null", 
+                        "string"
+                    ], 
+                    "default": "5G", 
+                    "inputBinding": {
+                        "prefix": "-Xmx", 
+                        "separate": false, 
+                        "position": 0
+                    }, 
+                    "id": "#ocrevaluation.cwl/xmx"
                 }
             ], 
             "outputs": [

@@ -12,7 +12,7 @@ charset = utf-8
 
 # Matches multiple files with brace expansion notation
 # Set default charset
-[*.{js,py,java,r,R,html}]
+[*.{js,py,java,r,R,html,cwl}]
 indent_style = space
 
 # 4 space indentation

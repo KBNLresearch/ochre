@@ -1,56 +1,30 @@
 #!/usr/bin/env cwl-runner
 cwlVersion: v1.0
 class: Workflow
-requirements:
-- class: ScatterFeatureRequirement
 inputs:
-  gt: Directory
-  ocr: Directory
-  out_name:
-    default: performance.csv
-    type: string?
+  gt: File
+  ocr: File
+  xmx: string?
 outputs:
-  performance:
+  character_data:
     type: File
-    outputSource: merge-csv-1/merged
+    outputSource: ocrevaluation-extract/character_data
+  global_data:
+    type: File
+    outputSource: ocrevaluation-extract/global_data
 steps:
-  ls-6:
-    run: ls.cwl
-    in:
-      in_dir: ocr
-    out:
-    - out_files
-  ls-7:
-    run: ls.cwl
-    in:
-      in_dir: gt
-    out:
-    - out_files
-  ocrevaluation-1:
+  ocrevaluation:
     run: https://raw.githubusercontent.com/nlppln/ocrevaluation-docker/master/ocrevaluation.cwl
     in:
-      ocr: ls-6/out_files
-      gt: ls-7/out_files
+      ocr: ocr
+      gt: gt
+      xmx: xmx
     out:
     - out_file
-    scatter:
-    - gt
-    - ocr
-    scatterMethod: dotproduct
-  ocrevaluation-extract-1:
+  ocrevaluation-extract:
     run: ocrevaluation-extract.cwl
     in:
-      in_file: ocrevaluation-1/out_file
+      in_file: ocrevaluation/out_file
     out:
     - character_data
     - global_data
-    scatter:
-    - in_file
-    scatterMethod: dotproduct
-  merge-csv-1:
-    run: merge-csv.cwl
-    in:
-      in_files: ocrevaluation-extract-1/global_data
-      name: out_name
-    out:
-    - merged
