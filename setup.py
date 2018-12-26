@@ -65,7 +65,7 @@ setup(
         'nlppln>=0.3.2',
         'six',
         'glob2',
-        'yaml',
+        'ruamel.yaml',
         'edlib',
         'sh',
     ]
