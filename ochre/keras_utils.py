@@ -50,7 +50,7 @@ def initialize_model_bidirectional(n, dropout, seq_length, chars, output_size,
     return model
 
 
-def initialize_model_seq2seq(n, dropout, seq_length, predict_chars,
+def initialize_model_seq2seq(n, dropout, seq_length,
                              output_size, layers, char_embedding_size=0,
                              loss='categorical_crossentropy', optimizer='adam',
                              metrics=['accuracy']):
@@ -63,7 +63,7 @@ def initialize_model_seq2seq(n, dropout, seq_length, predict_chars,
     else:
         model.add(LSTM(n, input_shape=(seq_length, output_size)))
     # For the decoder's input, we repeat the encoded input for each time step
-    model.add(RepeatVector(seq_length+predict_chars))
+    model.add(RepeatVector(seq_length))
     # The decoder RNN could be multiple layers stacked or a single layer
     for _ in range(layers-1):
         model.add(LSTM(n, return_sequences=True))
