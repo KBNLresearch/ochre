@@ -1,8 +1,9 @@
 from keras.callbacks import ModelCheckpoint
 
-from ochre.utils import initialize_model, initialize_model_bidirectional, \
-                           initialize_model_seq2seq, load_weights, \
-                           create_training_data, read_texts, get_char_to_int
+from ochre.utils import create_training_data, read_texts, \
+    get_char_to_int
+from ochre.keras_utils import initialize_model, load_weights, \
+    initialize_model_bidirectional, initialize_model_seq2seq
 
 import click
 import os
