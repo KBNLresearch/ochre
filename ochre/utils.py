@@ -237,13 +237,15 @@ def save_charset(weights_dir, chars, lowercase):
         f.write(u''.join(chars))
 
 
-def get_chars(raw_val, raw_test, raw_train, lowercase, padding_char=u'\n'):
+def get_chars(raw_val, raw_test, raw_train, lowercase, padding_char=u'\n',
+              oov_char='@'):
     raw_text = ''.join([raw_val, raw_test, raw_train])
     if lowercase:
         raw_text = raw_text.lower()
 
     chars = sorted(list(set(raw_text)))
     chars.append(padding_char)
+    chars.append(oov_char)
     char_to_int = get_char_to_int(chars)
 
     return chars, len(chars), char_to_int
