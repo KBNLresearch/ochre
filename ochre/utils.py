@@ -305,3 +305,10 @@ def get_files(in_dir, div, name):
             files_out.append(fi)
     files_out.sort()
     return files_out
+
+
+def get_sequences(gs, ocr, length):
+    gs_ngrams = zip(*[gs[i:] for i in range(length)])
+    ocr_ngrams = zip(*[ocr[i:] for i in range(length)])
+
+    return [''.join(n) for n in gs_ngrams], [''.join(n) for n in ocr_ngrams]
