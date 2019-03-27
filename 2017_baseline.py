@@ -9,7 +9,7 @@ from keras.layers import RepeatVector
 from keras.layers import Embedding
 from keras.callbacks import ModelCheckpoint
 
-from ochre.datagen import DataGenerator
+from datagen import DataGenerator
 
 
 # load the data
