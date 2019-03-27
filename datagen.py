@@ -80,3 +80,8 @@ class DataGenerator(keras.utils.Sequence):
             except IndexError:
                 res[i] = self.char_to_int[self.padding_char]
         return res
+
+    def __iter__(self):
+        n = len(self)
+        for i in range(n):
+            yield self[i]
