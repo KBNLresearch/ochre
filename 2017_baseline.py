@@ -13,7 +13,7 @@ from datagen import DataGenerator
 
 
 # load the data
-data_dir = '' # FIXME
+data_dir = 'in' # FIXME
 weights_dir = 'weights'
 
 seq_length = 53
@@ -74,8 +74,6 @@ checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1,
 callbacks_list = [checkpoint]
 
 # do training (and save weights)
-model.fit_generator(dg_train, steps_per_epoch=len(dg_train), epochs=epochs,
-                    validation_data=dg_val,
-                    validation_steps=len(dg_val), callbacks=callbacks_list,
-                    use_multiprocessing=True,
-                    workers=3)
+model.fit_generator(iter(dg_train), steps_per_epoch=len(dg_train), epochs=epochs,
+                    validation_data=(s for s in dg_val),
+                    validation_steps=len(dg_val), callbacks=callbacks_list)

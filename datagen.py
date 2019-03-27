@@ -4,11 +4,12 @@ Source:
 https://stanford.edu/~shervine/blog/keras-how-to-generate-data-on-the-fly
 """
 import keras
+import tensorflow
 
 import numpy as np
 
 
-class DataGenerator(keras.utils.Sequence):
+class DataGenerator(tensorflow.keras.utils.Sequence):
     'Generates data for Keras'
     def __init__(self, xData, yData, char_to_int, seq_length,
                  padding_char='\n', oov_char='@', batch_size=32, shuffle=True):
