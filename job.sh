@@ -5,7 +5,6 @@
 #
 #SBATCH --ntasks=1
 #SBATCH -C TitanX
-#SBATCH --begin=20:00:00
 #SBATCH --time=15:00:00
 #SBATCH --gres=gpu:1
 
