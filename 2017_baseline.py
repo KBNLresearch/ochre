@@ -13,8 +13,8 @@ from datagen import DataGenerator
 
 
 # load the data
-data_dir = 'in' # FIXME
-weights_dir = 'weights'
+data_dir = '/home/jvdzwaan/data/sprint-icdar/in' # FIXME
+weights_dir = '/home/jvdzwaan/data/sprint-icdar/weights'
 
 seq_length = 53
 batch_size = 100
