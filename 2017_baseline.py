@@ -26,7 +26,7 @@ n_nodes = 1000
 dropout = 0.2
 n_embed = 256
 
-epochs = 10
+epochs = 30
 loss = 'categorical_crossentropy'
 optimizer = 'adam'
 metrics = ['accuracy']
