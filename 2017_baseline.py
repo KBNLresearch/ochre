@@ -16,6 +16,9 @@ from datagen import DataGenerator
 data_dir = '/home/jvdzwaan/data/sprint-icdar/in' # FIXME
 weights_dir = '/home/jvdzwaan/data/sprint-icdar/weights'
 
+if not os.path.exists(weights_dir):
+    os.makedirs(weights_dir)
+
 seq_length = 53
 batch_size = 100
 shuffle = True
