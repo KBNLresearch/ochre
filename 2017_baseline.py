@@ -12,6 +12,13 @@ from keras.callbacks import ModelCheckpoint
 from datagen import DataGenerator
 
 
+def infinite_loop(generator):
+    while True:
+        for i in range(len(generator)):
+            yield(generator[i])
+        generator.on_epoch_end()
+
+
 # load the data
 data_dir = '/home/jvdzwaan/data/sprint-icdar/in' # FIXME
 weights_dir = '/home/jvdzwaan/data/sprint-icdar/weights'
@@ -77,6 +84,6 @@ checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1,
 callbacks_list = [checkpoint]
 
 # do training (and save weights)
-model.fit_generator(iter(dg_train), steps_per_epoch=len(dg_train), epochs=epochs,
-                    validation_data=(s for s in dg_val),
+model.fit_generator(infinite_loop(dg_train), steps_per_epoch=len(dg_train), epochs=epochs,
+                    validation_data=infinite_loop(dg_val),
                     validation_steps=len(dg_val), callbacks=callbacks_list)
