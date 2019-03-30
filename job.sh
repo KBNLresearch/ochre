@@ -5,7 +5,7 @@
 #
 #SBATCH --ntasks=1
 #SBATCH -C TitanX
-#SBATCH --time=:01:00
+#SBATCH --time=15:00:00
 #SBATCH --gres=gpu:1
 
 module load python/3.5.2
