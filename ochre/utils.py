@@ -6,6 +6,7 @@ import glob2
 import json
 import re
 import edlib
+import tempfile
 import pandas as pd
 
 
@@ -312,3 +313,15 @@ def get_sequences(gs, ocr, length):
     ocr_ngrams = zip(*[ocr[i:] for i in range(length)])
 
     return [''.join(n) for n in gs_ngrams], [''.join(n) for n in ocr_ngrams]
+
+
+def get_temp_file():
+    """Create a temporary file and return the path.
+
+    Returns:
+        Path to the temporary file.
+    """
+    (fd, fname) = tempfile.mkstemp()
+    os.close(fd)
+
+    return fname
