@@ -7,5 +7,12 @@
 #SBATCH -C TitanX
 #SBATCH --gres=gpu:1
 
-srun mkdir -p /var/scratch/jvdzwaan/nematus/
-srun python ~/code/nematus/nematus/translate.py -m /var/scratch/jvdzwaan/nematus/model/model-120000 -i /home/jvdzwaan/data/nematus/test-eng_mon-context.ocr -o /var/scratch/jvdzwaan/nematus/test-eng_mon-context.pred
+inputdir = /var/scratch/jvdzwaan/kb-ocr/sample-nematus-text_aligned_blocks-match_gs/sample-test/
+modelfile = /var/scratch/jvdzwaan/kb-ocr/sample-nematus-text_aligned_blocks-match_gs/model/model-110000
+outputdir = /var/scratch/jvdzwaan/kb-ocr/sample-nematus-text_aligned_blocks-match_gs/pred
+
+srun mkdir -p $outputdir
+
+for filename in "$inputdir"/*.ocr; do
+  echo	srun python ~/code/nematus/nematus/translate.py -m "$modelfile" -i "$filename" -o "$outputdir/$(basename "$filename" .ocr).pred"
+done
