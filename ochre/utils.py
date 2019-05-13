@@ -332,3 +332,13 @@ def get_temp_file():
     os.close(fd)
 
     return fname
+
+
+def to_space_tokenized(string):
+    result = []
+    for c in string:
+        if c != ' ':
+            result.append(c)
+        else:
+            result.append('<SPACE>')
+    return ' '.join(result)
