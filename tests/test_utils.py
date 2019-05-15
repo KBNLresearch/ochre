@@ -1,4 +1,5 @@
-from ochre.utils import read_text_to_predict, get_char_to_int
+from ochre.utils import read_text_to_predict, get_char_to_int, \
+    to_space_tokenized
 
 
 def test_read_text_to_predict_no_embedding():
@@ -41,3 +42,8 @@ def test_read_text_to_predict_embedding():
     # The result contains lists of ints
     assert result.dtype == int
     assert result.shape == (4, seq_length)
+
+
+def test_to_space_tokenized():
+    result = to_space_tokenized('Dit is een test.')
+    assert 'D i t <SPACE> i s <SPACE> e e n <SPACE> t e s t .' == result
