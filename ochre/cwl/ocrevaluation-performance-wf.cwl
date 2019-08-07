@@ -7,17 +7,17 @@ inputs:
   xmx: string?
 outputs:
   character_data:
-    type: File
     outputSource: ocrevaluation-extract/character_data
-  global_data:
     type: File
+  global_data:
     outputSource: ocrevaluation-extract/global_data
+    type: File
 steps:
   ocrevaluation:
     run: https://raw.githubusercontent.com/nlppln/ocrevaluation-docker/master/ocrevaluation.cwl
     in:
-      ocr: ocr
       gt: gt
+      ocr: ocr
       xmx: xmx
     out:
     - out_file

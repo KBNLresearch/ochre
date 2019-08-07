@@ -6,6 +6,7 @@ import glob2
 import json
 import re
 import edlib
+import tempfile
 import pandas as pd
 
 
@@ -163,65 +164,72 @@ def get_int_to_char(chars):
     return dict((i, c) for i, c in enumerate(chars))
 
 
-def align_characters(ocr, gs, cigar, empty_char='', sanity_check=True):
-    matches = re.findall(r'(\d+)(.)', cigar)
-    offset1 = 0
-    offset2 = 0
+def align_characters(query, ref, empty_char=''):
+    a = edlib.align(query, ref, task="path")
+    ref_pos = a["locations"][0][0]
+    query_pos = 0
+    ref_aln = []
+    match_aln = ""
+    query_aln = []
 
-    gs_a = []
-    ocr_a = []
+    for step, code in re.findall(r"(\d+)(\D)", a["cigar"]):
+        step = int(step)
+        if code == "=":
+            for c in ref[ref_pos : ref_pos + step]:
+                ref_aln.append(c)
+            #ref_aln += ref[ref_pos : ref_pos + step]
+            ref_pos += step
+            for c in query[query_pos : query_pos + step]:
+                query_aln.append(c)
+            #query_aln += query[query_pos : query_pos + step]
+            query_pos += step
+            match_aln += "|" * step
+        elif code == "X":
+            for c in ref[ref_pos : ref_pos + step]:
+                ref_aln.append(c)
+            #ref_aln += ref[ref_pos : ref_pos + step]
+            ref_pos += step
+            for c in query[query_pos : query_pos + step]:
+                query_aln.append(c)
+            #query_aln += query[query_pos : query_pos + step]
+            query_pos += step
+            match_aln += "." * step
+        elif code == "D":
+            for c in ref[ref_pos : ref_pos + step]:
+                ref_aln.append(c)
+            #ref_aln += ref[ref_pos : ref_pos + step]
+            ref_pos += step
+            #query_aln += " " * step
+            query_pos += 0
+            for i in range(step):
+                query_aln.append('')
+            match_aln += " " * step
+        elif code == "I":
+            for i in range(step):
+                ref_aln.append('')
+            #ref_aln += " " * step
+            ref_pos += 0
+            for c in query[query_pos : query_pos + step]:
+                query_aln.append(c)
+            #query_aln += query[query_pos : query_pos + step]
+            query_pos += step
+            match_aln += " " * step
+        else:
+            pass
 
-    for m in matches:
-        n = int(m[0])
-        typ = m[1]
-
-        if typ == '=':
-            # sanity check - strings should be equal
-            if sanity_check:
-                assert(ocr[offset1:offset1+n] == gs[offset2:offset2+n])
-
-            for c in ocr[offset1:offset1+n]:
-                ocr_a.append(c)
-            for c in gs[offset2:offset2+n]:
-                gs_a.append(c)
-
-            offset1 += n
-            offset2 += n
-        elif typ == 'D':  # Inserted
-            for _ in range(n):
-                ocr_a.append(empty_char)
-            for c in gs[offset2:offset2+n]:
-                gs_a.append(c)
-
-            offset2 += n
-        elif typ == 'X':
-            for c in ocr[offset1:offset1+n]:
-                ocr_a.append(c)
-            for c in gs[offset2:offset2+n]:
-                gs_a.append(c)
-
-            offset1 += n
-            offset2 += n
-        elif typ == 'I':  # Deleted
-            for c in ocr[offset1:offset1+n]:
-                ocr_a.append(c)
-            for _ in range(n):
-                gs_a.append(empty_char)
-
-            offset1 += n
-    return ocr_a, gs_a
+    return ref_aln, query_aln, match_aln
 
 
 def align_output_to_input(input_str, output_str, empty_char=u'@'):
     t_output_str = output_str.encode('ASCII', 'replace')
     t_input_str = input_str.encode('ASCII', 'replace')
-    try:
-        r = edlib.align(t_input_str, t_output_str, task='path')
-    except:
-        print(input_str)
-        print(output_str)
-    r1, r2 = align_characters(input_str, output_str, r.get('cigar'),
-                              empty_char=empty_char, sanity_check=False)
+    #try:
+    #    r = edlib.align(t_input_str, t_output_str, task='path')
+    #except:
+    #    print(input_str)
+    #    print(output_str)
+    r1, r2 = align_characters(input_str, output_str,
+                              empty_char=empty_char)
     while len(r2) < len(input_str):
         r2.append(empty_char)
     return u''.join(r2)
@@ -237,13 +245,15 @@ def save_charset(weights_dir, chars, lowercase):
         f.write(u''.join(chars))
 
 
-def get_chars(raw_val, raw_test, raw_train, lowercase, padding_char=u'\n'):
+def get_chars(raw_val, raw_test, raw_train, lowercase, padding_char=u'\n',
+              oov_char='@'):
     raw_text = ''.join([raw_val, raw_test, raw_train])
     if lowercase:
         raw_text = raw_text.lower()
 
     chars = sorted(list(set(raw_text)))
     chars.append(padding_char)
+    chars.append(oov_char)
     char_to_int = get_char_to_int(chars)
 
     return chars, len(chars), char_to_int
@@ -303,3 +313,32 @@ def get_files(in_dir, div, name):
             files_out.append(fi)
     files_out.sort()
     return files_out
+
+
+def get_sequences(gs, ocr, length):
+    gs_ngrams = zip(*[gs[i:] for i in range(length)])
+    ocr_ngrams = zip(*[ocr[i:] for i in range(length)])
+
+    return [''.join(n) for n in gs_ngrams], [''.join(n) for n in ocr_ngrams]
+
+
+def get_temp_file():
+    """Create a temporary file and return the path.
+
+    Returns:
+        Path to the temporary file.
+    """
+    (fd, fname) = tempfile.mkstemp()
+    os.close(fd)
+
+    return fname
+
+
+def to_space_tokenized(string):
+    result = []
+    for c in string:
+        if c != ' ':
+            result.append(c)
+        else:
+            result.append('<SPACE>')
+    return ' '.join(result)
