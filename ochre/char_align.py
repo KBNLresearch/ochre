@@ -6,7 +6,7 @@ import json
 
 from nlppln.utils import create_dirs, out_file_name
 
-from .utils import align_characters
+from .edlibutils import align_characters
 
 
 @click.command()
