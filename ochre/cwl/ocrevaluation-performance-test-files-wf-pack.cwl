@@ -401,6 +401,7 @@
                     "listing": [
                         {
                             "entryname": "$(inputs.gt.nameroot)_out.html",
+                            "writable": true,
                             "entry": "<h2>General results</h2>\n<table border=\"1\">\n<tr>\n<td>CER</td><td>n/a</td>\n</tr>\n<tr>\n<td>WER</td><td>n/a</td>\n</tr>\n<tr>\n<td>WER (order independent)</td><td>n/a</td>\n</tr>\n</table>\n<h2>Difference spotting</h2>\n<table border=\"1\">\n</table>\n<h2>Error rate per character and type</h2>\n<table border=\"1\">\n<tr>\n<td>Character</td><td>Hex code</td><td>Total</td><td>Spurious</td><td>Confused</td><td>Lost</td><td>Error rate</td>\n</tr>\n<tr>\n<td>n/a</td><td>n/a</td><td>n/a</td><td>n/a</td><td>n/a</td><td>n/a</td><td>n/a</td>\n</tr>\n</table>\n"
                         }
                     ]
