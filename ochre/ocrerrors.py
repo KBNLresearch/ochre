@@ -5,10 +5,55 @@ import six
 
 import warnings
 
+import pandas as pd
+
 from collections import OrderedDict
 from string import punctuation
 
 from .rmgarbage import get_rmgarbage_errors
+
+
+def level1_error_classification(row):
+    if row['original-ocr'] == row['gs'] and \
+       row['original-ocr'] == row['corrected-ocr']:
+        return 'correctly unchanged'
+    if row['original-ocr'] == row['gs'] and \
+       row['corrected-ocr'] != row['gs']:
+        return 'added mistake'
+
+    if row['original-ocr'] != row['gs'] and \
+       row['gs'] == row['corrected-ocr']:
+        return 'correctly corrected'
+    if row['original-ocr'] != row['gs'] and \
+       row['original-ocr'] == row['corrected-ocr']:
+        return 'uncorrected mistake'
+
+    if row['original-ocr'] != row['gs'] and \
+       row['gs'] != row['corrected-ocr'] and \
+       row['original-ocr'] != row['corrected-ocr']:
+        return 'changed mistake'
+
+    return 'something else'
+
+
+def get_level1_error_classification(df):
+    return df.apply(level1_error_classification, axis=1)
+
+
+def get_level1_error_counts(df):
+    overview = {}
+    grouped = df.groupby('level1')
+    for gr in grouped:
+        overview[gr[0]] = gr[1].shape[0]
+    overview['total words'] = sum(overview.values())
+    idx = ['total words', 'correctly unchanged', 'correctly corrected',
+           'uncorrected mistake', 'changed mistake', 'added mistake']
+    ov = pd.DataFrame.from_dict(overview, orient='index')
+    ov = ov.reindex(index=idx)
+    ov.columns = ['# words']
+
+    return ov
+
 
 
 def get_error_types():

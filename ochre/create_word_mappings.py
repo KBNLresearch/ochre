@@ -30,15 +30,20 @@ def find_word_boundaries(words, aligned):
                 s = prev + 1
             else:
                 s = prev
+            #print('Word', w)
             wb.append((s, i))
             prev = i
             j += 1
         elif aligned[i] == '' or aligned[i] == ' ':
+            #print('Space or empty in aligned', unaligned[j])
             i += 1
         elif aligned[i] == unaligned[j]:
+            #print('Matching chars', unaligned[j])
             i += 1
             j += 1
         else:
+            #print('Other', unaligned[j], aligned[i])
+            #print('j', j, 'i', i)
             i += 1
     # add last word
     wb.append((prev, len(aligned)))

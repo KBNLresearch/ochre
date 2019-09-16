@@ -272,7 +272,8 @@ def merge_wordmappings(wm_improved_ocr, wm_original_ocr):
         start = 0
         for i in df.index[1:]:
             res = df.loc[i]
-            if res['Unnamed: 0'] == 0:
+            print(res)
+            if res['word_index'] == 0:
                 dfs.append(df.loc[start:i-1])
                 start = i
         dfs.append(df.loc[start:])
@@ -293,6 +294,23 @@ def merge_wordmappings(wm_improved_ocr, wm_original_ocr):
     df = pd.concat(res)
     df = df.reset_index()
     return df
+
+
+def merge_wordmappings2(list_wm_improved_ocr, list_wm_original_ocr):
+    res = []
+    for d1, d2 in zip(list_wm_improved_ocr, list_wm_original_ocr):
+        d1 = d1.reset_index()
+        del d1['index']
+        d2 = d2.reset_index()
+        del d2['index']
+        r = pd.concat([d1, d2], axis=1)
+        r.columns = ['wordindex1', 'gs', 'corrected-ocr', 'wordindex2', 'gs2',
+                     'original-ocr']
+        res.append(r[['gs', 'corrected-ocr', 'original-ocr']])
+    df = pd.concat(res)
+    df = df.reset_index()
+    return df
+
 
 
 def match(name, beginnings):
