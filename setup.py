@@ -68,6 +68,19 @@ setup(
         'six',
         'glob2',
         'sh',
+    ],
+    setup_requires=[
+        # dependency for `python setup.py test`
+        'pytest-runner',
+        # dependencies for `python setup.py build_sphinx`
+        'sphinx',
+        'sphinx_rtd_theme',
+        'recommonmark'
+    ],
+    tests_require=[
+        'pytest',
+        'pytest-cov',
+        'pycodestyle',
     ]
 
     #scripts=['recipy-cmd']
