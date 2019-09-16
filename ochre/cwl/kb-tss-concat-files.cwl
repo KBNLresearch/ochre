@@ -7,12 +7,10 @@ requirements:
     envDef:
       LC_ALL: C.UTF-8
       LANG: C.UTF-8
-
-baseCommand: ["python", "-m", "ochre.kb_tss_concat_files"]
-
-requirements:
   InitialWorkDirRequirement:
     listing: $(inputs.in_files)
+
+baseCommand: ["python", "-m", "ochre.kb_tss_concat_files"]
 
 arguments:
   - valueFrom: $(runtime.outdir)

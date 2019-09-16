@@ -10,8 +10,8 @@ from keras.models import load_model
 
 from nlppln.utils import create_dirs, out_file_name
 
-from .utils import get_char_to_int, get_int_to_char, align_output_to_input, \
-                  read_text_to_predict
+from .utils import get_char_to_int, get_int_to_char, read_text_to_predict
+from .edlibutils import align_output_to_input
 
 
 @click.command()

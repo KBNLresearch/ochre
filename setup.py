@@ -62,11 +62,11 @@ setup(
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=[
+        'cwltool==1.0.20181102182747',
+        'scriptcwl>=0.8.1',
         'nlppln>=0.3.2',
         'six',
         'glob2',
-        'ruamel.yaml',
-        'edlib',
         'sh',
     ]
 
