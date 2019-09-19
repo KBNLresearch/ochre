@@ -6,10 +6,21 @@
 Welcome to ochre's documentation!
 =================================
 
+Ochre is a toolbox for OCR post-correction.
+
+.. important::
+    Please note that this software is experimental and very much a work in
+    progress!
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   installation
+   datasets
+   post_correction_methods
+   quality_measures
+   error_analysis
 
 
 Indices and tables
