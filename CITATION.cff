@@ -1,0 +1,23 @@
+# YAML 1.2
+---
+abstract: "Ochre contains ready-to-use data processing workflows based on CWL (http://www.commonwl.org/). The software also allows you to create your own (OCR post-correction related) workflows. Examples using Jupyter Notebooks are available. Please note that Ochre is still a work in progress."
+authors: 
+  -
+    family-names: Zwaan
+    given-names: Janneke
+    name-particle: "van der"
+    orcid: "https://orcid.org/0000-0002-8329-7000"
+cff-version: "1.0.3"
+date-released: 2018-10-12
+doi: "10.0000/FIXME"
+keywords: 
+  - "optical character recognition"
+  - OCR
+  - "OCR post-correction"
+  - "character-based language models"
+license: "Apache-2.0"
+message: "If you use this software, please cite it using these metadata."
+repository-code: "https://github.com/KBNLresearch/ochre"
+title: Ochre
+version: "0.0.0-alpha0"
+...
